@@ -4,16 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="576f11d8-d586-4b82-a48b-86bdd25550ea" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/Connection.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/Graph.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/Node.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/Range.java" afterDir="false" />
+    <list default="true" id="576f11d8-d586-4b82-a48b-86bdd25550ea" name="Changes" comment="Update Range constructor exception message">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Graph.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Graph.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Node.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Node.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,17 +35,17 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "preferences.sourceCode.Java"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.Java&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -61,8 +55,37 @@
       <option name="presentableId" value="Default" />
       <updated>1652316796148</updated>
       <workItem from="1652316798029" duration="1410000" />
-      <workItem from="1652381394560" duration="128000" />
+      <workItem from="1652381394560" duration="8697000" />
+      <workItem from="1652442202892" duration="1299000" />
+      <workItem from="1652544078721" duration="3914000" />
+      <workItem from="1652568457819" duration="920000" />
+      <workItem from="1652613990097" duration="1097000" />
+      <workItem from="1652648104600" duration="3436000" />
+      <workItem from="1652659258092" duration="2942000" />
+      <workItem from="1652662413971" duration="39000" />
     </task>
+    <task id="LOCAL-00001" summary="Initial commit">
+      <created>1652381727826</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1652381727826</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Implement the node connection class">
+      <created>1652649235350</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1652649235350</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Update Range constructor exception message">
+      <created>1652660310137</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1652660310137</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -78,6 +101,12 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Initial commit" />
+    <MESSAGE value="Implement the node connection class" />
+    <MESSAGE value="Update Range constructor exception message" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update Range constructor exception message" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
