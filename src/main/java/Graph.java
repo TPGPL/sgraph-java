@@ -11,20 +11,16 @@ public class Graph {
     private final ArrayList<Node> nodes;
     private Range edgeValueRange;
 
-    public Graph(int columnCount, int rowCount, int subgraphCount)
-    {
+    public Graph(int columnCount, int rowCount) {
         if (columnCount <= 0)
             throw new IllegalArgumentException("Graph: The number of columns must be positive.");
 
         if (rowCount <= 0)
             throw new IllegalArgumentException("Graph: The number of rows must be positive.");
 
-        if (subgraphCount <= 0)
-            throw new IllegalArgumentException("Graph: The number of subgraphs must be positive.");
 
         this.columnCount = columnCount;
         this.rowCount = rowCount;
-        this.subgraphCount = subgraphCount;
 
         nodes = new ArrayList<>();
 
@@ -33,20 +29,23 @@ public class Graph {
         }
     }
 
-    public Graph(int columnCount, int rowCount, int subgraphCount, double min, double max)
-    {
-        this(columnCount, rowCount, subgraphCount);
+    public Graph(int columnCount, int rowCount, int subgraphCount, double min, double max) {
+        this(columnCount, rowCount);
 
+        if (subgraphCount <= 0)
+            throw new IllegalArgumentException("Graph: The number of subgraphs must be positive.");
+
+        this.subgraphCount = subgraphCount;
         edgeValueRange = new Range(min, max);
+
+        generate(); // in constructor to ensure that it is used only once per object
     }
 
-    public int getColumnCount()
-    {
+    public int getColumnCount() {
         return columnCount;
     }
 
-    public int getRowCount()
-    {
+    public int getRowCount() {
         return rowCount;
     }
 
@@ -54,21 +53,18 @@ public class Graph {
         return subgraphCount;
     }
 
-    public Range getEdgeValueRange()
-    {
+    public Range getEdgeValueRange() {
         return edgeValueRange;
     }
 
-    public Node getNode(int index) throws IllegalArgumentException
-    {
+    public Node getNode(int index) throws IllegalArgumentException {
         if (index < 0 || index >= columnCount * rowCount)
             throw new IllegalArgumentException(String.format("Graph: Cannot get a node of index %d in a %dx%d graph.", index, rowCount, columnCount));
 
         return nodes.get(index);
     }
 
-    public void addConnection(Node node1, Node node2, double edge) throws IllegalArgumentException
-    {
+    public void addConnection(Node node1, Node node2, double edge) throws IllegalArgumentException {
         if (!canNodesAdhere(node1, node2))
             throw new IllegalArgumentException(String.format("Graph: Nodes %d and %d cannot adhere in a %dx%d graph.", node1.getIndex(), node2.getIndex(), rowCount, columnCount));
 
@@ -89,14 +85,12 @@ public class Graph {
         node2.addConnection(node1, edge);
     }
 
-    public void removeConnection(Node node1, Node node2)
-    {
+    public void removeConnection(Node node1, Node node2) {
         node1.removeConnection(node2);
         node2.removeConnection(node1);
     }
 
-    private boolean canNodesAdhere(Node node1, Node node2)
-    {
+    private boolean canNodesAdhere(Node node1, Node node2) {
         int row1 = (node1.getIndex() - node1.getIndex() % columnCount) / columnCount + 1;
         int row2 = (node2.getIndex() - node2.getIndex() % columnCount) / columnCount + 1;
         int col1 = node1.getIndex() % columnCount + 1;
@@ -105,13 +99,11 @@ public class Graph {
         return Math.abs(row1 - row2) == 1 || Math.abs(col1 - col2) == 1;
     }
 
-    public void setEdgeValueRange(double min, double max)
-    {
+    public void setEdgeValueRange(double min, double max) {
         edgeValueRange = new Range(min, max);
     }
 
-    public void generate()
-    {
+    private void generate() {
         Random r = new Random();
 
         for (int i = 0; i < rowCount * columnCount; i++) {
@@ -126,13 +118,14 @@ public class Graph {
             divide(); // TODO
     }
 
-    public void readFromFile(String path)
-    {
-        return;
+    public void print() {
+        System.out.println(rowCount + " " + columnCount);
+        for (Node n : nodes) {
+            System.out.println(n.toString());
+        }
     }
 
-    public void readToFile(String path) throws IOException
-    {
+    public void readToFile(String path) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(path));
         writer.write(String.format("%d %d\n", rowCount, columnCount));
 
@@ -143,8 +136,26 @@ public class Graph {
         writer.close();
     }
 
-    public void divide()
-    {
+    public void divide() {
         return;
+    } // TODO
+
+    public boolean areNodesConnected(Node node1, Node node2) {
+        BreadthFirstSearch bfs = new BreadthFirstSearch(rowCount * columnCount);
+        bfs.run(node1);
+
+        return bfs.wasNodeVisited(node2);
+    }
+
+    public void calculateSubraphCount() {
+        int n = 0;
+        BreadthFirstSearch bfs = new BreadthFirstSearch(rowCount * columnCount);
+
+        while (bfs.hasNotVisitedNode()) {
+            n++;
+            bfs.run(nodes.get(bfs.getNotVisitedNode()));
+        }
+
+        subgraphCount = n;
     }
 }

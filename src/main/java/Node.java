@@ -45,6 +45,16 @@ public class Node {
         return connections.get(index).getWeight();
     }
 
+    public ArrayList<Node> getConnectedNodes()
+    {
+        ArrayList<Node> connectedNodes = new ArrayList<>();
+
+        for (Connection c : connections)
+            connectedNodes.add(c.getNode());
+
+        return connectedNodes;
+    }
+
     @Override
     public String toString()
     {

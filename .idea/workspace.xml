@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="576f11d8-d586-4b82-a48b-86bdd25550ea" name="Changes" comment="Update Range constructor exception message">
+    <list default="true" id="576f11d8-d586-4b82-a48b-86bdd25550ea" name="Changes" comment="Implement basic Graph and Node class structure">
+      <change afterPath="$PROJECT_DIR$/src/main/java/BreadthFirstSearch.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/GraphReader.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/Test.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Graph.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Graph.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Node.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Node.java" afterDir="false" />
@@ -40,12 +44,28 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Mateusz/Desktop/SGraph&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.Java&quot;
   }
 }</component>
+  <component name="RunManager">
+    <configuration name="Test" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Test" />
+      <module name="SGraph" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Test" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -63,6 +83,15 @@
       <workItem from="1652648104600" duration="3436000" />
       <workItem from="1652659258092" duration="2942000" />
       <workItem from="1652662413971" duration="39000" />
+      <workItem from="1652701130624" duration="1381000" />
+      <workItem from="1652722982639" duration="3174000" />
+      <workItem from="1652726790742" duration="25000" />
+      <workItem from="1652727241767" duration="199000" />
+      <workItem from="1652727592602" duration="9000" />
+      <workItem from="1652741299266" duration="1562000" />
+      <workItem from="1652781674025" duration="1533000" />
+      <workItem from="1652800279020" duration="589000" />
+      <workItem from="1652802011083" duration="1404000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit">
       <created>1652381727826</created>
@@ -85,7 +114,14 @@
       <option name="project" value="LOCAL" />
       <updated>1652660310137</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Implement basic Graph and Node class structure">
+      <created>1652701457397</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1652701457397</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -106,7 +142,8 @@
     <MESSAGE value="Initial commit" />
     <MESSAGE value="Implement the node connection class" />
     <MESSAGE value="Update Range constructor exception message" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update Range constructor exception message" />
+    <MESSAGE value="Implement basic Graph and Node class structure" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implement basic Graph and Node class structure" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
