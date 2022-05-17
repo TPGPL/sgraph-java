@@ -4,13 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="576f11d8-d586-4b82-a48b-86bdd25550ea" name="Changes" comment="Implement basic Graph and Node class structure">
-      <change afterPath="$PROJECT_DIR$/src/main/java/BreadthFirstSearch.java" afterDir="false" />
+    <list default="true" id="576f11d8-d586-4b82-a48b-86bdd25550ea" name="Changes" comment="Implement BFS">
       <change afterPath="$PROJECT_DIR$/src/main/java/GraphReader.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/Test.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Graph.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Graph.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/BreadthFirstSearch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BreadthFirstSearch.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Node.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Node.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -91,7 +89,8 @@
       <workItem from="1652741299266" duration="1562000" />
       <workItem from="1652781674025" duration="1533000" />
       <workItem from="1652800279020" duration="589000" />
-      <workItem from="1652802011083" duration="1404000" />
+      <workItem from="1652802011083" duration="2614000" />
+      <workItem from="1652807874390" duration="3400000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit">
       <created>1652381727826</created>
@@ -121,7 +120,14 @@
       <option name="project" value="LOCAL" />
       <updated>1652701457397</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Implement BFS">
+      <created>1652804261369</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1652804261369</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -143,7 +149,8 @@
     <MESSAGE value="Implement the node connection class" />
     <MESSAGE value="Update Range constructor exception message" />
     <MESSAGE value="Implement basic Graph and Node class structure" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implement basic Graph and Node class structure" />
+    <MESSAGE value="Implement BFS" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implement BFS" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

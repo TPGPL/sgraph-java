@@ -39,10 +39,8 @@ public class Node {
     {
         int index = connections.indexOf(new Connection(node, 0));
 
-        if (index == -1)
-            return 0;
 
-        return connections.get(index).getWeight();
+        return (index == -1) ? 0 : connections.get(index).getWeight();
     }
 
     public ArrayList<Node> getConnectedNodes()
