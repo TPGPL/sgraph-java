@@ -4,12 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="576f11d8-d586-4b82-a48b-86bdd25550ea" name="Changes" comment="Implement BFS">
+    <list default="true" id="576f11d8-d586-4b82-a48b-86bdd25550ea" name="Changes" comment="Minor QOL changes">
       <change afterPath="$PROJECT_DIR$/src/main/java/GraphReader.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/Test.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/BreadthFirstSearch.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/BreadthFirstSearch.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Node.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Node.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Graph.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Graph.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,6 +23,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -91,6 +95,9 @@
       <workItem from="1652800279020" duration="589000" />
       <workItem from="1652802011083" duration="2614000" />
       <workItem from="1652807874390" duration="3400000" />
+      <workItem from="1652819032081" duration="174000" />
+      <workItem from="1652887948944" duration="1142000" />
+      <workItem from="1652907576718" duration="360000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit">
       <created>1652381727826</created>
@@ -127,7 +134,14 @@
       <option name="project" value="LOCAL" />
       <updated>1652804261369</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Minor QOL changes">
+      <created>1652819137609</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1652819137609</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -150,7 +164,8 @@
     <MESSAGE value="Update Range constructor exception message" />
     <MESSAGE value="Implement basic Graph and Node class structure" />
     <MESSAGE value="Implement BFS" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implement BFS" />
+    <MESSAGE value="Minor QOL changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Minor QOL changes" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
