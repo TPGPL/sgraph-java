@@ -1,5 +1,8 @@
-import java.io.*;
-import java.util.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class Graph {
     private final int columnCount;
@@ -26,66 +29,6 @@ public class Graph {
         }
     }
 
-    public Graph(String path) {
-        String[] line;
-        ArrayList<Double> convertedLine;
-        Scanner file_scanner = null;
-
-        try {
-            file_scanner = new Scanner(new File(path));
-        } catch (FileNotFoundException e) {
-            System.err.println("Graph: File not found");
-            System.exit(1);
-        }
-
-        line = file_scanner.nextLine().replace(":", " ").split(" ");
-        convertedLine = new ArrayList<>();
-        //Function for converting a line
-        for (String s : line) {
-            try {
-                convertedLine.add(Double.parseDouble(s));
-            } catch (NumberFormatException ignored) {
-            }
-        }
-
-        if (convertedLine.size() != 2)
-            throw new InputMismatchException("Graph: Not correct graph dimensions");
-
-        rowCount = convertedLine.get(0).intValue();
-        columnCount = convertedLine.get(1).intValue();
-        nodes = new ArrayList<>();
-
-        for (int i = 0; i < rowCount * columnCount; i++)
-            nodes.add(new Node(i));
-
-        for (int i = 0; i < nodes.size(); i++) {
-            try {
-                line = file_scanner.nextLine().replace(":", " ").split(" ");
-            } catch (NoSuchElementException e) {
-                System.err.println("Graph: File have less nodes that dimension suggest");
-                System.exit(1);
-            }
-            convertedLine = new ArrayList<>();
-
-            //Function for converting a line
-            for (String s : line) {
-                try {
-                    convertedLine.add(Double.parseDouble(s));
-                } catch (NumberFormatException ignored) {
-                }
-            }
-
-            if (convertedLine.size() % 2 != 0)
-                throw new InputMismatchException("Graph: Not correct graph nodes values in line " + (i + 1));
-
-            for (int j = 0; j < convertedLine.size(); j += 2) {
-                addConnection(nodes.get(i), nodes.get(convertedLine.get(j).intValue()), convertedLine.get(j + 1));
-            }
-        }
-        if (file_scanner.hasNextDouble())
-            throw new InputMismatchException("Graph: File have more nodes that dimension suggest");
-    }
-
     public Graph(int columnCount, int rowCount, int subgraphCount, double min, double max) {
         this(columnCount, rowCount);
 
@@ -104,6 +47,10 @@ public class Graph {
 
     public int getRowCount() {
         return rowCount;
+    }
+
+    public int getNodeCount() {
+        return rowCount * columnCount;
     }
 
     public int getSubgraphCount() {
