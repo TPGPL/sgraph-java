@@ -3,14 +3,13 @@ import java.util.Random;
 
 public class GraphGenerator {
     private static final Random r = new Random();
-    public static Graph generate(int columnCount, int rowCount, int subgraphCount, double min, double max){
-        Graph g=new Graph(columnCount,rowCount,subgraphCount,min,max);
 
-        //generate(); // in constructor to ensure that it is used only once per object
+    public static Graph generate(int columnCount, int rowCount, int subgraphCount, double min, double max) {
+        Graph g = new Graph(columnCount, rowCount, subgraphCount, min, max);
 
-        for (int i = 0; i < rowCount * columnCount; i++) {
+        for (int i = 0; i < g.getNodeCount(); i++) {
             if (i % columnCount + 1 != columnCount) // if node is not in the last column
-                g.addConnection(g.getNode(i), g.getNode(i+1), r.nextDouble(g.getEdgeValueRange().getMin(), g.getEdgeValueRange().getMax()));
+                g.addConnection(g.getNode(i), g.getNode(i + 1), r.nextDouble(g.getEdgeValueRange().getMin(), g.getEdgeValueRange().getMax()));
 
             if ((i - i % columnCount) / columnCount + 1 != rowCount) // if node is not in the last row
                 g.addConnection(g.getNode(i), g.getNode(i + columnCount), r.nextDouble(g.getEdgeValueRange().getMin(), g.getEdgeValueRange().getMax()));
@@ -28,7 +27,7 @@ public class GraphGenerator {
         return g;
     }
 
-    private static void divide(Graph g){
+    private static void divide(Graph g) {
         ArrayList<Integer> way = new ArrayList<>();
         int control, w, next_w, move, next_move, slice = 0;
         //Znalezienie początku
@@ -48,6 +47,7 @@ public class GraphGenerator {
             } else
                 control++;
         } while (g.getNode(w).getAdherentNumber() == 4 && control < 40);
+
         if (control == 40) //Pętla nieskończona
             return;
         //Cięcie
