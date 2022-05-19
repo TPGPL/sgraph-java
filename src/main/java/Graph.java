@@ -122,23 +122,6 @@ public class Graph {
         writer.close();
     }
 
-    public int getDirection(int position, int n_position) {
-        //Góra
-        if (position - columnCount > -1 && position - columnCount == n_position)
-            return 0;
-            //Lewo
-        else if (position - 1 == n_position && position / columnCount == n_position / columnCount)
-            return 1;
-            //Prawo
-        else if (position + 1 == n_position && position / columnCount == n_position / columnCount)
-            return 2;
-            //Dół
-        else if (position + columnCount < nodes.size() && position + columnCount == n_position)
-            return 3;
-        else
-            return -1;
-    }
-
     public boolean areNodesConnected(Node node1, Node node2) {
         BreadthFirstSearch bfs = new BreadthFirstSearch(rowCount * columnCount);
         bfs.run(node1);

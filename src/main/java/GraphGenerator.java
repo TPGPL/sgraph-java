@@ -4,6 +4,10 @@ import java.util.Random;
 public class GraphGenerator {
     private static final Random r = new Random();
 
+    private enum Move {
+        UP, LEFT, RIGHT, DOWN, NO_MOVE
+    }
+
     public static Graph generate(int columnCount, int rowCount, int subgraphCount, double min, double max) {
         Graph g = new Graph(columnCount, rowCount, subgraphCount, min, max);
 
@@ -29,17 +33,23 @@ public class GraphGenerator {
 
     private static void divide(Graph g) {
         ArrayList<Integer> way = new ArrayList<>();
-        int control, w, next_w, move, next_move, slice = 0;
-        //Znalezienie początku
+        int control, w, next_w, slice = 0;
+        Move move, next_move;
+
+        // find the starting node
         do {
             w = r.nextInt(g.getNodeCount());
         } while (g.getNode(w).getAdherentNumber() == 4 || g.getNode(w).getAdherentNumber() == 0);
+
         way.add(w);
-        //Tworzenie ścieżki
-        control = 0; //Służy do sprawdzenia, czy kod nie wykonuję się za długo
+
+        // start creating a slicing path
+
+        control = 0; // checks if app went into an infinite loop
+
         do {
-            //wyciągam losowy sąsiedni wierzchołek
-            next_w = g.getNode(w).getConnectedNodes().get(r.nextInt(g.getNode(w).getAdherentNumber())).getIndex();
+            next_w = g.getNode(w).getConnectedNodes().get(r.nextInt(g.getNode(w).getAdherentNumber())).getIndex(); // draws a random adherent node
+
             if (!way.contains(next_w)) {
                 way.add(next_w);
                 w = next_w;
@@ -48,70 +58,87 @@ public class GraphGenerator {
                 control++;
         } while (g.getNode(w).getAdherentNumber() == 4 && control < 40);
 
-        if (control == 40) //Pętla nieskończona
+        if (control == 40) // infinite loop
             return;
-        //Cięcie
-        //try i catch wyłapuje czy w danym przypadku nie wystąpił początek albo koniec, gdzie może nie mieć co ciąć
-        //Co jeśli są tylko dwa punkty
-        if (way.size() == 2) {
-            if (g.getNode(way.get(0)).getAdherentNumber() == 1 && g.getNode(way.get(1)).getAdherentNumber() == 1) { //Jeśli są połączone tylko ze sobą
+
+        // removing connections on path
+        if (way.size() == 2) { // if there are only two nodes in path
+            if (g.getNode(way.get(0)).getAdherentNumber() == 1 && g.getNode(way.get(1)).getAdherentNumber() == 1) { // if they are only connected to each other
                 g.removeConnection(g.getNode(way.get(0)), g.getNode(way.get(1)));
-            } else { //Jeśli istnieją połączenia z innymi punktami
+            } else { // if they are connected to other nodes
                 while (g.getNode(way.get(0)).getAdherentNumber() > 1) {
                     if (g.getNode(way.get(0)).getConnectedNodes().get(0).getIndex() != way.get(1)) {
-                        g.removeConnection(g.getNode(way.get(0)), g.getNode(way.get(0)).getConnectedNodes().get(0)); //Usuwa pierwszego z listy
+                        g.removeConnection(g.getNode(way.get(0)), g.getNode(way.get(0)).getConnectedNodes().get(0));
                     } else {
-                        g.removeConnection(g.getNode(way.get(0)), g.getNode(way.get(0)).getConnectedNodes().get(1)); //Chyba, że to ten drugi, wtedy bierze kolejnego
+                        g.removeConnection(g.getNode(way.get(0)), g.getNode(way.get(0)).getConnectedNodes().get(1));
                     }
                 }
+
                 while (g.getNode(way.get(1)).getAdherentNumber() > 1) {
                     if (g.getNode(way.get(1)).getConnectedNodes().get(1).getIndex() != way.get(0)) {
-                        g.removeConnection(g.getNode(way.get(1)), g.getNode(way.get(1)).getConnectedNodes().get(0)); //Usuwa pierwszego z listy
+                        g.removeConnection(g.getNode(way.get(1)), g.getNode(way.get(1)).getConnectedNodes().get(0));
                     } else {
-                        g.removeConnection(g.getNode(way.get(1)), g.getNode(way.get(1)).getConnectedNodes().get(1)); //Chyba, że to ten drugi, wtedy bierze kolejnego
+                        g.removeConnection(g.getNode(way.get(1)), g.getNode(way.get(1)).getConnectedNodes().get(1));
                     }
                 }
             }
-        } else {
-            //Droga dłuższa niż dwa
-            //Pierwszy krok
+        } else { // path longer than two nodes
+            // first step
             w = way.get(0);
             next_w = way.get(1);
-            move = g.getDirection(w, next_w);
-            if (move == 0 || move == 3) { //Tnie na lewo
+            move = getDirection(w, next_w, g.getColumnCount(), g.getRowCount());
+
+            if (move == Move.UP || move == Move.DOWN) { // slices to the left
                 slice = w - 1;
-            } else if (move == 1 || move == 2) { //Tnie od dołu
+            } else if (move == Move.LEFT || move == Move.RIGHT) { // slices to the bottom
                 slice = w + g.getColumnCount();
             } else {
-                System.err.println("Błąd przy tworzeniu ścieżki tnącej. Nie powinien w ogóle wystąpić!");
+                System.err.println("GraphGenerator: An unexpected error occured while slicing the graph into subgraphs.");
                 System.exit(1);
             }
+
             g.removeConnection(g.getNode(w), g.getNode(slice));
             w = next_w;
-            //Reszta ścieżki
+
+            // the rest of the path
             for (int i = 2; i < way.size(); i++) {
                 next_w = way.get(i);
-                next_move = g.getDirection(w, next_w);
-                if ((next_move == 0 || next_move == 3) && next_move == move) { //Tnie na lewo
+                next_move = getDirection(w, next_w, g.getColumnCount(), g.getRowCount());
+
+                if ((next_move == Move.UP || next_move == Move.DOWN) && next_move == move) { // slices to the left
                     slice = w - 1;
-                } else if ((next_move == 1 || next_move == 2) && next_move == move) { //Tnie od dołu
+                } else if ((next_move == Move.LEFT || next_move == Move.RIGHT) && next_move == move) { // slices to the bottom
                     slice = w + g.getColumnCount();
-                } else if ((next_move == 0 || next_move == 3)) { //Tnie na lewo, ale wcześniej też od dołu
+                } else if ((next_move == Move.UP || next_move == Move.DOWN)) { // slices to the bottom, then to the left
                     slice = w - 1;
                     g.removeConnection(g.getNode(w), g.getNode(w + g.getColumnCount()));
-                } else if ((next_move == 1 || next_move == 2)) { //Tnie od dołu, ale wcześniej też po lewej
+                } else if ((next_move == Move.LEFT || next_move == Move.RIGHT)) { // slices to the left, then to the bottom
                     slice = 3;
                     g.removeConnection(g.getNode(w), g.getNode(w - 1));
                 } else {
-                    System.err.println("Błąd przy tworzeniu ścieżki tnącej. Nie powinien w ogóle wystąpić!");
+                    System.err.println("GraphGenerator: An unexpected error occured while slicing the graph into subgraphs.");
                     System.exit(1);
                 }
                 g.removeConnection(g.getNode(w), g.getNode(slice));
                 w = next_w;
                 move = next_move;
             }
-            //Ostatni element
+
+            // final step
             g.removeConnection(g.getNode(next_w), g.getNode(slice));
         }
+    }
+
+    private static Move getDirection(int position, int n_position, int columnCount, int rowCount) {
+        if (position - columnCount > -1 && position - columnCount == n_position)
+            return Move.UP;
+        else if (position - 1 == n_position && position / columnCount == n_position / columnCount)
+            return Move.LEFT;
+        else if (position + 1 == n_position && position / columnCount == n_position / columnCount)
+            return Move.RIGHT;
+        else if (position + columnCount < rowCount * columnCount && position + columnCount == n_position)
+            return Move.DOWN;
+        else
+            return Move.NO_MOVE;
     }
 }
