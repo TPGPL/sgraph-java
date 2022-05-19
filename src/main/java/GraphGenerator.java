@@ -33,7 +33,7 @@ public class GraphGenerator {
 
     private static void divide(Graph g) {
         ArrayList<Integer> way = new ArrayList<>();
-        int control, w, next_w, slice = 0;
+        int w, next_w, slice = 0;
         Move move, next_move;
 
         // find the starting node
@@ -45,21 +45,16 @@ public class GraphGenerator {
 
         // start creating a slicing path
 
-        control = 0; // checks if app went into an infinite loop
-
         do {
             next_w = g.getNode(w).getConnectedNodes().get(r.nextInt(g.getNode(w).getAdherentNumber())).getIndex(); // draws a random adherent node
 
-            if (!way.contains(next_w)) {
-                way.add(next_w);
-                w = next_w;
-                control = 0;
-            } else
-                control++;
-        } while (g.getNode(w).getAdherentNumber() == 4 && control < 40);
+            if (way.contains(next_w))
+                return; // the path crosssed -> dividing starts from the beginning
 
-        if (control == 40) // infinite loop
-            return;
+            way.add(next_w);
+            w = next_w;
+
+        } while (g.getNode(w).getAdherentNumber() == 4);
 
         // removing connections on path
         if (way.size() == 2) { // if there are only two nodes in path
