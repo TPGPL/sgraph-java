@@ -31,8 +31,8 @@ public class Graph {
     public Graph(int columnCount, int rowCount, int subgraphCount, double min, double max) {
         this(columnCount, rowCount);
 
-        if (subgraphCount <= 0)
-            throw new IllegalArgumentException("Graph: The number of subgraphs must be positive.");
+        if (subgraphCount <= 0 || subgraphCount > getNodeCount())
+            throw new IllegalArgumentException("Graph: The number of subgraphs must be positive and lower than the total number of nodes.");
 
         this.subgraphCount = subgraphCount;
         edgeValueRange = new Range(min, max);
