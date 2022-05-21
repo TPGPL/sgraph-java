@@ -69,9 +69,6 @@ public class Graph {
         if (!canNodesAdhere(node1, node2))
             throw new IllegalArgumentException(String.format("Graph: Nodes %d and %d cannot adhere in a %dx%d graph.", node1.getIndex(), node2.getIndex(), rowCount, columnCount));
 
-        if (edge <= 0)
-            throw new IllegalArgumentException("Graph: Edge value must be positive.");
-
         if (node1.hasConnection(node2)) // connection between node1 and node2 exists
         {
             double definedEdge = node1.getEdgeOnConnection(node2);

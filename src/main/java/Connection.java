@@ -4,6 +4,9 @@ public class Connection {
 
     public Connection(Node node, double weight)
     {
+        if (weight <= 0)
+            throw new IllegalArgumentException("Connection: Edge value must be positive.");
+
         this.node = node;
         this.weight = weight;
     }
