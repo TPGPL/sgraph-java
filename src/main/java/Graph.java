@@ -2,7 +2,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Graph {
     private final int columnCount;
@@ -32,13 +31,11 @@ public class Graph {
     public Graph(int columnCount, int rowCount, int subgraphCount, double min, double max) {
         this(columnCount, rowCount);
 
-        if (subgraphCount <= 0)
-            throw new IllegalArgumentException("Graph: The number of subgraphs must be positive.");
+        if (subgraphCount <= 0 || subgraphCount > getNodeCount())
+            throw new IllegalArgumentException("Graph: The number of subgraphs must be positive and lower than the total number of nodes.");
 
         this.subgraphCount = subgraphCount;
         edgeValueRange = new Range(min, max);
-
-        generate(); // in constructor to ensure that it is used only once per object
     }
 
     public int getColumnCount() {
@@ -47,6 +44,10 @@ public class Graph {
 
     public int getRowCount() {
         return rowCount;
+    }
+
+    public int getNodeCount() {
+        return rowCount * columnCount;
     }
 
     public int getSubgraphCount() {
@@ -103,21 +104,6 @@ public class Graph {
         edgeValueRange = new Range(min, max);
     }
 
-    private void generate() {
-        Random r = new Random();
-
-        for (int i = 0; i < rowCount * columnCount; i++) {
-            if (i % columnCount + 1 != columnCount) // if node is not in the last column
-                addConnection(nodes.get(i), nodes.get(i + 1), r.nextDouble(edgeValueRange.getMin(), edgeValueRange.getMax()));
-
-            if ((i - i % columnCount) / columnCount + 1 != rowCount) // if node is not in the last row
-                addConnection(nodes.get(i), nodes.get(i + columnCount), r.nextDouble(edgeValueRange.getMin(), edgeValueRange.getMax()));
-        }
-
-        if (subgraphCount != 1)
-            divide(); // TODO
-    }
-
     public void print() {
         System.out.println(rowCount + " " + columnCount);
         for (Node n : nodes) {
@@ -135,10 +121,6 @@ public class Graph {
 
         writer.close();
     }
-
-    public void divide() {
-        return;
-    } // TODO
 
     public boolean areNodesConnected(Node node1, Node node2) {
         BreadthFirstSearch bfs = new BreadthFirstSearch(rowCount * columnCount);
