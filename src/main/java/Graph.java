@@ -23,7 +23,7 @@ public class Graph {
 
         nodes = new ArrayList<>();
 
-        for (int i = 0; i < columnCount * rowCount; i++) {
+        for (int i = 0; i < getNodeCount(); i++) {
             nodes.add(new Node(i));
         }
     }
@@ -59,7 +59,7 @@ public class Graph {
     }
 
     public Node getNode(int index) throws IllegalArgumentException {
-        if (index < 0 || index >= columnCount * rowCount)
+        if (index < 0 || index >= getNodeCount())
             throw new IllegalArgumentException(String.format("Graph: Cannot get a node of index %d in a %dx%d graph.", index, rowCount, columnCount));
 
         return nodes.get(index);
@@ -78,7 +78,7 @@ public class Graph {
 
             if (definedEdge == edge) // the edge values are equal -> likely has been added the second time through IO
                 return;
-            else
+            else // trying to add a connection with a different edge value
                 throw new IllegalArgumentException(String.format("Graph: Connection between nodes %d and %d has already been defined with an edge value of %g", node1.getIndex(), node2.getIndex(), definedEdge));
         }
 
@@ -123,7 +123,7 @@ public class Graph {
     }
 
     public boolean areNodesConnected(Node node1, Node node2) {
-        BreadthFirstSearch bfs = new BreadthFirstSearch(rowCount * columnCount);
+        BreadthFirstSearch bfs = new BreadthFirstSearch(getNodeCount());
         bfs.run(node1);
 
         return bfs.wasNodeVisited(node2);
@@ -131,7 +131,7 @@ public class Graph {
 
     public void calculateSubraphCount() {
         int n = 0;
-        BreadthFirstSearch bfs = new BreadthFirstSearch(rowCount * columnCount);
+        BreadthFirstSearch bfs = new BreadthFirstSearch(getNodeCount());
 
         while (bfs.hasNotVisitedNode()) {
             n++;
