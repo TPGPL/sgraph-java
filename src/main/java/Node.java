@@ -22,12 +22,12 @@ public class Node {
 
     public void removeConnection(Node node)
     {
-        connections.remove(new Connection(node, 0));
+        connections.remove(new Connection(node, 1));
     }
 
     public boolean hasConnection(Node node)
     {
-        return connections.contains(new Connection(node, 0));
+        return connections.contains(new Connection(node, 1));
     }
 
     public int getAdherentNumber()
@@ -37,7 +37,7 @@ public class Node {
 
     public double getEdgeOnConnection(Node node)
     {
-        int index = connections.indexOf(new Connection(node, 0));
+        int index = connections.indexOf(new Connection(node, 1));
 
 
         return (index == -1) ? 0 : connections.get(index).getWeight();
