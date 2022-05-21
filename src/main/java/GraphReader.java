@@ -18,7 +18,7 @@ public class GraphReader {
             System.exit(1);
         }
 
-        lineSplit = file_scanner.nextLine().replace(":", " ").split(" ");
+        lineSplit = file_scanner.nextLine().split("\\s+"); // get dimensions
         convertedLine = new ArrayList<>();
 
         for (String s : lineSplit) {
@@ -35,7 +35,7 @@ public class GraphReader {
 
         for (int i = 0; i < g.getNodeCount(); i++) {
             try {
-                lineSplit = file_scanner.nextLine().replace(":", " ").split(" ");
+                lineSplit = file_scanner.nextLine().replace(":", " ").split("\\s+");
             } catch (NoSuchElementException e) {
                 System.err.println("GraphReader: File has less lines than dimensions suggest.");
                 System.exit(1);
