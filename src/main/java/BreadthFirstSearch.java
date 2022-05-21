@@ -19,7 +19,7 @@ public class BreadthFirstSearch {
         queue.add(startNode);
         visitedNodes[startNode.getIndex()] = true;
 
-        while(queue.size() != 0)
+        while(!queue.isEmpty())
         {
             parsedNode = queue.removeFirst();
 
