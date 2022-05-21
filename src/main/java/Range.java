@@ -4,7 +4,7 @@ public class Range {
 
     public Range(double min, double max) {
         if (min < 0 || max <= min)
-            throw new IllegalArgumentException("Range: MIN must be positive and lower than MAX.");
+            throw new IllegalArgumentException("Range: MIN must be non-negative and lower than MAX.");
 
         this.min = min;
         this.max = max;
