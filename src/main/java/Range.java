@@ -18,4 +18,8 @@ public class Range {
         return max;
     }
 
+    @Override
+    public String toString() {
+        return min + " - " + max;
+    }
 }
