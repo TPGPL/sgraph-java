@@ -35,7 +35,7 @@ public class Graph {
             throw new IllegalArgumentException("Graph: The number of subgraphs must be positive and lower than the total number of nodes.");
 
         this.subgraphCount = subgraphCount;
-        edgeValueRange = new Range(min, max);
+        edgeValueRange = new EdgeRange(min, max);
     }
 
     public int getColumnCount() {
@@ -98,7 +98,7 @@ public class Graph {
     }
 
     public void setEdgeValueRange(double min, double max) {
-        edgeValueRange = new Range(min, max);
+        edgeValueRange = new EdgeRange(min, max);
     }
 
     public void print() {
