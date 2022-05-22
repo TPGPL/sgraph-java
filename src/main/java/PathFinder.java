@@ -7,6 +7,7 @@ public class PathFinder {
     private final Node[] previousNode;
     private final boolean[] parsedNodes;
     private final ArrayList<Node> queue;
+    private Range nodeValueRange;
 
     public PathFinder(int nodeCount, Node startingNode)
     {
@@ -84,5 +85,29 @@ public class PathFinder {
         }
 
         return path;
+    }
+
+    public void calculateNodeValueRange()
+    {
+        double minValue = Double.MAX_VALUE;
+        double maxValue = -1;
+
+        for (double d : distanceToNode) {
+            if (d == Double.MAX_VALUE)
+                continue;
+
+            if (d < minValue)
+                minValue = d;
+
+            if (d > maxValue)
+                maxValue = d;
+        }
+
+        nodeValueRange = new Range(minValue, maxValue);
+    }
+
+    public Range getNodeValueRange()
+    {
+        return nodeValueRange;
     }
 }
