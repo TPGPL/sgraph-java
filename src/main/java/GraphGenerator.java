@@ -9,25 +9,33 @@ public class GraphGenerator {
     }
 
     public static Graph generate(int columnCount, int rowCount, int subgraphCount, double min, double max) {
-        Graph g = new Graph(columnCount, rowCount, subgraphCount, min, max);
+        Graph g = new Graph(columnCount, rowCount);
+
+        if (subgraphCount <= 0 || subgraphCount > g.getNodeCount())
+            throw new IllegalArgumentException("GraphGenerator: The number of subgraphs must be positive and lower than the total number of nodes.");
+
+        if (min < 0 || max <= min)
+            throw new IllegalArgumentException("GraphGenerator: Invalid edge value range. MIN must be non-negative and lower than MAX.");
 
         for (int i = 0; i < g.getNodeCount(); i++) {
             if (i % columnCount + 1 != columnCount) // if node is not in the last column
-                g.addConnection(g.getNode(i), g.getNode(i + 1), r.nextDouble(g.getEdgeValueRange().getMin(), g.getEdgeValueRange().getMax()));
+                g.addConnection(g.getNode(i), g.getNode(i + 1), r.nextDouble(min, max));
 
             if ((i - i % columnCount) / columnCount + 1 != rowCount) // if node is not in the last row
-                g.addConnection(g.getNode(i), g.getNode(i + columnCount), r.nextDouble(g.getEdgeValueRange().getMin(), g.getEdgeValueRange().getMax()));
+                g.addConnection(g.getNode(i), g.getNode(i + columnCount), r.nextDouble(min, max));
         }
 
         if (subgraphCount != 1) {
-            int limit = g.getSubgraphCount();
             g.calculateSubraphCount();
 
-            while (limit > g.getSubgraphCount()) {
+            while (subgraphCount > g.getSubgraphCount()) {
                 divide(g);
                 g.calculateSubraphCount();
             }
         }
+
+        g.calculateEdgeValueRange();
+
         return g;
     }
 

@@ -1,7 +1,9 @@
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class BreadthFirstSearch {
     private final boolean[] visitedNodes;
+    private ArrayList<Node> connectedNodes;
     private final LinkedList<Node> queue;
 
     public BreadthFirstSearch(int nodeNumber) {
@@ -10,6 +12,7 @@ public class BreadthFirstSearch {
 
         visitedNodes = new boolean[nodeNumber];
         queue = new LinkedList<>();
+        connectedNodes = new ArrayList<>();
     }
 
     public void run(Node startNode)
@@ -19,15 +22,13 @@ public class BreadthFirstSearch {
         queue.add(startNode);
         visitedNodes[startNode.getIndex()] = true;
 
-        while(!queue.isEmpty())
-        {
+        while (!queue.isEmpty()) {
             parsedNode = queue.removeFirst();
 
-            for (Node n : parsedNode.getConnectedNodes())
-            {
-                if (!visitedNodes[n.getIndex()])
-                {
+            for (Node n : parsedNode.getConnectedNodes()) {
+                if (!visitedNodes[n.getIndex()]) {
                     queue.add(n);
+                    connectedNodes.add(n);
                     visitedNodes[n.getIndex()] = true;
                 }
             }
@@ -56,5 +57,9 @@ public class BreadthFirstSearch {
     public boolean wasNodeVisited(Node node)
     {
         return visitedNodes[node.getIndex()];
+    }
+
+    public ArrayList<Node> getConnectedNodes() {
+        return connectedNodes;
     }
 }

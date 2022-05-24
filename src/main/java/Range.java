@@ -3,8 +3,8 @@ public class Range {
     private final double max;
 
     public Range(double min, double max) {
-        if (min < 0 || max <= min)
-            throw new IllegalArgumentException("Range: MIN must be non-negative and lower than MAX.");
+        if (min < 0)
+            throw new IllegalArgumentException("Range: MIN must be non-negative.");
 
         this.min = min;
         this.max = max;
@@ -18,4 +18,8 @@ public class Range {
         return max;
     }
 
+    @Override
+    public String toString() {
+        return min + " - " + max;
+    }
 }
