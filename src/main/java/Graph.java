@@ -28,16 +28,6 @@ public class Graph {
         }
     }
 
-    public Graph(int columnCount, int rowCount, int subgraphCount, double min, double max) {
-        this(columnCount, rowCount);
-
-        if (subgraphCount <= 0 || subgraphCount > getNodeCount())
-            throw new IllegalArgumentException("Graph: The number of subgraphs must be positive and lower than the total number of nodes.");
-
-        this.subgraphCount = subgraphCount;
-        edgeValueRange = new EdgeRange(min, max);
-    }
-
     public int getColumnCount() {
         return columnCount;
     }
@@ -69,6 +59,9 @@ public class Graph {
         if (!canNodesAdhere(node1, node2))
             throw new IllegalArgumentException(String.format("Graph: Nodes %d and %d cannot adhere in a %dx%d graph.", node1.getIndex(), node2.getIndex(), rowCount, columnCount));
 
+        if (edge <= 0)
+            throw new IllegalArgumentException("Graph: The edge value must be positive.");
+
         if (node1.hasConnection(node2)) // connection between node1 and node2 exists
         {
             double definedEdge = node1.getEdgeOnConnection(node2);
@@ -95,10 +88,6 @@ public class Graph {
         int col2 = node2.getIndex() % columnCount + 1;
 
         return Math.abs(row1 - row2) == 1 || Math.abs(col1 - col2) == 1;
-    }
-
-    public void setEdgeValueRange(double min, double max) {
-        edgeValueRange = new EdgeRange(min, max);
     }
 
     public void print() {
@@ -136,5 +125,39 @@ public class Graph {
         }
 
         subgraphCount = n;
+    }
+
+    public void calculateEdgeValueRange() {
+        double min = Double.MAX_VALUE;
+        double max = -1;
+        double edge;
+
+        for (Node n : nodes) {
+            if (n.getIndex() % columnCount + 1 != columnCount) {
+                if (n.hasConnection(getNode(n.getIndex() + 1))) {
+                    edge = n.getEdgeOnConnection(getNode(n.getIndex() + 1));
+
+                    if (edge > max)
+                        max = edge;
+
+                    if (edge < min)
+                        min = edge;
+                }
+            }
+
+            if ((n.getIndex() - n.getIndex() % columnCount) / columnCount + 1 != rowCount) {
+                if (n.hasConnection(getNode(n.getIndex() + columnCount))) {
+                    edge = n.getEdgeOnConnection(getNode(n.getIndex() + columnCount));
+
+                    if (edge > max)
+                        max = edge;
+
+                    if (edge < min)
+                        min = edge;
+                }
+            }
+        }
+
+        edgeValueRange = (max == -1) ? new Range(0, 0) : new Range(min, max);
     }
 }

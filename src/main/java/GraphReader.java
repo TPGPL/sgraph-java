@@ -60,6 +60,9 @@ public class GraphReader {
         if (file_scanner.hasNextDouble())
             throw new InputMismatchException("GraphReader: File contains more connection lists than dimensions suggest.");
 
+        g.calculateSubraphCount();
+        g.calculateEdgeValueRange();
+
         return g;
     }
 }
