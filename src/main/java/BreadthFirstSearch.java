@@ -3,7 +3,7 @@ import java.util.LinkedList;
 
 public class BreadthFirstSearch {
     private final boolean[] visitedNodes;
-    private ArrayList<Node> connectedNodes;
+    private final ArrayList<Node> connectedNodes;
     private final LinkedList<Node> queue;
 
     public BreadthFirstSearch(int nodeNumber) {
