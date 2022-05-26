@@ -25,9 +25,9 @@ public class GraphGenerator {
                 g.addConnection(g.getNode(i), g.getNode(i + columnCount), r.nextDouble(min, max));
         }
 
-        if (subgraphCount != 1) {
-            g.calculateSubraphCount();
+        g.calculateSubraphCount();
 
+        if (subgraphCount != 1) {
             while (subgraphCount > g.getSubgraphCount()) {
                 divide(g);
                 g.calculateSubraphCount();
