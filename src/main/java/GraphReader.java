@@ -9,13 +9,13 @@ public class GraphReader {
     public static Graph readFromFile(String path) {
         String[] lineSplit;
         ArrayList<Double> convertedLine;
-        Scanner file_scanner = null;
+        Scanner file_scanner;
 
         try {
             file_scanner = new Scanner(new File(path));
         } catch (FileNotFoundException e) {
-            System.err.println("GraphReader: File was not found.");
-            System.exit(1);
+            System.err.println("GraphReader: " + e.getMessage());
+            return null;
         }
 
         lineSplit = file_scanner.nextLine().split("\\s+"); // get dimensions
@@ -38,7 +38,7 @@ public class GraphReader {
                 lineSplit = file_scanner.nextLine().replace(":", " ").split("\\s+");
             } catch (NoSuchElementException e) {
                 System.err.println("GraphReader: File has less lines than dimensions suggest.");
-                System.exit(1);
+                return null;
             }
 
             convertedLine.clear();

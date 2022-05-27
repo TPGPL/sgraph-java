@@ -97,7 +97,7 @@ public class GraphGenerator {
                 slice = w + g.getColumnCount();
             } else {
                 System.err.println("GraphGenerator: An unexpected error occured while slicing the graph into subgraphs.");
-                System.exit(1);
+                return;
             }
 
             g.removeConnection(g.getNode(w), g.getNode(slice));
@@ -120,7 +120,7 @@ public class GraphGenerator {
                     g.removeConnection(g.getNode(w), g.getNode(w - 1));
                 } else {
                     System.err.println("GraphGenerator: An unexpected error occured while slicing the graph into subgraphs.");
-                    System.exit(1);
+                    return;
                 }
                 g.removeConnection(g.getNode(w), g.getNode(slice));
                 w = next_w;
