@@ -1,6 +1,7 @@
 package org.sgraph;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -97,6 +98,17 @@ public class Graph {
         for (Node n : nodes) {
             System.out.println(n.toString());
         }
+    }
+
+    public void readToFile(File file) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+        writer.write(String.format("%d %d\n", rowCount, columnCount));
+
+        for (Node n : nodes) {
+            writer.write(n.toString() + "\n");
+        }
+
+        writer.close();
     }
 
     public void readToFile(String path) throws IOException {
