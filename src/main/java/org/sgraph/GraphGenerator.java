@@ -1,3 +1,5 @@
+package org.sgraph;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -41,7 +43,7 @@ public class GraphGenerator {
 
     private static void divide(Graph g) {
         ArrayList<Integer> way = new ArrayList<>();
-        int w, next_w, slice = 0;
+        int w, next_w, slice;
         Move move, next_move;
 
         // find the starting node

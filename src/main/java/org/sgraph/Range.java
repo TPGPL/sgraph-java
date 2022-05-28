@@ -1,3 +1,5 @@
+package org.sgraph;
+
 public class Range {
     private final double min;
     private final double max;

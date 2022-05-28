@@ -1,3 +1,5 @@
+package org.sgraph;
+
 import java.util.ArrayList;
 
 public class Node {
