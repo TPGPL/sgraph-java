@@ -1,5 +1,7 @@
 package org.sgraph;
 
+import javafx.scene.paint.Color;
+
 public class Range {
     private final double min;
     private final double max;
@@ -18,6 +20,17 @@ public class Range {
 
     public double getMax() {
         return max;
+    }
+
+    public Color getHSBValue(double value)
+    {
+        if (value < min || value > max)
+            throw new IllegalArgumentException("Range: Value must be in range bounds.");
+
+        if (min == max) // prevents 0-0 range as well
+            return Color.hsb(0, 1, 1, 1);
+
+        return Color.hsb((1 - (value - min) / (max - min)) * 240, 1, 1, 1);
     }
 
     @Override
