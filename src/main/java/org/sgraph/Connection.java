@@ -1,3 +1,5 @@
+package org.sgraph;
+
 public class Connection {
     private final Node node;
     private final double weight;

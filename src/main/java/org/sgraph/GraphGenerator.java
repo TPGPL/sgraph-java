@@ -1,3 +1,5 @@
+package org.sgraph;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -25,9 +27,9 @@ public class GraphGenerator {
                 g.addConnection(g.getNode(i), g.getNode(i + columnCount), r.nextDouble(min, max));
         }
 
-        if (subgraphCount != 1) {
-            g.calculateSubraphCount();
+        g.calculateSubraphCount();
 
+        if (subgraphCount != 1) {
             while (subgraphCount > g.getSubgraphCount()) {
                 divide(g);
                 g.calculateSubraphCount();
@@ -41,7 +43,7 @@ public class GraphGenerator {
 
     private static void divide(Graph g) {
         ArrayList<Integer> way = new ArrayList<>();
-        int w, next_w, slice = 0;
+        int w, next_w, slice;
         Move move, next_move;
 
         // find the starting node
@@ -97,7 +99,7 @@ public class GraphGenerator {
                 slice = w + g.getColumnCount();
             } else {
                 System.err.println("GraphGenerator: An unexpected error occured while slicing the graph into subgraphs.");
-                System.exit(1);
+                return;
             }
 
             g.removeConnection(g.getNode(w), g.getNode(slice));
@@ -120,7 +122,7 @@ public class GraphGenerator {
                     g.removeConnection(g.getNode(w), g.getNode(w - 1));
                 } else {
                     System.err.println("GraphGenerator: An unexpected error occured while slicing the graph into subgraphs.");
-                    System.exit(1);
+                    return;
                 }
                 g.removeConnection(g.getNode(w), g.getNode(slice));
                 w = next_w;
