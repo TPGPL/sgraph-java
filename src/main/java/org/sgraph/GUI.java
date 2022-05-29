@@ -21,25 +21,25 @@ import java.util.ArrayList;
 public class GUI extends Application {
     private static Graph graph;
     private static GraphicsContext gc;
-    private static final int size = 900;
+    private static final int size = 800;
     private static FileChooser fileChooser;
 
     //Nagłówki guzików
-    private static Label labelForNumberOfColumns;
-    private static Label labelForNumberOfRows;
-    private static Label labelForNumberOfSubGraphs;
-    private static Label labelForWeightRange;
+    private static Label labelColumnTextField;
+    private static Label labelRowTextField;
+    private static Label labelSubgraphTextField;
+    private static Label labelRangeTextField;
 
     //Pola tekstowe
-    private static TextField textFieldForNumberOfColumns;
-    private static TextField textFieldForNumberOfRows;
-    private static TextField textFieldForNumberOfSubGraphs;
-    private static TextField textFieldForWeightRange;
+    private static TextField textFieldColumnCount;
+    private static TextField textFieldRowCount;
+    private static TextField textFieldSubgraphCount;
+    private static TextField textFieldWeightRange;
 
     //Guziki
-    private static Button buttonGen;
-    private static Button buttonOpen;
-    private static Button buttonSave;
+    private static Button buttonGenerate;
+    private static Button buttonFileOpen;
+    private static Button buttonFileSave;
 
     //Linie przycisków
     private static HBox upHeadLine;
@@ -54,114 +54,114 @@ public class GUI extends Application {
         stage.setTitle("SGraph");
 
         //Tworzenie górnego nagłówka
-        labelForNumberOfColumns = new Label("# of columns");
-        labelForNumberOfColumns.setPrefWidth(size * 0.6 / 4);
-        labelForNumberOfColumns.setPrefHeight(20);
-        labelForNumberOfColumns.setAlignment(Pos.CENTER);
+        labelColumnTextField = new Label("# of columns");
+        labelColumnTextField.setPrefWidth(size * 0.6 / 4);
+        labelColumnTextField.setPrefHeight(20);
+        labelColumnTextField.setAlignment(Pos.CENTER);
 
-        labelForNumberOfRows = new Label("# of rows");
-        labelForNumberOfRows.setPrefWidth(size * 0.6 / 4);
-        labelForNumberOfRows.setPrefHeight(20);
-        labelForNumberOfRows.setAlignment(Pos.CENTER);
+        labelRowTextField = new Label("# of rows");
+        labelRowTextField.setPrefWidth(size * 0.6 / 4);
+        labelRowTextField.setPrefHeight(20);
+        labelRowTextField.setAlignment(Pos.CENTER);
 
-        labelForNumberOfSubGraphs = new Label("# of subgraph");
-        labelForNumberOfSubGraphs.setPrefWidth(size * 0.6 / 4);
-        labelForNumberOfSubGraphs.setPrefHeight(20);
-        labelForNumberOfSubGraphs.setAlignment(Pos.CENTER);
+        labelSubgraphTextField = new Label("# of subgraph");
+        labelSubgraphTextField.setPrefWidth(size * 0.6 / 4);
+        labelSubgraphTextField.setPrefHeight(20);
+        labelSubgraphTextField.setAlignment(Pos.CENTER);
 
-        labelForWeightRange = new Label("Weight range");
-        labelForWeightRange.setPrefWidth(size * 0.6 / 4);
-        labelForWeightRange.setPrefHeight(20);
-        labelForWeightRange.setAlignment(Pos.CENTER);
+        labelRangeTextField = new Label("Weight range");
+        labelRangeTextField.setPrefWidth(size * 0.6 / 4);
+        labelRangeTextField.setPrefHeight(20);
+        labelRangeTextField.setAlignment(Pos.CENTER);
 
-        upHeadLine = new HBox(10, labelForNumberOfColumns, labelForNumberOfRows, labelForNumberOfSubGraphs, labelForWeightRange);
+        upHeadLine = new HBox(10, labelColumnTextField, labelRowTextField, labelSubgraphTextField, labelRangeTextField);
 
         //Tworzenie dolnego nagłówka
-        textFieldForNumberOfColumns = new TextField("");
-        textFieldForNumberOfColumns.setPrefWidth(size * 0.6 / 4);
-        textFieldForNumberOfColumns.setPrefHeight(20);
-        textFieldForNumberOfColumns.setAlignment(Pos.CENTER);
+        textFieldColumnCount = new TextField("");
+        textFieldColumnCount.setPrefWidth(size * 0.6 / 4);
+        textFieldColumnCount.setPrefHeight(20);
+        textFieldColumnCount.setAlignment(Pos.CENTER);
 
-        textFieldForNumberOfRows = new TextField("");
-        textFieldForNumberOfRows.setPrefWidth(size * 0.6 / 4);
-        textFieldForNumberOfRows.setPrefHeight(20);
-        textFieldForNumberOfRows.setAlignment(Pos.CENTER);
+        textFieldRowCount = new TextField("");
+        textFieldRowCount.setPrefWidth(size * 0.6 / 4);
+        textFieldRowCount.setPrefHeight(20);
+        textFieldRowCount.setAlignment(Pos.CENTER);
 
-        textFieldForNumberOfSubGraphs = new TextField("");
-        textFieldForNumberOfSubGraphs.setPrefWidth(size * 0.6 / 4);
-        textFieldForNumberOfSubGraphs.setPrefHeight(20);
-        textFieldForNumberOfSubGraphs.setAlignment(Pos.CENTER);
+        textFieldSubgraphCount = new TextField("");
+        textFieldSubgraphCount.setPrefWidth(size * 0.6 / 4);
+        textFieldSubgraphCount.setPrefHeight(20);
+        textFieldSubgraphCount.setAlignment(Pos.CENTER);
 
-        textFieldForWeightRange = new TextField("");
-        textFieldForWeightRange.setPrefWidth(size * 0.6 / 4);
-        textFieldForWeightRange.setPrefHeight(20);
-        textFieldForWeightRange.setAlignment(Pos.CENTER);
+        textFieldWeightRange = new TextField("");
+        textFieldWeightRange.setPrefWidth(size * 0.6 / 4);
+        textFieldWeightRange.setPrefHeight(20);
+        textFieldWeightRange.setAlignment(Pos.CENTER);
 
         //Guzik do generowania
-        buttonGen = new Button("Generate");
-        buttonGen.setOnAction(actionEvent -> {
-            turnOfButton();
+        buttonGenerate = new Button("Generate");
+        buttonGenerate.setOnAction(actionEvent -> {
+            disableAllButtons();
             int col, row, sub;
             double min, max;
-            String stringColumns = textFieldForNumberOfColumns.getText();
-            String stringRows = textFieldForNumberOfRows.getText();
-            String stringSubGraph = textFieldForNumberOfSubGraphs.getText();
-            String stringRange = textFieldForWeightRange.getText();
+            String columnTextContent = textFieldColumnCount.getText();
+            String rowTextContent = textFieldRowCount.getText();
+            String subgraphTextContent = textFieldSubgraphCount.getText();
+            String rangeTextContent = textFieldWeightRange.getText();
             try {
-                col = Integer.parseInt(stringColumns);
-                row = Integer.parseInt(stringRows);
-                sub = Integer.parseInt(stringSubGraph);
+                col = Integer.parseInt(columnTextContent);
+                row = Integer.parseInt(rowTextContent);
+                sub = Integer.parseInt(subgraphTextContent);
                 //Leniwa funkcja do odczytania wag, ale działa
-                min = Double.parseDouble(stringRange.split("-")[0]);
-                max = Double.parseDouble(stringRange.split("-")[1]);
+                min = Double.parseDouble(rangeTextContent.split("-")[0]);
+                max = Double.parseDouble(rangeTextContent.split("-")[1]);
 
             } catch (NumberFormatException e) {
                 System.err.println("Text fields have not corrected format");
-                turnOnButton();
+                enableAllButtons();
                 return;
             } catch (ArrayIndexOutOfBoundsException ee) {
                 System.err.println("Range do not have -, or not correted format");
-                turnOnButton();
+                enableAllButtons();
                 return;
             }
             //TODO try catch, jeśli niepoprawne dane do grafu
             graph = GraphGenerator.generate(col, row, sub, min, max);
             draw(graph.getColumnCount(), graph.getRowCount());
-            turnOnButton();
+            enableAllButtons();
         });
-        buttonGen.setPrefWidth(size * 0.3 / 3);
-        buttonGen.setPrefHeight(20);
-        buttonGen.setAlignment(Pos.CENTER);
+        buttonGenerate.setPrefWidth(size * 0.3 / 3);
+        buttonGenerate.setPrefHeight(20);
+        buttonGenerate.setAlignment(Pos.CENTER);
 
         //Guzik do wczytania
-        buttonOpen = new Button("Open from file...");
-        buttonOpen.setOnAction(actionEvent -> {
-            turnOfButton();
+        buttonFileOpen = new Button("Open from file...");
+        buttonFileOpen.setOnAction(actionEvent -> {
+            disableAllButtons();
             fileChooser.setTitle("Load from...");
             File file = fileChooser.showOpenDialog(stage);
             //Jeśli zamknięto okno i nie podano pliku
             if (file == null) {
-                turnOnButton();
+                enableAllButtons();
                 return;
             }
             //TODO try catch, jeśli niepoprawny format pliku
             graph = GraphReader.readFromFile(file);
 
             draw(graph.getColumnCount(), graph.getRowCount());
-            turnOnButton();
+            enableAllButtons();
         });
-        buttonOpen.setPrefWidth(size * 0.3 / 3);
-        buttonOpen.setPrefHeight(20);
-        buttonOpen.setAlignment(Pos.CENTER);
+        buttonFileOpen.setPrefWidth(size * 0.3 / 3);
+        buttonFileOpen.setPrefHeight(20);
+        buttonFileOpen.setAlignment(Pos.CENTER);
 
         //Guzik do zapisu
-        buttonSave = new Button("Save to file...");
-        buttonSave.setOnAction(actionEvent -> {
-            turnOfButton();
+        buttonFileSave = new Button("Save to file...");
+        buttonFileSave.setOnAction(actionEvent -> {
+            disableAllButtons();
             fileChooser.setTitle("Save to...");
             File file = fileChooser.showSaveDialog(stage);
             if (file == null) {
-                turnOnButton();
+                enableAllButtons();
                 return;
             }
             //TODO try catch
@@ -169,17 +169,16 @@ public class GUI extends Application {
                 graph.readToFile(file);
             } catch (IOException e) {
                 e.printStackTrace();
-                turnOnButton();
+                enableAllButtons();
                 return;
             }
-            turnOnButton();
+            enableAllButtons();
         });
-        buttonSave.setPrefWidth(size * 0.3 / 3);
-        buttonSave.setPrefHeight(20);
-        buttonSave.setAlignment(Pos.CENTER);
+        buttonFileSave.setPrefWidth(size * 0.3 / 3);
+        buttonFileSave.setPrefHeight(20);
+        buttonFileSave.setAlignment(Pos.CENTER);
 
-        upBottomLine = new HBox(10, textFieldForNumberOfColumns, textFieldForNumberOfRows, textFieldForNumberOfSubGraphs, textFieldForWeightRange, buttonGen, buttonOpen, buttonSave);
-
+        upBottomLine = new HBox(10, textFieldColumnCount, textFieldRowCount, textFieldSubgraphCount, textFieldWeightRange, buttonGenerate, buttonFileOpen, buttonFileSave);
         canvas = new Canvas(size, size);
         gc = canvas.getGraphicsContext2D();
 
@@ -202,49 +201,49 @@ public class GUI extends Application {
         launch();
     }
 
-    public static void draw(int columns, int verses) {
+    public static void draw(int columnCount, int rowCount) {
 
         gc.clearRect(0, 0, size, size);
         gc.setFill(Color.BLACK);
         //Proporcje połączenia względem promienia wierzchołka
         double lineWidthProportion = 2.0 / 3.0;
-        double lineLenghtProportion = 4.0;
+        double lineLengthProportion = 4.0;
 
         //Położenie startowe, przerwa od krawędzi ekranu
         double gap = 10.0;//Stałe
 
         //Skala, Długość promienia punktu,Przesunięcie połączenia
-        double ovalR = columns > verses ? (size - 2 * gap) / (2 * columns + (lineLenghtProportion - 2.0) * (columns - 1)) : (size - 2 * gap) / (2 * verses + (lineLenghtProportion - 2.0) * (verses - 1));
+        double ovalR = columnCount > rowCount ? (size - 2 * gap) / (2 * columnCount + (lineLengthProportion - 2.0) * (columnCount - 1)) : (size - 2 * gap) / (2 * rowCount + (lineLengthProportion - 2.0) * (rowCount - 1));
 
         //długość krawędzi,Odległość międzypunktami
-        double edgeLenght = lineLenghtProportion * ovalR;
+        double edgeLength = lineLengthProportion * ovalR;
         //jego szerokość
         double rectW = lineWidthProportion * ovalR;
 
         gc.setStroke(Color.BLACK); //Domyślny kolor
         gc.setLineWidth(rectW);
 
-        int edge, drawing;
+        int parsedNodeIndex, adhNodeIndex;
 
         //Rysowanie połączeń
-        for (int j = 0; j < verses; j++) {
-            for (int i = 0; i < columns; i++) {
-                edge = j * columns + i;
+        for (int j = 0; j < rowCount; j++) {
+            for (int i = 0; i < columnCount; i++) {
+                parsedNodeIndex = j * columnCount + i;
                 //Rysowanie połączenia pionowego
-                if ((drawing = checkDown(edge)) != -1) {
-                    gc.setStroke(graph.getEdgeValueRange().getHSBValue(graph.getNode(edge).getEdgeOnConnection(graph.getNode(drawing))));
+                if ((adhNodeIndex = checkDown(parsedNodeIndex)) != -1) {
+                    gc.setStroke(graph.getEdgeValueRange().getHSBValue(graph.getNode(parsedNodeIndex).getEdgeOnConnection(graph.getNode(adhNodeIndex))));
                     gc.beginPath();
-                    gc.moveTo(gap + ovalR + i * edgeLenght, gap + ovalR + j * edgeLenght);
-                    gc.lineTo(gap + ovalR + i * edgeLenght + 0, gap + ovalR + j * edgeLenght + edgeLenght);
+                    gc.moveTo(gap + ovalR + i * edgeLength, gap + ovalR + j * edgeLength);
+                    gc.lineTo(gap + ovalR + i * edgeLength + 0, gap + ovalR + j * edgeLength + edgeLength);
                     gc.stroke();
                     gc.closePath();
                 }
                 //Rysowanie połączenia poziomego
-                if ((drawing = checkRight(edge)) != -1) {
-                    gc.setStroke(graph.getEdgeValueRange().getHSBValue(graph.getNode(edge).getEdgeOnConnection(graph.getNode(drawing))));
+                if ((adhNodeIndex = checkRight(parsedNodeIndex)) != -1) {
+                    gc.setStroke(graph.getEdgeValueRange().getHSBValue(graph.getNode(parsedNodeIndex).getEdgeOnConnection(graph.getNode(adhNodeIndex))));
                     gc.beginPath();
-                    gc.moveTo(gap + ovalR + i * edgeLenght, gap + ovalR + j * edgeLenght);
-                    gc.lineTo(gap + ovalR + i * edgeLenght + edgeLenght, gap + ovalR + j * edgeLenght);
+                    gc.moveTo(gap + ovalR + i * edgeLength, gap + ovalR + j * edgeLength);
+                    gc.lineTo(gap + ovalR + i * edgeLength + edgeLength, gap + ovalR + j * edgeLength);
                     gc.stroke();
                     gc.closePath();
                 }
@@ -252,29 +251,29 @@ public class GUI extends Application {
         }
 
         //Rysowanie punktu, wydzieliłem, ale można połączyć z pętlą wyżej
-        for (int j = 0; j < verses; j++) {
-            for (int i = 0; i < columns; i++) {
+        for (int j = 0; j < rowCount; j++) {
+            for (int i = 0; i < columnCount; i++) {
                 //gc.setFill(Color.CRIMSON);
-                gc.fillOval(gap + i * edgeLenght, gap + j * edgeLenght, ovalR * 2, ovalR * 2); //Punkt
+                gc.fillOval(gap + i * edgeLength, gap + j * edgeLength, ovalR * 2, ovalR * 2); //Punkt
             }
         }
     }
 
     //Sprawdzanie kierunku połączenia
-    private static int checkDown(int edge) {
-        ArrayList<Node> neighbour = graph.getNode(edge).getConnectedNodes();
-        for (Node n : neighbour) {
-            if (edge + graph.getColumnCount() < graph.getRowCount() * graph.getColumnCount() && edge + graph.getColumnCount() == n.getIndex())
+    private static int checkDown(int index) {
+        ArrayList<Node> connectedNodes = graph.getNode(index).getConnectedNodes();
+        for (Node n : connectedNodes) {
+            if (index + graph.getColumnCount() < graph.getRowCount() * graph.getColumnCount() && index + graph.getColumnCount() == n.getIndex())
                 return n.getIndex();
         }
         return -1;
     }
 
     //Sprawdzanie kierunku połączenia
-    private static int checkRight(int edge) {
-        ArrayList<Node> neighbour = graph.getNode(edge).getConnectedNodes();
-        for (Node n : neighbour) {
-            if (edge + 1 == n.getIndex() && edge / graph.getColumnCount() == n.getIndex() / graph.getColumnCount())
+    private static int checkRight(int index) {
+        ArrayList<Node> connectedNodes = graph.getNode(index).getConnectedNodes();
+        for (Node n : connectedNodes) {
+            if (index + 1 == n.getIndex() && index / graph.getColumnCount() == n.getIndex() / graph.getColumnCount())
                 return n.getIndex();
         }
         return -1;
@@ -282,16 +281,16 @@ public class GUI extends Application {
 
 
     //Wyłącza guziki na czas trwania rysowania
-    private static void turnOfButton() {
-        buttonGen.setDisable(true);
-        buttonOpen.setDisable(true);
-        buttonSave.setDisable(true);
+    private static void disableAllButtons() {
+        buttonGenerate.setDisable(true);
+        buttonFileOpen.setDisable(true);
+        buttonFileSave.setDisable(true);
     }
 
     //Włącza po wszystkim guziki
-    private static void turnOnButton() {
-        buttonGen.setDisable(false);
-        buttonOpen.setDisable(false);
-        buttonSave.setDisable(false);
+    private static void enableAllButtons() {
+        buttonGenerate.setDisable(false);
+        buttonFileOpen.setDisable(false);
+        buttonFileSave.setDisable(false);
     }
 }
