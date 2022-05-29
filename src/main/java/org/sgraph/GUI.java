@@ -19,21 +19,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class GUI extends Application {
-    private static Graph graph;
-    private static GraphicsContext gc;
-    private static final int size = 800;
-    private static FileChooser fileChooser;
+    private Graph graph;
+    private GraphicsContext gc;
+    private final int size = 800;
+    private FileChooser fileChooser;
 
     // text fields
-    private static TextField textFieldColumnCount;
-    private static TextField textFieldRowCount;
-    private static TextField textFieldSubgraphCount;
-    private static TextField textFieldWeightRange;
+    private TextField textFieldColumnCount;
+    private TextField textFieldRowCount;
+    private TextField textFieldSubgraphCount;
+    private TextField textFieldWeightRange;
 
     // buttons
-    private static Button buttonGenerate;
-    private static Button buttonFileOpen;
-    private static Button buttonFileSave;
+    private Button buttonGenerate;
+    private Button buttonFileOpen;
+    private Button buttonFileSave;
 
     @Override
     public void start(Stage stage) {
@@ -190,7 +190,7 @@ public class GUI extends Application {
         launch();
     }
 
-    public static void draw(int columnCount, int rowCount) {
+    public void draw(int columnCount, int rowCount) {
 
         gc.clearRect(0, 0, size, size);
         gc.setFill(Color.BLACK);
@@ -249,7 +249,7 @@ public class GUI extends Application {
     }
 
     //Sprawdzanie kierunku połączenia
-    private static int checkDown(int index) {
+    private int checkDown(int index) {
         ArrayList<Node> connectedNodes = graph.getNode(index).getConnectedNodes();
         for (Node n : connectedNodes) {
             if (index + graph.getColumnCount() < graph.getRowCount() * graph.getColumnCount() && index + graph.getColumnCount() == n.getIndex())
@@ -259,7 +259,7 @@ public class GUI extends Application {
     }
 
     //Sprawdzanie kierunku połączenia
-    private static int checkRight(int index) {
+    private int checkRight(int index) {
         ArrayList<Node> connectedNodes = graph.getNode(index).getConnectedNodes();
         for (Node n : connectedNodes) {
             if (index + 1 == n.getIndex() && index / graph.getColumnCount() == n.getIndex() / graph.getColumnCount())
@@ -270,14 +270,14 @@ public class GUI extends Application {
 
 
     //Wyłącza guziki na czas trwania rysowania
-    private static void disableAllButtons() {
+    private void disableAllButtons() {
         buttonGenerate.setDisable(true);
         buttonFileOpen.setDisable(true);
         buttonFileSave.setDisable(true);
     }
 
     //Włącza po wszystkim guziki
-    private static void enableAllButtons() {
+    private void enableAllButtons() {
         buttonGenerate.setDisable(false);
         buttonFileOpen.setDisable(false);
         buttonFileSave.setDisable(false);
