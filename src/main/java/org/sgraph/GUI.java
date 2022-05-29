@@ -1,6 +1,7 @@
 package org.sgraph;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -10,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -19,9 +21,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class GUI extends Application {
+    private static final int WINDOW_WIDTH = 700;
+    private static final int WINDOW_HEIGHT = 900;
+    private static final int CANVAS_RESOLUTION = 700;
+    private static final int PADDING = 10;
+    private static final int ITEM_HEIGHT = 30;
+    private static final int BIG_ITEM_HEIGHT = 2 * ITEM_HEIGHT + PADDING;
+    private static final int ITEM_WIDTH = 105;
+    private static final int DEFAULT_COLUMN_COUNT = 10;
+    private static final int DEFAULT_ROW_COUNT = 10;
+    private static final int DEFAULT_SUBGRAPH_COUNT = 1;
+    private static final String DEFAULT_WEIGHT_RANGE = "0-1";
+
     private Graph graph;
     private GraphicsContext gc;
-    private final int size = 800;
     private FileChooser fileChooser;
 
     // text fields
@@ -38,54 +51,60 @@ public class GUI extends Application {
     @Override
     public void start(Stage stage) {
         stage.setTitle("SGraph");
+        stage.setResizable(false);
 
-        //Tworzenie górnego nagłówka
-        //Nagłówki guzików
+        // GUI creation
+        // text labels
+
         Label labelColumnTextField = new Label("# of columns");
-        labelColumnTextField.setPrefWidth(size * 0.6 / 4);
-        labelColumnTextField.setPrefHeight(20);
+        labelColumnTextField.setPrefWidth(ITEM_WIDTH);
+        labelColumnTextField.setPrefHeight(ITEM_HEIGHT);
         labelColumnTextField.setAlignment(Pos.CENTER);
 
         Label labelRowTextField = new Label("# of rows");
-        labelRowTextField.setPrefWidth(size * 0.6 / 4);
-        labelRowTextField.setPrefHeight(20);
+        labelRowTextField.setPrefWidth(ITEM_WIDTH);
+        labelRowTextField.setPrefHeight(ITEM_HEIGHT);
         labelRowTextField.setAlignment(Pos.CENTER);
 
-        Label labelSubgraphTextField = new Label("# of subgraph");
-        labelSubgraphTextField.setPrefWidth(size * 0.6 / 4);
-        labelSubgraphTextField.setPrefHeight(20);
+        Label labelSubgraphTextField = new Label("# of subgraphs");
+        labelSubgraphTextField.setPrefWidth(ITEM_WIDTH);
+        labelSubgraphTextField.setPrefHeight(ITEM_HEIGHT);
         labelSubgraphTextField.setAlignment(Pos.CENTER);
 
         Label labelRangeTextField = new Label("Weight range");
-        labelRangeTextField.setPrefWidth(size * 0.6 / 4);
-        labelRangeTextField.setPrefHeight(20);
+        labelRangeTextField.setPrefWidth(ITEM_WIDTH);
+        labelRangeTextField.setPrefHeight(ITEM_HEIGHT);
         labelRangeTextField.setAlignment(Pos.CENTER);
 
-        //Linie przycisków
-        HBox upHeadLine = new HBox(10, labelColumnTextField, labelRowTextField, labelSubgraphTextField, labelRangeTextField);
+        // text fields
 
-        //Tworzenie dolnego nagłówka
-        textFieldColumnCount = new TextField("");
-        textFieldColumnCount.setPrefWidth(size * 0.6 / 4);
-        textFieldColumnCount.setPrefHeight(20);
+        textFieldColumnCount = new TextField(Integer.toString(DEFAULT_COLUMN_COUNT));
+        textFieldColumnCount.setPrefWidth(ITEM_WIDTH);
+        textFieldColumnCount.setPrefHeight(ITEM_HEIGHT);
         textFieldColumnCount.setAlignment(Pos.CENTER);
 
-        textFieldRowCount = new TextField("");
-        textFieldRowCount.setPrefWidth(size * 0.6 / 4);
-        textFieldRowCount.setPrefHeight(20);
+        textFieldRowCount = new TextField(Integer.toString(DEFAULT_ROW_COUNT));
+        textFieldRowCount.setPrefWidth(ITEM_WIDTH);
+        textFieldRowCount.setPrefHeight(ITEM_HEIGHT);
         textFieldRowCount.setAlignment(Pos.CENTER);
 
-        textFieldSubgraphCount = new TextField("");
-        textFieldSubgraphCount.setPrefWidth(size * 0.6 / 4);
-        textFieldSubgraphCount.setPrefHeight(20);
+        textFieldSubgraphCount = new TextField(Integer.toString(DEFAULT_SUBGRAPH_COUNT));
+        textFieldSubgraphCount.setPrefWidth(ITEM_WIDTH);
+        textFieldSubgraphCount.setPrefHeight(ITEM_HEIGHT);
         textFieldSubgraphCount.setAlignment(Pos.CENTER);
 
-        textFieldWeightRange = new TextField("");
-        textFieldWeightRange.setPrefWidth(size * 0.6 / 4);
-        textFieldWeightRange.setPrefHeight(20);
+        textFieldWeightRange = new TextField(DEFAULT_WEIGHT_RANGE);
+        textFieldWeightRange.setPrefWidth(ITEM_WIDTH);
+        textFieldWeightRange.setPrefHeight(ITEM_HEIGHT);
         textFieldWeightRange.setAlignment(Pos.CENTER);
 
-        //Guzik do generowania
+        VBox columnBox = new VBox(PADDING,labelColumnTextField,textFieldColumnCount);
+        VBox rowBox = new VBox(PADDING, labelRowTextField, textFieldRowCount);
+        VBox subgraphBox = new VBox(PADDING, labelSubgraphTextField, textFieldSubgraphCount);
+        VBox weightBox = new VBox(PADDING, labelRangeTextField, textFieldWeightRange);
+
+        // buttons
+
         buttonGenerate = new Button("Generate");
         buttonGenerate.setOnAction(actionEvent -> {
             disableAllButtons();
@@ -117,11 +136,10 @@ public class GUI extends Application {
             draw(graph.getColumnCount(), graph.getRowCount());
             enableAllButtons();
         });
-        buttonGenerate.setPrefWidth(size * 0.3 / 3);
-        buttonGenerate.setPrefHeight(20);
+        buttonGenerate.setPrefWidth(ITEM_WIDTH);
+        buttonGenerate.setPrefHeight(BIG_ITEM_HEIGHT);
         buttonGenerate.setAlignment(Pos.CENTER);
 
-        //Guzik do wczytania
         buttonFileOpen = new Button("Open from file...");
         buttonFileOpen.setOnAction(actionEvent -> {
             disableAllButtons();
@@ -138,11 +156,10 @@ public class GUI extends Application {
             draw(graph.getColumnCount(), graph.getRowCount());
             enableAllButtons();
         });
-        buttonFileOpen.setPrefWidth(size * 0.3 / 3);
-        buttonFileOpen.setPrefHeight(20);
+        buttonFileOpen.setPrefWidth(ITEM_WIDTH);
+        buttonFileOpen.setPrefHeight(ITEM_HEIGHT);
         buttonFileOpen.setAlignment(Pos.CENTER);
 
-        //Guzik do zapisu
         buttonFileSave = new Button("Save to file...");
         buttonFileSave.setOnAction(actionEvent -> {
             disableAllButtons();
@@ -162,13 +179,17 @@ public class GUI extends Application {
             }
             enableAllButtons();
         });
-        buttonFileSave.setPrefWidth(size * 0.3 / 3);
-        buttonFileSave.setPrefHeight(20);
+        buttonFileSave.setPrefWidth(ITEM_WIDTH);
+        buttonFileSave.setPrefHeight(ITEM_HEIGHT);
         buttonFileSave.setAlignment(Pos.CENTER);
 
-        HBox upBottomLine = new HBox(10, textFieldColumnCount, textFieldRowCount, textFieldSubgraphCount, textFieldWeightRange, buttonGenerate, buttonFileOpen, buttonFileSave);
+        VBox buttonBox = new VBox(PADDING, buttonFileOpen, buttonFileSave);
+
+        HBox topBar = new HBox(PADDING, columnBox, rowBox, subgraphBox, weightBox, buttonGenerate, buttonBox);
+        topBar.setPadding(new Insets(PADDING));
+
         //Rysowanie
-        Canvas canvas = new Canvas(size, size);
+        Canvas canvas = new Canvas(CANVAS_RESOLUTION, CANVAS_RESOLUTION);
         gc = canvas.getGraphicsContext2D();
 
         //Ustawienia obiektu do wczytywania z pliku
@@ -178,11 +199,9 @@ public class GUI extends Application {
 
         FlowPane root = new FlowPane();
 
-        root.getChildren().add(upHeadLine);
-        root.getChildren().add(upBottomLine);
-        root.getChildren().add(canvas);
+        root.getChildren().addAll(topBar,canvas);
 
-        stage.setScene(new Scene(root, size, size + 50));
+        stage.setScene(new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT));
         stage.show();
     }
 
@@ -192,7 +211,7 @@ public class GUI extends Application {
 
     public void draw(int columnCount, int rowCount) {
 
-        gc.clearRect(0, 0, size, size);
+        gc.clearRect(0, 0, CANVAS_RESOLUTION, CANVAS_RESOLUTION);
         gc.setFill(Color.BLACK);
         //Proporcje połączenia względem promienia wierzchołka
         double lineWidthProportion = 2.0 / 3.0;
@@ -202,7 +221,7 @@ public class GUI extends Application {
         double gap = 10.0;//Stałe
 
         //Skala, Długość promienia punktu,Przesunięcie połączenia
-        double ovalR = columnCount > rowCount ? (size - 2 * gap) / (2 * columnCount + (lineLengthProportion - 2.0) * (columnCount - 1)) : (size - 2 * gap) / (2 * rowCount + (lineLengthProportion - 2.0) * (rowCount - 1));
+        double ovalR = columnCount > rowCount ? (CANVAS_RESOLUTION - 2 * gap) / (2 * columnCount + (lineLengthProportion - 2.0) * (columnCount - 1)) : (CANVAS_RESOLUTION - 2 * gap) / (2 * rowCount + (lineLengthProportion - 2.0) * (rowCount - 1));
 
         //długość krawędzi,Odległość międzypunktami
         double edgeLength = lineLengthProportion * ovalR;
@@ -283,3 +302,8 @@ public class GUI extends Application {
         buttonFileSave.setDisable(false);
     }
 }
+
+// TODO:
+//  - graph generation should be in a separate thread
+//  - Save button should be disabled until a proper graph in generated
+//  - text field validation
