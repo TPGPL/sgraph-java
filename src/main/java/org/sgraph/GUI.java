@@ -24,57 +24,45 @@ public class GUI extends Application {
     private static final int size = 800;
     private static FileChooser fileChooser;
 
-    //Nagłówki guzików
-    private static Label labelColumnTextField;
-    private static Label labelRowTextField;
-    private static Label labelSubgraphTextField;
-    private static Label labelRangeTextField;
-
-    //Pola tekstowe
+    // text fields
     private static TextField textFieldColumnCount;
     private static TextField textFieldRowCount;
     private static TextField textFieldSubgraphCount;
     private static TextField textFieldWeightRange;
 
-    //Guziki
+    // buttons
     private static Button buttonGenerate;
     private static Button buttonFileOpen;
     private static Button buttonFileSave;
-
-    //Linie przycisków
-    private static HBox upHeadLine;
-    private static HBox upBottomLine;
-
-    //Rysowanie
-    private static Canvas canvas;
-    private static FlowPane root;
 
     @Override
     public void start(Stage stage) {
         stage.setTitle("SGraph");
 
         //Tworzenie górnego nagłówka
-        labelColumnTextField = new Label("# of columns");
+        //Nagłówki guzików
+        Label labelColumnTextField = new Label("# of columns");
         labelColumnTextField.setPrefWidth(size * 0.6 / 4);
         labelColumnTextField.setPrefHeight(20);
         labelColumnTextField.setAlignment(Pos.CENTER);
 
-        labelRowTextField = new Label("# of rows");
+        Label labelRowTextField = new Label("# of rows");
         labelRowTextField.setPrefWidth(size * 0.6 / 4);
         labelRowTextField.setPrefHeight(20);
         labelRowTextField.setAlignment(Pos.CENTER);
 
-        labelSubgraphTextField = new Label("# of subgraph");
+        Label labelSubgraphTextField = new Label("# of subgraph");
         labelSubgraphTextField.setPrefWidth(size * 0.6 / 4);
         labelSubgraphTextField.setPrefHeight(20);
         labelSubgraphTextField.setAlignment(Pos.CENTER);
 
-        labelRangeTextField = new Label("Weight range");
+        Label labelRangeTextField = new Label("Weight range");
         labelRangeTextField.setPrefWidth(size * 0.6 / 4);
         labelRangeTextField.setPrefHeight(20);
         labelRangeTextField.setAlignment(Pos.CENTER);
 
-        upHeadLine = new HBox(10, labelColumnTextField, labelRowTextField, labelSubgraphTextField, labelRangeTextField);
+        //Linie przycisków
+        HBox upHeadLine = new HBox(10, labelColumnTextField, labelRowTextField, labelSubgraphTextField, labelRangeTextField);
 
         //Tworzenie dolnego nagłówka
         textFieldColumnCount = new TextField("");
@@ -178,8 +166,9 @@ public class GUI extends Application {
         buttonFileSave.setPrefHeight(20);
         buttonFileSave.setAlignment(Pos.CENTER);
 
-        upBottomLine = new HBox(10, textFieldColumnCount, textFieldRowCount, textFieldSubgraphCount, textFieldWeightRange, buttonGenerate, buttonFileOpen, buttonFileSave);
-        canvas = new Canvas(size, size);
+        HBox upBottomLine = new HBox(10, textFieldColumnCount, textFieldRowCount, textFieldSubgraphCount, textFieldWeightRange, buttonGenerate, buttonFileOpen, buttonFileSave);
+        //Rysowanie
+        Canvas canvas = new Canvas(size, size);
         gc = canvas.getGraphicsContext2D();
 
         //Ustawienia obiektu do wczytywania z pliku
@@ -187,7 +176,7 @@ public class GUI extends Application {
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
         fileChooser.setInitialFileName("graph.txt"); //Domyślna nazwa zapisanego pliku
 
-        root = new FlowPane();
+        FlowPane root = new FlowPane();
 
         root.getChildren().add(upHeadLine);
         root.getChildren().add(upBottomLine);
