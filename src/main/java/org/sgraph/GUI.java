@@ -206,14 +206,19 @@ public class GUI extends Application {
         root.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                turnOfButton();
                 double x,y,r;
-                if(graph==null)
+                if(graph==null){
+                    turnOnButton();
                     return; //ignoruj
+                    }
                 x=event.getSceneX()-canvas.getLayoutX();
                 y=event.getSceneY()-canvas.getLayoutY();
                 //poza canvas
-                if(x<0 || y<0 || x>size || y>size)
+                if(x<0 || y<0 || x>size || y>size) {
+                    turnOnButton();
                     return; //Ignoruj
+                }
                 int posX,posY,devide;
                 //maks
                 if(graph.getColumnCount()>graph.getRowCount())
@@ -225,9 +230,12 @@ public class GUI extends Application {
                 posX= (int)((x-10+r)/(4*r));
                 posY= (int)((y-10+r)/(4*r));
                 //Czy trafiono w punkt
-                if(posX<0 || posY<0 || posX>graph.getColumnCount()-1 || posY>graph.getRowCount()-1)
+                if(posX<0 || posY<0 || posX>graph.getColumnCount()-1 || posY>graph.getRowCount()-1) {
+                    turnOnButton();
                     return; //ignoruj
-                drawNodes(graph.getNode(posX +posY*graph.getColumnCount()));
+                }
+                drawNodes(graph.getNode(posX +posY*graph.getColumnCount()),graph.getNodeCount());
+                turnOnButton();
             }
         });
 
@@ -320,10 +328,12 @@ public class GUI extends Application {
         return -1;
     }
 
-    private static void drawNodes(Node start){
-        //TODO
-        //Tutaj powinna ruszyć djikstra
-        //djikstra(start)
+    private static void drawNodes(Node start, int nodeCount){
+        //Djikstra
+        PathFinder pathFinder=new PathFinder(nodeCount,start);
+        pathFinder.run();
+        pathFinder.calculateNodeValueRange();
+
         int columns= graph.getColumnCount();
         int verses=graph.getRowCount();
 
@@ -348,12 +358,16 @@ public class GUI extends Application {
         //Rysowanie punktów
         for (int j = 0; j < verses; j++) {
             for (int i = 0; i < columns; i++) {
-                    //gc.setFill(Color.CRIMSON); //Ustawianie koloru
-                    gc.fillOval(gap + i * edgeLenght, gap + j * edgeLenght, ovalR*2, ovalR*2); //Punkt
+                if(pathFinder.getDistanceToNode(graph.getNode(j*graph.getColumnCount()+i))!=-1) {
+                    gc.setFill(pathFinder.getNodeValueRange().getHSBValue(pathFinder.getDistanceToNode(graph.getNode(j * graph.getColumnCount() + i))));
+                }else{
+                    gc.setFill(Color.BLACK); //Resetowanie punktów, potrzebne do grafów niespójnych
+                }
+                //Punkt
+                gc.fillOval(gap + i * edgeLenght, gap + j * edgeLenght, ovalR*2, ovalR*2);
             }
         }
     }
-
 
     //Wyłącza guziki na czas trwania rysowania
     private static void turnOfButton(){
