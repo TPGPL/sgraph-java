@@ -24,14 +24,16 @@ public class GUI extends Application {
     private static final int WINDOW_WIDTH = 700;
     private static final int WINDOW_HEIGHT = 900;
     private static final int CANVAS_RESOLUTION = 700;
-    private static final int PADDING = 10;
+    private static final double PADDING = 10.0;
     private static final int ITEM_HEIGHT = 30;
-    private static final int BIG_ITEM_HEIGHT = 2 * ITEM_HEIGHT + PADDING;
+    private static final int BIG_ITEM_HEIGHT = 2 * ITEM_HEIGHT + (int) PADDING;
     private static final int ITEM_WIDTH = 105;
     private static final int DEFAULT_COLUMN_COUNT = 10;
     private static final int DEFAULT_ROW_COUNT = 10;
     private static final int DEFAULT_SUBGRAPH_COUNT = 1;
     private static final String DEFAULT_WEIGHT_RANGE = "0-1";
+    private static final double LINE_WIDTH_PROPORTION = 2.0 / 3.0;
+    private static final double LINE_LENGTH_PROPORTION = 4.0;
 
     private Graph graph;
     private GraphicsContext gc;
@@ -98,7 +100,7 @@ public class GUI extends Application {
         textFieldWeightRange.setPrefHeight(ITEM_HEIGHT);
         textFieldWeightRange.setAlignment(Pos.CENTER);
 
-        VBox columnBox = new VBox(PADDING,labelColumnTextField,textFieldColumnCount);
+        VBox columnBox = new VBox(PADDING, labelColumnTextField, textFieldColumnCount);
         VBox rowBox = new VBox(PADDING, labelRowTextField, textFieldRowCount);
         VBox subgraphBox = new VBox(PADDING, labelSubgraphTextField, textFieldSubgraphCount);
         VBox weightBox = new VBox(PADDING, labelRangeTextField, textFieldWeightRange);
@@ -199,7 +201,34 @@ public class GUI extends Application {
 
         FlowPane root = new FlowPane();
 
-        root.getChildren().addAll(topBar,canvas);
+        canvas.setOnMouseClicked(event -> {
+            disableAllButtons();
+            double x, y, r;
+            if (graph == null) {
+                enableAllButtons();
+                return;
+            }
+            x = event.getSceneX() - canvas.getLayoutX();
+            y = event.getSceneY() - canvas.getLayoutY();
+
+            int posX, posY, scale;
+
+            scale = Math.max(graph.getColumnCount(), graph.getRowCount());
+            r = (CANVAS_RESOLUTION - 2 * PADDING) / (scale * 4 - 2);
+
+            posX = (int) ((x - PADDING + r) / (4 * r));
+            posY = (int) ((y - PADDING + r) / (4 * r));
+
+            if (posX < 0 || posY < 0 || posX > graph.getColumnCount() - 1 || posY > graph.getRowCount() - 1) {
+                enableAllButtons();
+                return;
+            }
+            drawNodes(graph.getNode(posX + posY * graph.getColumnCount()), graph.getNodeCount());
+            enableAllButtons();
+        });
+
+
+        root.getChildren().addAll(topBar, canvas);
 
         stage.setScene(new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT));
         stage.show();
@@ -213,23 +242,14 @@ public class GUI extends Application {
 
         gc.clearRect(0, 0, CANVAS_RESOLUTION, CANVAS_RESOLUTION);
         gc.setFill(Color.BLACK);
-        //Proporcje połączenia względem promienia wierzchołka
-        double lineWidthProportion = 2.0 / 3.0;
-        double lineLengthProportion = 4.0;
 
-        //Położenie startowe, przerwa od krawędzi ekranu
-        double gap = 10.0;//Stałe
+        // scale
+        double ovalR = columnCount > rowCount ? (CANVAS_RESOLUTION - 2 * PADDING) / (2 * columnCount + (LINE_LENGTH_PROPORTION - 2.0) * (columnCount - 1)) : (CANVAS_RESOLUTION - 2 * PADDING) / (2 * rowCount + (LINE_LENGTH_PROPORTION - 2.0) * (rowCount - 1));
 
-        //Skala, Długość promienia punktu,Przesunięcie połączenia
-        double ovalR = columnCount > rowCount ? (CANVAS_RESOLUTION - 2 * gap) / (2 * columnCount + (lineLengthProportion - 2.0) * (columnCount - 1)) : (CANVAS_RESOLUTION - 2 * gap) / (2 * rowCount + (lineLengthProportion - 2.0) * (rowCount - 1));
-
-        //długość krawędzi,Odległość międzypunktami
-        double edgeLength = lineLengthProportion * ovalR;
-        //jego szerokość
-        double rectW = lineWidthProportion * ovalR;
+        double edgeLength = LINE_LENGTH_PROPORTION * ovalR; // edge length
 
         gc.setStroke(Color.BLACK); //Domyślny kolor
-        gc.setLineWidth(rectW);
+        gc.setLineWidth(LINE_WIDTH_PROPORTION * ovalR);
 
         int parsedNodeIndex, adhNodeIndex;
 
@@ -241,8 +261,8 @@ public class GUI extends Application {
                 if ((adhNodeIndex = checkDown(parsedNodeIndex)) != -1) {
                     gc.setStroke(graph.getEdgeValueRange().getHSBValue(graph.getNode(parsedNodeIndex).getEdgeOnConnection(graph.getNode(adhNodeIndex))));
                     gc.beginPath();
-                    gc.moveTo(gap + ovalR + i * edgeLength, gap + ovalR + j * edgeLength);
-                    gc.lineTo(gap + ovalR + i * edgeLength + 0, gap + ovalR + j * edgeLength + edgeLength);
+                    gc.moveTo(PADDING + ovalR + i * edgeLength, PADDING + ovalR + j * edgeLength);
+                    gc.lineTo(PADDING + ovalR + i * edgeLength + 0, PADDING + ovalR + j * edgeLength + edgeLength);
                     gc.stroke();
                     gc.closePath();
                 }
@@ -250,8 +270,8 @@ public class GUI extends Application {
                 if ((adhNodeIndex = checkRight(parsedNodeIndex)) != -1) {
                     gc.setStroke(graph.getEdgeValueRange().getHSBValue(graph.getNode(parsedNodeIndex).getEdgeOnConnection(graph.getNode(adhNodeIndex))));
                     gc.beginPath();
-                    gc.moveTo(gap + ovalR + i * edgeLength, gap + ovalR + j * edgeLength);
-                    gc.lineTo(gap + ovalR + i * edgeLength + edgeLength, gap + ovalR + j * edgeLength);
+                    gc.moveTo(PADDING + ovalR + i * edgeLength, PADDING + ovalR + j * edgeLength);
+                    gc.lineTo(PADDING + ovalR + i * edgeLength + edgeLength, PADDING + ovalR + j * edgeLength);
                     gc.stroke();
                     gc.closePath();
                 }
@@ -262,7 +282,7 @@ public class GUI extends Application {
         for (int j = 0; j < rowCount; j++) {
             for (int i = 0; i < columnCount; i++) {
                 //gc.setFill(Color.CRIMSON);
-                gc.fillOval(gap + i * edgeLength, gap + j * edgeLength, ovalR * 2, ovalR * 2); //Punkt
+                gc.fillOval(PADDING + i * edgeLength, PADDING + j * edgeLength, ovalR * 2, ovalR * 2); //Punkt
             }
         }
     }
@@ -285,6 +305,34 @@ public class GUI extends Application {
                 return n.getIndex();
         }
         return -1;
+    }
+
+    private void drawNodes(Node startingNode, int nodeCount) {
+        PathFinder pf = new PathFinder(nodeCount, startingNode);
+        pf.run();
+        pf.calculateNodeValueRange();
+
+        int columnCount = graph.getColumnCount();
+        int rowCount = graph.getRowCount();
+
+        // scale
+        double ovalR = columnCount > rowCount ? (CANVAS_RESOLUTION - 2 * PADDING) / (2 * columnCount + (LINE_LENGTH_PROPORTION - 2.0) * (columnCount - 1)) : (CANVAS_RESOLUTION - 2 * PADDING) / (2 * rowCount + (LINE_LENGTH_PROPORTION - 2.0) * (rowCount - 1));
+        double edgeLength = LINE_LENGTH_PROPORTION * ovalR; // edge length
+
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(LINE_WIDTH_PROPORTION * ovalR);
+
+        for (int j = 0; j < rowCount; j++) {
+            for (int i = 0; i < columnCount; i++) {
+                if (pf.getDistanceToNode(graph.getNode(j * graph.getColumnCount() + i)) != -1) {
+                    gc.setFill(pf.getNodeValueRange().getHSBValue(pf.getDistanceToNode(graph.getNode(j * graph.getColumnCount() + i))));
+                } else {
+                    gc.setFill(Color.BLACK); // doesn't colour nodes which are not connected
+                }
+
+                gc.fillOval(PADDING + i * edgeLength, PADDING + j * edgeLength, ovalR * 2, ovalR * 2);
+            }
+        }
     }
 
 
