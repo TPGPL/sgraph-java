@@ -227,9 +227,7 @@ public class GUI extends Application {
                 //Czy trafiono w punkt
                 if(posX<0 || posY<0 || posX>graph.getColumnCount()-1 || posY>graph.getRowCount()-1)
                     return; //ignoruj
-
-                System.out.println("New:");
-                System.out.println(posX +posY*graph.getColumnCount());
+                drawNodes(graph.getNode(posX +posY*graph.getColumnCount()));
             }
         });
 
@@ -322,7 +320,39 @@ public class GUI extends Application {
         return -1;
     }
 
+    private static void drawNodes(Node start){
+        //TODO
+        //Tutaj powinna ruszyć djikstra
+        //djikstra(start)
+        int columns= graph.getColumnCount();
+        int verses=graph.getRowCount();
 
+        //Proporcje połączenia względem promienia wierzchołka
+        double lineWidthProportion=2.0/3.0;
+        double lineLenghtProportion=4.0;
+
+        //Położenie startowe, przerwa od krawędzi ekranu
+        double gap = 10.0;//Stałe
+
+        //Skala, Długość promienia punktu,Przesunięcie połączenia
+        double ovalR=  columns>verses ? (size-2*gap)/(2*columns+(lineLenghtProportion-2.0)*(columns-1)) : (size-2*gap)/(2*verses+(lineLenghtProportion-2.0)*(verses-1));
+
+        //długość krawędzi,Odległość międzypunktami
+        double edgeLenght=lineLenghtProportion*ovalR;
+        //jego szerokość
+        double rectW=lineWidthProportion*ovalR;
+
+        gc.setStroke(Color.BLACK); //Domyślny kolor
+        gc.setLineWidth(rectW);
+
+        //Rysowanie punktów
+        for (int j = 0; j < verses; j++) {
+            for (int i = 0; i < columns; i++) {
+                    //gc.setFill(Color.CRIMSON); //Ustawianie koloru
+                    gc.fillOval(gap + i * edgeLenght, gap + j * edgeLenght, ovalR*2, ovalR*2); //Punkt
+            }
+        }
+    }
 
 
     //Wyłącza guziki na czas trwania rysowania
