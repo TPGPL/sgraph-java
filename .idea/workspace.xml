@@ -4,14 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="576f11d8-d586-4b82-a48b-86bdd25550ea" name="Changes" comment="Replace Generation of Graph to another objectssssssss">
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/sgraph/GUI.java" afterDir="false" />
+    <list default="true" id="576f11d8-d586-4b82-a48b-86bdd25550ea" name="Changes" comment="Add devide methode">
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/sgraph/Graph.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/sgraph/Graph.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/sgraph/GraphReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/sgraph/GraphReader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/sgraph/GUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/sgraph/GUI.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,7 +25,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="GUI-revision" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -72,6 +69,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.GUI" />
         <item itemvalue="Application.GUI" />
       </list>
     </recent_temporary>

@@ -10,6 +10,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 public class GUI extends Application {
     private static Graph graph;
     private static GraphicsContext gc;
-    private static final int size=950;
+    private static final int size=600;
     private static FileChooser fileChooser;
 
     //Nagłówki guzików
@@ -200,6 +201,37 @@ public class GUI extends Application {
         fileChooser.setInitialFileName("graph.txt"); //Domyślna nazwa zapisanego pliku
 
         root = new FlowPane();
+
+        //Obsługa myszki
+        root.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                double x,y,r;
+                if(graph==null)
+                    return; //ignoruj
+                x=event.getSceneX()-canvas.getLayoutX();
+                y=event.getSceneY()-canvas.getLayoutY();
+                //poza canvas
+                if(x<0 || y<0 || x>size || y>size)
+                    return; //Ignoruj
+                int posX,posY,devide;
+                //maks
+                if(graph.getColumnCount()>graph.getRowCount())
+                    devide=graph.getColumnCount();
+                else
+                    devide=graph.getRowCount();
+                r=(size-20.0)/(devide*4-2);
+                //Przesunięcie luki (10-r) i znormalizowanie
+                posX= (int)((x-10+r)/(4*r));
+                posY= (int)((y-10+r)/(4*r));
+                //Czy trafiono w punkt
+                if(posX<0 || posY<0 || posX>graph.getColumnCount()-1 || posY>graph.getRowCount()-1)
+                    return; //ignoruj
+
+                System.out.println("New:");
+                System.out.println(posX +posY*graph.getColumnCount());
+            }
+        });
 
         root.getChildren().add(upHeadLine);
         root.getChildren().add(upBottomLine);
