@@ -1,6 +1,7 @@
 package org.sgraph;
 
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -15,6 +16,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
+import net.synedra.validatorfx.TooltipWrapper;
+import net.synedra.validatorfx.Validator;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +38,7 @@ public class GUI extends Application {
     private static final String DEFAULT_WEIGHT_RANGE = "0-1";
     private static final double LINE_WIDTH_PROPORTION = 2.0 / 3.0;
     private static final double LINE_LENGTH_PROPORTION = 4.0;
+    private static final String DEFAULT_FILE_NAME = "graph.txt";
 
     private Graph graph;
     private GraphicsContext gc;
@@ -54,6 +59,8 @@ public class GUI extends Application {
     public void start(Stage stage) {
         stage.setTitle("SGraph");
         stage.setResizable(false);
+
+        Validator validator = new Validator();
 
         // GUI creation
         // text labels
@@ -85,20 +92,79 @@ public class GUI extends Application {
         textFieldColumnCount.setPrefHeight(ITEM_HEIGHT);
         textFieldColumnCount.setAlignment(Pos.CENTER);
 
+        validator.createCheck()
+                .dependsOn("column",textFieldColumnCount.textProperty())
+                .withMethod(c-> {
+                    try {
+                        if (Integer.parseInt(c.get("column")) <= 0)
+                            c.error("The number of columns must be positive.");
+                    } catch (NumberFormatException ex)
+                    {
+                        c.error("The column field must contain a natural number.");
+                    }
+                })
+                .decorates(textFieldColumnCount)
+                .immediate();
+
         textFieldRowCount = new TextField(Integer.toString(DEFAULT_ROW_COUNT));
         textFieldRowCount.setPrefWidth(ITEM_WIDTH);
         textFieldRowCount.setPrefHeight(ITEM_HEIGHT);
         textFieldRowCount.setAlignment(Pos.CENTER);
+
+        validator.createCheck()
+                .dependsOn("row",textFieldRowCount.textProperty())
+                .withMethod(c-> {
+                    try {
+                        if (Integer.parseInt(c.get("row")) <= 0)
+                            c.error("The number of rows must be positive.");
+                    } catch (NumberFormatException ex)
+                    {
+                        c.error("The row field must contain a natural number.");
+                    }
+                })
+                .decorates(textFieldRowCount)
+                .immediate();
 
         textFieldSubgraphCount = new TextField(Integer.toString(DEFAULT_SUBGRAPH_COUNT));
         textFieldSubgraphCount.setPrefWidth(ITEM_WIDTH);
         textFieldSubgraphCount.setPrefHeight(ITEM_HEIGHT);
         textFieldSubgraphCount.setAlignment(Pos.CENTER);
 
+        validator.createCheck()
+                .dependsOn("subgraph",textFieldSubgraphCount.textProperty())
+                .withMethod(c-> {
+                    try { // can't really check the < nodeCount condition
+                        if (Integer.parseInt(c.get("subgraph")) <= 0)
+                            c.error("The number of subgraphs must be positive.");
+                    } catch (NumberFormatException ex)
+                    {
+                        c.error("The subgraph field must contain a natural number.");
+                    }
+                })
+                .decorates(textFieldSubgraphCount)
+                .immediate();
+
         textFieldWeightRange = new TextField(DEFAULT_WEIGHT_RANGE);
         textFieldWeightRange.setPrefWidth(ITEM_WIDTH);
         textFieldWeightRange.setPrefHeight(ITEM_HEIGHT);
         textFieldWeightRange.setAlignment(Pos.CENTER);
+
+        validator.createCheck()
+                .dependsOn("range",textFieldWeightRange.textProperty())
+                .withMethod(c-> {
+                    try {
+                        String rangeTextContent = c.get("range");
+                        double min = Double.parseDouble(rangeTextContent.split("-")[0]);
+                        double max = Double.parseDouble(rangeTextContent.split("-")[1]);
+                        if (min < 0 || max <= min)
+                            c.error("In weight range, MIN must be positive and lower than MAX.");
+                    } catch (NumberFormatException|ArrayIndexOutOfBoundsException ex)
+                    {
+                        c.error("The range field must follow a 'MIN-MAX' format.");
+                    }
+                })
+                .decorates(textFieldWeightRange)
+                .immediate();
 
         VBox columnBox = new VBox(PADDING, labelColumnTextField, textFieldColumnCount);
         VBox rowBox = new VBox(PADDING, labelRowTextField, textFieldRowCount);
@@ -140,6 +206,11 @@ public class GUI extends Application {
         buttonGenerate.setPrefWidth(ITEM_WIDTH);
         buttonGenerate.setPrefHeight(BIG_ITEM_HEIGHT);
         buttonGenerate.setAlignment(Pos.CENTER);
+
+        TooltipWrapper<Button> generateButtonWrapper = new TooltipWrapper<>(
+                buttonGenerate,
+                validator.containsErrorsProperty(),
+                Bindings.concat("Cannot generate a graph:\n", validator.createStringBinding()));
 
         buttonFileOpen = new Button("Open from file...");
         buttonFileOpen.setOnAction(actionEvent -> {
@@ -194,7 +265,7 @@ public class GUI extends Application {
 
         fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-        fileChooser.setInitialFileName("graph.txt"); // TODO: make a constant
+        fileChooser.setInitialFileName(DEFAULT_FILE_NAME);
 
         FlowPane root = new FlowPane();
 
@@ -328,13 +399,11 @@ public class GUI extends Application {
     }
 
     private void disableAllButtons() {
-        buttonGenerate.setDisable(true);
         buttonFileOpen.setDisable(true);
         buttonFileSave.setDisable(true);
     }
 
     private void enableAllButtons() {
-        buttonGenerate.setDisable(false);
         buttonFileOpen.setDisable(false);
         buttonFileSave.setDisable(false);
     }
@@ -343,4 +412,3 @@ public class GUI extends Application {
 // TODO:
 //  - graph generation should be in a separate thread
 //  - Save button should be disabled until a proper graph in generated
-//  - text field validation
