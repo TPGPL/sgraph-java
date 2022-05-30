@@ -120,7 +120,6 @@ public class GUI extends Application {
                 col = Integer.parseInt(columnTextContent);
                 row = Integer.parseInt(rowTextContent);
                 sub = Integer.parseInt(subgraphTextContent);
-                //Leniwa funkcja do odczytania wag, ale działa
                 min = Double.parseDouble(rangeTextContent.split("-")[0]);
                 max = Double.parseDouble(rangeTextContent.split("-")[1]);
 
@@ -147,7 +146,7 @@ public class GUI extends Application {
             disableAllButtons();
             fileChooser.setTitle("Load from...");
             File file = fileChooser.showOpenDialog(stage);
-            //Jeśli zamknięto okno i nie podano pliku
+
             if (file == null) {
                 enableAllButtons();
                 return;
@@ -190,18 +189,16 @@ public class GUI extends Application {
         HBox topBar = new HBox(PADDING, columnBox, rowBox, subgraphBox, weightBox, buttonGenerate, buttonBox);
         topBar.setPadding(new Insets(PADDING));
 
-        //Rysowanie
         Canvas canvas = new Canvas(CANVAS_RESOLUTION, CANVAS_RESOLUTION);
         gc = canvas.getGraphicsContext2D();
 
-        //Ustawienia obiektu do wczytywania z pliku
         fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-        fileChooser.setInitialFileName("graph.txt"); //Domyślna nazwa zapisanego pliku
+        fileChooser.setInitialFileName("graph.txt"); // TODO: make a constant
 
         FlowPane root = new FlowPane();
 
-        canvas.setOnMouseClicked(event -> {
+        canvas.setOnMouseClicked(event -> { // TODO: make a switch
             disableAllButtons();
             double x, y, r;
             if (graph == null) {
@@ -253,11 +250,10 @@ public class GUI extends Application {
 
         int parsedNodeIndex, adhNodeIndex;
 
-        //Rysowanie połączeń
         for (int j = 0; j < rowCount; j++) {
             for (int i = 0; i < columnCount; i++) {
                 parsedNodeIndex = j * columnCount + i;
-                //Rysowanie połączenia pionowego
+                // vertical connection
                 if ((adhNodeIndex = checkDown(parsedNodeIndex)) != -1) {
                     gc.setStroke(graph.getEdgeValueRange().getHSBValue(graph.getNode(parsedNodeIndex).getEdgeOnConnection(graph.getNode(adhNodeIndex))));
                     gc.beginPath();
@@ -266,7 +262,7 @@ public class GUI extends Application {
                     gc.stroke();
                     gc.closePath();
                 }
-                //Rysowanie połączenia poziomego
+                // horizontal connection
                 if ((adhNodeIndex = checkRight(parsedNodeIndex)) != -1) {
                     gc.setStroke(graph.getEdgeValueRange().getHSBValue(graph.getNode(parsedNodeIndex).getEdgeOnConnection(graph.getNode(adhNodeIndex))));
                     gc.beginPath();
@@ -278,16 +274,13 @@ public class GUI extends Application {
             }
         }
 
-        //Rysowanie punktu, wydzieliłem, ale można połączyć z pętlą wyżej
         for (int j = 0; j < rowCount; j++) {
             for (int i = 0; i < columnCount; i++) {
-                //gc.setFill(Color.CRIMSON);
                 gc.fillOval(PADDING + i * edgeLength, PADDING + j * edgeLength, ovalR * 2, ovalR * 2); //Punkt
             }
         }
     }
 
-    //Sprawdzanie kierunku połączenia
     private int checkDown(int index) {
         ArrayList<Node> connectedNodes = graph.getNode(index).getConnectedNodes();
         for (Node n : connectedNodes) {
@@ -297,7 +290,6 @@ public class GUI extends Application {
         return -1;
     }
 
-    //Sprawdzanie kierunku połączenia
     private int checkRight(int index) {
         ArrayList<Node> connectedNodes = graph.getNode(index).getConnectedNodes();
         for (Node n : connectedNodes) {
@@ -335,15 +327,12 @@ public class GUI extends Application {
         }
     }
 
-
-    //Wyłącza guziki na czas trwania rysowania
     private void disableAllButtons() {
         buttonGenerate.setDisable(true);
         buttonFileOpen.setDisable(true);
         buttonFileSave.setDisable(true);
     }
 
-    //Włącza po wszystkim guziki
     private void enableAllButtons() {
         buttonGenerate.setDisable(false);
         buttonFileOpen.setDisable(false);
