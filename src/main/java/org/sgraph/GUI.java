@@ -50,11 +50,6 @@ public class GUI extends Application {
     private TextField textFieldSubgraphCount;
     private TextField textFieldWeightRange;
 
-    // buttons
-    private Button buttonGenerate;
-    private Button buttonFileOpen;
-    private Button buttonFileSave;
-
     @Override
     public void start(Stage stage) {
         stage.setTitle("SGraph");
@@ -93,13 +88,12 @@ public class GUI extends Application {
         textFieldColumnCount.setAlignment(Pos.CENTER);
 
         validator.createCheck()
-                .dependsOn("column",textFieldColumnCount.textProperty())
-                .withMethod(c-> {
+                .dependsOn("column", textFieldColumnCount.textProperty())
+                .withMethod(c -> {
                     try {
                         if (Integer.parseInt(c.get("column")) <= 0)
                             c.error("The number of columns must be positive.");
-                    } catch (NumberFormatException ex)
-                    {
+                    } catch (NumberFormatException ex) {
                         c.error("The column field must contain a natural number.");
                     }
                 })
@@ -112,13 +106,12 @@ public class GUI extends Application {
         textFieldRowCount.setAlignment(Pos.CENTER);
 
         validator.createCheck()
-                .dependsOn("row",textFieldRowCount.textProperty())
-                .withMethod(c-> {
+                .dependsOn("row", textFieldRowCount.textProperty())
+                .withMethod(c -> {
                     try {
                         if (Integer.parseInt(c.get("row")) <= 0)
                             c.error("The number of rows must be positive.");
-                    } catch (NumberFormatException ex)
-                    {
+                    } catch (NumberFormatException ex) {
                         c.error("The row field must contain a natural number.");
                     }
                 })
@@ -131,13 +124,12 @@ public class GUI extends Application {
         textFieldSubgraphCount.setAlignment(Pos.CENTER);
 
         validator.createCheck()
-                .dependsOn("subgraph",textFieldSubgraphCount.textProperty())
-                .withMethod(c-> {
+                .dependsOn("subgraph", textFieldSubgraphCount.textProperty())
+                .withMethod(c -> {
                     try { // can't really check the < nodeCount condition
                         if (Integer.parseInt(c.get("subgraph")) <= 0)
                             c.error("The number of subgraphs must be positive.");
-                    } catch (NumberFormatException ex)
-                    {
+                    } catch (NumberFormatException ex) {
                         c.error("The subgraph field must contain a natural number.");
                     }
                 })
@@ -150,16 +142,15 @@ public class GUI extends Application {
         textFieldWeightRange.setAlignment(Pos.CENTER);
 
         validator.createCheck()
-                .dependsOn("range",textFieldWeightRange.textProperty())
-                .withMethod(c-> {
+                .dependsOn("range", textFieldWeightRange.textProperty())
+                .withMethod(c -> {
                     try {
                         String rangeTextContent = c.get("range");
                         double min = Double.parseDouble(rangeTextContent.split("-")[0]);
                         double max = Double.parseDouble(rangeTextContent.split("-")[1]);
                         if (min < 0 || max <= min)
                             c.error("In weight range, MIN must be positive and lower than MAX.");
-                    } catch (NumberFormatException|ArrayIndexOutOfBoundsException ex)
-                    {
+                    } catch (NumberFormatException | ArrayIndexOutOfBoundsException ex) {
                         c.error("The range field must follow a 'MIN-MAX' format.");
                     }
                 })
@@ -173,35 +164,43 @@ public class GUI extends Application {
 
         // buttons
 
-        buttonGenerate = new Button("Generate");
+        // buttons
+        Button buttonGenerate = new Button("Generate");
         buttonGenerate.setOnAction(actionEvent -> {
-            disableAllButtons();
             int col, row, sub;
             double min, max;
-            String columnTextContent = textFieldColumnCount.getText();
-            String rowTextContent = textFieldRowCount.getText();
-            String subgraphTextContent = textFieldSubgraphCount.getText();
             String rangeTextContent = textFieldWeightRange.getText();
+
             try {
-                col = Integer.parseInt(columnTextContent);
-                row = Integer.parseInt(rowTextContent);
-                sub = Integer.parseInt(subgraphTextContent);
+                col = Integer.parseInt(textFieldColumnCount.getText());
+                row = Integer.parseInt(textFieldRowCount.getText());
+                sub = Integer.parseInt(textFieldSubgraphCount.getText());
                 min = Double.parseDouble(rangeTextContent.split("-")[0]);
                 max = Double.parseDouble(rangeTextContent.split("-")[1]);
 
+                if (sub > col * row)
+                    throw new IllegalArgumentException("The number of subgraphs must be lower than the node count.");
+
             } catch (NumberFormatException e) {
-                System.err.println("Text fields have not corrected format");
-                enableAllButtons();
+                System.err.println("The text fields' content has incorrect format.");
                 return;
-            } catch (ArrayIndexOutOfBoundsException ee) {
-                System.err.println("Range do not have -, or not correted format");
-                enableAllButtons();
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.err.println("The range text field doesn't follow the MIN-MAX format.");
+                return;
+            } catch (IllegalArgumentException e) {
+                System.err.println(e.getMessage());
                 return;
             }
-            //TODO try catch, jeśli niepoprawne dane do grafu
-            graph = GraphGenerator.generate(col, row, sub, min, max);
+
+            try {
+                graph = GraphGenerator.generate(col, row, sub, min, max);
+            } catch (Exception e) // if graph generation still SOMEHOW failed
+            {
+                System.err.println("Graph generation failed - error message: " + e.getMessage());
+                return;
+            }
+
             draw(graph.getColumnCount(), graph.getRowCount());
-            enableAllButtons();
         });
         buttonGenerate.setPrefWidth(ITEM_WIDTH);
         buttonGenerate.setPrefHeight(BIG_ITEM_HEIGHT);
@@ -212,44 +211,47 @@ public class GUI extends Application {
                 validator.containsErrorsProperty(),
                 Bindings.concat("Cannot generate a graph:\n", validator.createStringBinding()));
 
-        buttonFileOpen = new Button("Open from file...");
+        Button buttonFileOpen = new Button("Open from file...");
         buttonFileOpen.setOnAction(actionEvent -> {
-            disableAllButtons();
             fileChooser.setTitle("Load from...");
             File file = fileChooser.showOpenDialog(stage);
 
             if (file == null) {
-                enableAllButtons();
+                System.err.println("Failed to load the file.");
                 return;
             }
-            //TODO try catch, jeśli niepoprawny format pliku
-            graph = GraphReader.readFromFile(file);
+
+            try {
+                graph = GraphReader.readFromFile(file);
+            } catch (Exception e) {
+                System.err.println("Failed to load a graph from a file - error message: " + e.getMessage());
+                return;
+            }
 
             draw(graph.getColumnCount(), graph.getRowCount());
-            enableAllButtons();
         });
         buttonFileOpen.setPrefWidth(ITEM_WIDTH);
         buttonFileOpen.setPrefHeight(ITEM_HEIGHT);
         buttonFileOpen.setAlignment(Pos.CENTER);
 
-        buttonFileSave = new Button("Save to file...");
+        Button buttonFileSave = new Button("Save to file...");
         buttonFileSave.setOnAction(actionEvent -> {
-            disableAllButtons();
+            if (graph == null)
+            {
+                System.err.println("The graph has not been generated yet - cannot save anything to file.");
+                return;
+            }
             fileChooser.setTitle("Save to...");
             File file = fileChooser.showSaveDialog(stage);
             if (file == null) {
-                enableAllButtons();
                 return;
             }
-            //TODO try catch
+
             try {
                 graph.readToFile(file);
             } catch (IOException e) {
-                e.printStackTrace();
-                enableAllButtons();
-                return;
+                System.err.println("Failed to save a graph to file - error message: " + e.getMessage());
             }
-            enableAllButtons();
         });
         buttonFileSave.setPrefWidth(ITEM_WIDTH);
         buttonFileSave.setPrefHeight(ITEM_HEIGHT);
@@ -257,7 +259,7 @@ public class GUI extends Application {
 
         VBox buttonBox = new VBox(PADDING, buttonFileOpen, buttonFileSave);
 
-        HBox topBar = new HBox(PADDING, columnBox, rowBox, subgraphBox, weightBox, buttonGenerate, buttonBox);
+        HBox topBar = new HBox(PADDING, columnBox, rowBox, subgraphBox, weightBox, generateButtonWrapper, buttonBox);
         topBar.setPadding(new Insets(PADDING));
 
         Canvas canvas = new Canvas(CANVAS_RESOLUTION, CANVAS_RESOLUTION);
@@ -270,10 +272,8 @@ public class GUI extends Application {
         FlowPane root = new FlowPane();
 
         canvas.setOnMouseClicked(event -> { // TODO: make a switch
-            disableAllButtons();
             double x, y, r;
             if (graph == null) {
-                enableAllButtons();
                 return;
             }
             x = event.getSceneX() - canvas.getLayoutX();
@@ -288,11 +288,9 @@ public class GUI extends Application {
             posY = (int) ((y - PADDING + r) / (4 * r));
 
             if (posX < 0 || posY < 0 || posX > graph.getColumnCount() - 1 || posY > graph.getRowCount() - 1) {
-                enableAllButtons();
                 return;
             }
             drawNodes(graph.getNode(posX + posY * graph.getColumnCount()), graph.getNodeCount());
-            enableAllButtons();
         });
 
 
@@ -397,18 +395,4 @@ public class GUI extends Application {
             }
         }
     }
-
-    private void disableAllButtons() {
-        buttonFileOpen.setDisable(true);
-        buttonFileSave.setDisable(true);
-    }
-
-    private void enableAllButtons() {
-        buttonFileOpen.setDisable(false);
-        buttonFileSave.setDisable(false);
-    }
 }
-
-// TODO:
-//  - graph generation should be in a separate thread
-//  - Save button should be disabled until a proper graph in generated
