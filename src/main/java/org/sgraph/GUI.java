@@ -10,6 +10,10 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -236,8 +240,7 @@ public class GUI extends Application {
 
         Button buttonFileSave = new Button("Save to file...");
         buttonFileSave.setOnAction(actionEvent -> {
-            if (graph == null)
-            {
+            if (graph == null) {
                 System.err.println("The graph has not been generated yet - cannot save anything to file.");
                 return;
             }
@@ -293,8 +296,10 @@ public class GUI extends Application {
             drawNodes(graph.getNode(posX + posY * graph.getColumnCount()), graph.getNodeCount());
         });
 
+        Image colorScale = createColorScale();
+        ImageView imageContainer = new ImageView(colorScale);
 
-        root.getChildren().addAll(topBar, canvas);
+        root.getChildren().addAll(topBar, canvas, imageContainer);
 
         stage.setScene(new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT));
         stage.show();
@@ -395,4 +400,30 @@ public class GUI extends Application {
             }
         }
     }
+
+    private Color getColorFromValue(double value) {
+        if (value < 0 || value > 100) {
+            return Color.BLACK;
+        }
+        double hue = Color.BLUE.getHue() + (Color.RED.getHue() - Color.BLUE.getHue()) * value / 100;
+        return Color.hsb(hue, 1, 1, 1);
+    }
+
+    private Image createColorScale() {
+
+        WritableImage scale = new WritableImage(WINDOW_WIDTH, ITEM_HEIGHT);
+        PixelWriter pw = scale.getPixelWriter();
+
+        for (int x = 0; x < WINDOW_WIDTH; x++) {
+            double value = 100.0 * x / WINDOW_WIDTH;
+            Color color = getColorFromValue(value);
+
+            for (int y = 0; y < ITEM_HEIGHT; y++) {
+                pw.setColor(x, y, color);
+            }
+        }
+
+        return scale;
+    }
+
 }
