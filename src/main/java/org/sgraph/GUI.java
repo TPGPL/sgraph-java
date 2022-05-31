@@ -45,6 +45,7 @@ public class GUI extends Application {
     private static final String DEFAULT_FILE_NAME = "graph.txt";
 
     private Graph graph;
+    private PathFinder pf;
     private GraphicsContext gc;
     private FileChooser fileChooser;
 
@@ -53,6 +54,13 @@ public class GUI extends Application {
     private TextField textFieldRowCount;
     private TextField textFieldSubgraphCount;
     private TextField textFieldWeightRange;
+
+    // range field
+
+    private Label labelEdgeRangeMin;
+    private Label labelEdgeRangeMax;
+    private Label labelNodeRangeMin;
+    private Label labelNodeRangeMax;
 
     @Override
     public void start(Stage stage) {
@@ -204,6 +212,10 @@ public class GUI extends Application {
                 return;
             }
 
+            pf = null; // clearing PathFinder from previous usages;
+            setNodeRangeLabels();
+            setEdgeRangeLabels();
+
             draw(graph.getColumnCount(), graph.getRowCount());
         });
         buttonGenerate.setPrefWidth(ITEM_WIDTH);
@@ -231,6 +243,10 @@ public class GUI extends Application {
                 System.err.println("Failed to load a graph from a file - error message: " + e.getMessage());
                 return;
             }
+
+            pf = null; // clearing up PathFinder from previous graph usages
+            setNodeRangeLabels();
+            setEdgeRangeLabels();
 
             draw(graph.getColumnCount(), graph.getRowCount());
         });
@@ -296,10 +312,48 @@ public class GUI extends Application {
             drawNodes(graph.getNode(posX + posY * graph.getColumnCount()), graph.getNodeCount());
         });
 
-        Image colorScale = createColorScale();
-        ImageView imageContainer = new ImageView(colorScale);
+        // bottom bar
 
-        root.getChildren().addAll(topBar, canvas, imageContainer);
+        labelEdgeRangeMin = new Label("MIN");
+        labelEdgeRangeMin.setAlignment(Pos.BOTTOM_LEFT);
+        labelEdgeRangeMin.setPrefHeight(ITEM_HEIGHT);
+        labelEdgeRangeMin.setPrefWidth(WINDOW_WIDTH / 3.0);
+
+        labelEdgeRangeMax = new Label("MAX");
+        labelEdgeRangeMax.setAlignment(Pos.BOTTOM_RIGHT);
+        labelEdgeRangeMax.setPrefHeight(ITEM_HEIGHT);
+        labelEdgeRangeMax.setPrefWidth(WINDOW_WIDTH / 3.0);
+
+        Label labelEdgeRangeTitle = new Label("Edge color scale");
+        labelEdgeRangeTitle.setAlignment(Pos.BOTTOM_CENTER);
+        labelEdgeRangeTitle.setPrefHeight(ITEM_HEIGHT);
+        labelEdgeRangeTitle.setPrefWidth(WINDOW_WIDTH / 3.0);
+
+        HBox edgeRangeContainer = new HBox(0, labelEdgeRangeMin, labelEdgeRangeTitle, labelEdgeRangeMax);
+
+        labelNodeRangeMin = new Label("MIN");
+        labelNodeRangeMin.setAlignment(Pos.TOP_LEFT);
+        labelNodeRangeMin.setPrefHeight(ITEM_HEIGHT);
+        labelNodeRangeMin.setPrefWidth(WINDOW_WIDTH / 3.0);
+
+        labelNodeRangeMax = new Label("MAX");
+        labelNodeRangeMax.setAlignment(Pos.TOP_RIGHT);
+        labelNodeRangeMax.setPrefHeight(ITEM_HEIGHT);
+        labelNodeRangeMax.setPrefWidth(WINDOW_WIDTH / 3.0);
+
+        Label labelNodeRangeTitle = new Label("Node color scale");
+        labelNodeRangeTitle.setAlignment(Pos.TOP_CENTER);
+        labelNodeRangeTitle.setPrefHeight(ITEM_HEIGHT);
+        labelNodeRangeTitle.setPrefWidth(WINDOW_WIDTH / 3.0);
+
+        HBox nodeRangeContainer = new HBox(0, labelNodeRangeMin, labelNodeRangeTitle, labelNodeRangeMax);
+
+        Image colorScale = createColorScale();
+        ImageView scaleContainer = new ImageView(colorScale);
+
+        VBox bottomBar = new VBox(PADDING / 2, edgeRangeContainer, scaleContainer, nodeRangeContainer);
+
+        root.getChildren().addAll(topBar, canvas, bottomBar);
 
         stage.setScene(new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT));
         stage.show();
@@ -374,9 +428,10 @@ public class GUI extends Application {
     }
 
     private void drawNodes(Node startingNode, int nodeCount) {
-        PathFinder pf = new PathFinder(nodeCount, startingNode);
+        pf = new PathFinder(nodeCount, startingNode);
         pf.run();
         pf.calculateNodeValueRange();
+        setNodeRangeLabels();
 
         int columnCount = graph.getColumnCount();
         int rowCount = graph.getRowCount();
@@ -426,4 +481,15 @@ public class GUI extends Application {
         return scale;
     }
 
+    private void setEdgeRangeLabels()
+    {
+        labelEdgeRangeMin.setText(graph == null ? "MIN" : Double.toString(graph.getEdgeValueRange().getMin()));
+        labelEdgeRangeMax.setText(graph == null ? "MAX" : Double.toString(graph.getEdgeValueRange().getMax()));
+    }
+
+    private void setNodeRangeLabels()
+    {
+        labelNodeRangeMin.setText(pf == null ? "MIN" : Double.toString(pf.getNodeValueRange().getMin()));
+        labelNodeRangeMax.setText(pf == null ? "MAX" : Double.toString(pf.getNodeValueRange().getMax()));
+    }
 }
