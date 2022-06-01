@@ -396,7 +396,7 @@ public class GUI extends Application {
 
         double edgeLength = LINE_LENGTH_PROPORTION * ovalR; // edge length
 
-        gc.setStroke(Color.BLACK); //Domyślny kolor
+        gc.setStroke(Color.BLACK);
         gc.setLineWidth(LINE_WIDTH_PROPORTION * ovalR);
 
         int parsedNodeIndex, adhNodeIndex;
@@ -522,7 +522,7 @@ public class GUI extends Application {
 
         double edgeLength = LINE_LENGTH_PROPORTION * ovalR; // edge length
 
-        gc.setStroke(Color.BLACK); //Domyślny kolor
+        gc.setStroke(Color.BLACK);
         gc.setLineWidth(LINE_WIDTH_PROPORTION * ovalR);
 
         LinkedList<Integer> path = pf.getIndexPathToNode(clickedNode);
@@ -558,7 +558,7 @@ public class GUI extends Application {
                 System.err.println("An unexpected error occurred while drawing a path.");
                 return;
             }
-            //Punkt
+
             x = path.get(i) % graph.getColumnCount();
             y = path.get(i) / graph.getColumnCount();
             gc.fillOval(PADDING + x * edgeLength, PADDING + y * edgeLength, ovalR * 2, ovalR * 2);
