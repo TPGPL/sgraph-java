@@ -10,6 +10,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -23,15 +24,19 @@ import net.synedra.validatorfx.Validator;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class GUI extends Application {
-    private static final int WINDOW_WIDTH = 700;
-    private static final int WINDOW_HEIGHT = 900;
-    private static final int CANVAS_RESOLUTION = 700;
-    private static final double PADDING = 10.0;
-    private static final int ITEM_HEIGHT = 30;
-    private static final int BIG_ITEM_HEIGHT = 2 * ITEM_HEIGHT + (int) PADDING;
-    private static final int ITEM_WIDTH = 105;
+    private enum Move {
+        UP, LEFT, RIGHT, DOWN, NO_MOVE
+    }
+    private static final int WINDOW_WIDTH = 700/2;
+    private static final int WINDOW_HEIGHT = 900/2;
+    private static final int CANVAS_RESOLUTION = 700/2;
+    private static final double PADDING = 10.0/2;
+    private static final int ITEM_HEIGHT = 30/2;
+    private static final int BIG_ITEM_HEIGHT = (2 * ITEM_HEIGHT + (int) PADDING)/2;
+    private static final int ITEM_WIDTH = 105/2;
     private static final int DEFAULT_COLUMN_COUNT = 10;
     private static final int DEFAULT_ROW_COUNT = 10;
     private static final int DEFAULT_SUBGRAPH_COUNT = 1;
@@ -41,6 +46,8 @@ public class GUI extends Application {
     private static final String DEFAULT_FILE_NAME = "graph.txt";
 
     private Graph graph;
+
+    private PathFinder pathFinder;
     private GraphicsContext gc;
     private FileChooser fileChooser;
 
@@ -200,6 +207,7 @@ public class GUI extends Application {
             }
             //TODO try catch, jeśli niepoprawne dane do grafu
             graph = GraphGenerator.generate(col, row, sub, min, max);
+            pathFinder=null;
             draw(graph.getColumnCount(), graph.getRowCount());
             enableAllButtons();
         });
@@ -224,7 +232,7 @@ public class GUI extends Application {
             }
             //TODO try catch, jeśli niepoprawny format pliku
             graph = GraphReader.readFromFile(file);
-
+            pathFinder=null;
             draw(graph.getColumnCount(), graph.getRowCount());
             enableAllButtons();
         });
@@ -249,6 +257,7 @@ public class GUI extends Application {
                 enableAllButtons();
                 return;
             }
+            pathFinder=null;
             enableAllButtons();
         });
         buttonFileSave.setPrefWidth(ITEM_WIDTH);
@@ -291,7 +300,12 @@ public class GUI extends Application {
                 enableAllButtons();
                 return;
             }
-            drawNodes(graph.getNode(posX + posY * graph.getColumnCount()), graph.getNodeCount());
+            //Sprawdzanie przycisków myszki
+            if(event.getButton()== MouseButton.PRIMARY) {
+                drawNodes(graph.getNode(posX + posY * graph.getColumnCount()), graph.getNodeCount());
+            } else if (event.getButton()== MouseButton.SECONDARY) {
+                drawPath(graph.getNode(posX + posY * graph.getColumnCount()), graph.getNodeCount());
+            }
             enableAllButtons();
         });
 
@@ -371,10 +385,14 @@ public class GUI extends Application {
     }
 
     private void drawNodes(Node startingNode, int nodeCount) {
-        PathFinder pf = new PathFinder(nodeCount, startingNode);
-        pf.run();
-        pf.calculateNodeValueRange();
-
+        if(pathFinder==null || startingNode!=pathFinder.getStartingNode()) {
+            if(pathFinder!=null)
+                draw(graph.getColumnCount(), graph.getRowCount());
+            pathFinder = new PathFinder(nodeCount, startingNode);
+            pathFinder.run();
+            pathFinder.calculateNodeValueRange();
+        }else
+            return; //Ignoruj
         int columnCount = graph.getColumnCount();
         int rowCount = graph.getRowCount();
 
@@ -387,8 +405,8 @@ public class GUI extends Application {
 
         for (int j = 0; j < rowCount; j++) {
             for (int i = 0; i < columnCount; i++) {
-                if (pf.getDistanceToNode(graph.getNode(j * graph.getColumnCount() + i)) != -1) {
-                    gc.setFill(pf.getNodeValueRange().getHSBValue(pf.getDistanceToNode(graph.getNode(j * graph.getColumnCount() + i))));
+                if (pathFinder.getDistanceToNode(graph.getNode(j * graph.getColumnCount() + i)) != -1) {
+                    gc.setFill(pathFinder.getNodeValueRange().getHSBValue(pathFinder.getDistanceToNode(graph.getNode(j * graph.getColumnCount() + i))));
                 } else {
                     gc.setFill(Color.BLACK); // doesn't colour nodes which are not connected
                 }
@@ -398,6 +416,69 @@ public class GUI extends Application {
         }
     }
 
+    private void drawPath(Node clickedNode, int nodeCount) {
+        //Jeśli nie wybrano pierwszego wierzchołka
+        if(pathFinder==null) {
+            drawNodes(clickedNode,nodeCount);
+            return;
+        }
+        gc.setFill(Color.BLACK);
+
+        // scale
+        double ovalR = graph.getColumnCount() > graph.getRowCount() ? (CANVAS_RESOLUTION - 2 * PADDING) / (2 * graph.getColumnCount() + (LINE_LENGTH_PROPORTION - 2.0) * (graph.getColumnCount() - 1)) : (CANVAS_RESOLUTION - 2 * PADDING) / (2 * graph.getRowCount() + (LINE_LENGTH_PROPORTION - 2.0) * (graph.getRowCount() - 1));
+
+        double edgeLength = LINE_LENGTH_PROPORTION * ovalR; // edge length
+
+        gc.setStroke(Color.BLACK); //Domyślny kolor
+        gc.setLineWidth(LINE_WIDTH_PROPORTION * ovalR);
+
+        LinkedList<Integer> path=pathFinder.getPathToNode(clickedNode);
+        Move move;
+        int x,y;
+        x=path.get(0)%graph.getColumnCount();
+        y=path.get(0)/graph.getColumnCount();
+        gc.fillOval(PADDING + x * edgeLength, PADDING + y * edgeLength, ovalR * 2, ovalR * 2);
+        gc.beginPath();
+        for(int i=1;i< path.size();i++){
+            move=getDirection(path.get(i-1),path.get(i), graph.getColumnCount(),graph.getRowCount());
+            //Pionowo
+            if(move==Move.DOWN) {
+                gc.moveTo(PADDING + ovalR + x * edgeLength, PADDING + ovalR + y * edgeLength);
+                gc.lineTo(PADDING + ovalR + x * edgeLength, PADDING + ovalR + y * edgeLength + edgeLength);
+            } else if (move==Move.UP) {
+                gc.moveTo(PADDING + ovalR + x * edgeLength, PADDING + ovalR + y * edgeLength);
+                gc.lineTo(PADDING + ovalR + x * edgeLength, PADDING + ovalR + y * edgeLength - edgeLength);
+            } else if (move==Move.RIGHT) {
+                gc.moveTo(PADDING + ovalR + x * edgeLength, PADDING + ovalR + y * edgeLength);
+                gc.lineTo(PADDING + ovalR + x * edgeLength + edgeLength, PADDING + ovalR + y * edgeLength);
+            } else if (move==Move.LEFT) {
+                gc.moveTo(PADDING + ovalR + x * edgeLength, PADDING + ovalR + y * edgeLength);
+                gc.lineTo(PADDING + ovalR + x * edgeLength - edgeLength, PADDING + ovalR + y * edgeLength);
+            }else{
+                System.err.println("GraphPath: An unexpected error occurred while walking through path");
+                return;
+            }
+            //Punkt
+            x=path.get(i)%graph.getColumnCount();
+            y=path.get(i)/graph.getColumnCount();
+            gc.fillOval(PADDING + x * edgeLength, PADDING + y * edgeLength, ovalR * 2, ovalR * 2);
+        }
+        gc.stroke();
+        gc.closePath();
+    }
+
+    private static Move getDirection(int position, int n_position, int columnCount, int rowCount) {
+        if (position - columnCount > -1 && position - columnCount == n_position)
+            return Move.UP;
+        else if (position - 1 == n_position && position / columnCount == n_position / columnCount)
+            return Move.LEFT;
+        else if (position + 1 == n_position && position / columnCount == n_position / columnCount)
+            return Move.RIGHT;
+        else if (position + columnCount < rowCount * columnCount && position + columnCount == n_position)
+            return Move.DOWN;
+        else
+            return Move.NO_MOVE;
+    }
     private void disableAllButtons() {
         buttonFileOpen.setDisable(true);
         buttonFileSave.setDisable(true);

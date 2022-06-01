@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 public class PathFinder {
+    private final Node startingNode;
     private final double[] distanceToNode;
     private final Node[] previousNode;
     private final boolean[] parsedNodes;
@@ -15,6 +16,7 @@ public class PathFinder {
     {
         if (nodeCount <= 0) throw new IllegalArgumentException("PathFinder: The node count must be positive.");
 
+        this.startingNode=startingNode;
         distanceToNode = new double[nodeCount];
         previousNode = new Node[nodeCount];
         parsedNodes = new boolean[nodeCount];
@@ -66,7 +68,7 @@ public class PathFinder {
         return distanceToNode[n.getIndex()] == Double.MAX_VALUE ? -1 : distanceToNode[n.getIndex()];
     }
 
-    public String getPathToNode(Node n)
+    public LinkedList<Integer> getPathToNode(Node n)
     {
         if (distanceToNode[n.getIndex()] == Double.MAX_VALUE) // no path
             return null;
@@ -86,7 +88,7 @@ public class PathFinder {
             if (index != n.getIndex()) path = path.concat(" -> ");
         }
 
-        return path;
+        return indexes;
     }
 
     public void calculateNodeValueRange()
@@ -112,4 +114,6 @@ public class PathFinder {
     {
         return nodeValueRange;
     }
+
+    public Node getStartingNode(){ return startingNode; }
 }
