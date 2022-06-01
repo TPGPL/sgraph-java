@@ -6,7 +6,7 @@ import java.util.Random;
 public class GraphGenerator {
     private static final Random r = new Random();
 
-    private enum Move {
+    public enum Move {
         UP, LEFT, RIGHT, DOWN, NO_MOVE
     }
 
@@ -134,7 +134,7 @@ public class GraphGenerator {
         }
     }
 
-    private static Move getDirection(int position, int n_position, int columnCount, int rowCount) {
+    public static Move getDirection(int position, int n_position, int columnCount, int rowCount) {
         if (position - columnCount > -1 && position - columnCount == n_position)
             return Move.UP;
         else if (position - 1 == n_position && position / columnCount == n_position / columnCount)

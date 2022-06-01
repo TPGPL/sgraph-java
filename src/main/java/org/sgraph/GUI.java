@@ -14,6 +14,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -27,6 +28,10 @@ import net.synedra.validatorfx.Validator;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.sgraph.GraphGenerator.getDirection;
 
 public class GUI extends Application {
     private static final int WINDOW_WIDTH = 700;
@@ -68,6 +73,7 @@ public class GUI extends Application {
         stage.setResizable(false);
 
         Validator validator = new Validator();
+        AtomicBoolean wasPathDrawn = new AtomicBoolean(false);
 
         // GUI creation
         // text labels
@@ -290,7 +296,7 @@ public class GUI extends Application {
 
         FlowPane root = new FlowPane();
 
-        canvas.setOnMouseClicked(event -> { // TODO: make a switch
+        canvas.setOnMouseClicked(event -> {
             double x, y, r;
             if (graph == null) {
                 return;
@@ -309,7 +315,24 @@ public class GUI extends Application {
             if (posX < 0 || posY < 0 || posX > graph.getColumnCount() - 1 || posY > graph.getRowCount() - 1) {
                 return;
             }
-            drawNodes(graph.getNode(posX + posY * graph.getColumnCount()), graph.getNodeCount());
+
+            if (event.getButton() == MouseButton.PRIMARY) {
+                if (wasPathDrawn.get()) {
+                    draw(graph.getColumnCount(), graph.getRowCount());
+                    wasPathDrawn.set(false);
+                }
+
+                drawNodes(graph.getNode(posX + posY * graph.getColumnCount()), graph.getNodeCount());
+                System.out.println("Chosen node: number " + pf.getStartingNode().getIndex());
+            } else if (event.getButton() == MouseButton.SECONDARY) {
+                if (pf == null) // no node chosen
+                    return;
+
+                drawPath(graph.getNode(posX + posY * graph.getColumnCount()));
+
+                wasPathDrawn.set(true);
+            }
+
         });
 
         // bottom bar
@@ -481,15 +504,69 @@ public class GUI extends Application {
         return scale;
     }
 
-    private void setEdgeRangeLabels()
-    {
+    private void setEdgeRangeLabels() {
         labelEdgeRangeMin.setText(graph == null ? "MIN" : Double.toString(graph.getEdgeValueRange().getMin()));
         labelEdgeRangeMax.setText(graph == null ? "MAX" : Double.toString(graph.getEdgeValueRange().getMax()));
     }
 
-    private void setNodeRangeLabels()
-    {
+    private void setNodeRangeLabels() {
         labelNodeRangeMin.setText(pf == null ? "MIN" : Double.toString(pf.getNodeValueRange().getMin()));
         labelNodeRangeMax.setText(pf == null ? "MAX" : Double.toString(pf.getNodeValueRange().getMax()));
+    }
+
+    private void drawPath(Node clickedNode) {
+        gc.setFill(Color.BLACK);
+
+        // scale
+        double ovalR = graph.getColumnCount() > graph.getRowCount() ? (CANVAS_RESOLUTION - 2 * PADDING) / (2 * graph.getColumnCount() + (LINE_LENGTH_PROPORTION - 2.0) * (graph.getColumnCount() - 1)) : (CANVAS_RESOLUTION - 2 * PADDING) / (2 * graph.getRowCount() + (LINE_LENGTH_PROPORTION - 2.0) * (graph.getRowCount() - 1));
+
+        double edgeLength = LINE_LENGTH_PROPORTION * ovalR; // edge length
+
+        gc.setStroke(Color.BLACK); //Domyślny kolor
+        gc.setLineWidth(LINE_WIDTH_PROPORTION * ovalR);
+
+        LinkedList<Integer> path = pf.getIndexPathToNode(clickedNode);
+
+        if (path == null) {
+            System.err.printf("There is not path between nodes %d and %d.%n", pf.getStartingNode().getIndex(), clickedNode.getIndex());
+            return;
+        }
+
+        GraphGenerator.Move move;
+        int x = path.get(0) % graph.getColumnCount();
+        int y = path.get(0) / graph.getColumnCount();
+
+        gc.fillOval(PADDING + x * edgeLength, PADDING + y * edgeLength, ovalR * 2, ovalR * 2);
+        gc.beginPath();
+
+        for (int i = 1; i < path.size(); i++) {
+            move = getDirection(path.get(i - 1), path.get(i), graph.getColumnCount(), graph.getRowCount());
+
+            if (move == GraphGenerator.Move.DOWN) {
+                gc.moveTo(PADDING + ovalR + x * edgeLength, PADDING + ovalR + y * edgeLength);
+                gc.lineTo(PADDING + ovalR + x * edgeLength, PADDING + ovalR + y * edgeLength + edgeLength);
+            } else if (move == GraphGenerator.Move.UP) {
+                gc.moveTo(PADDING + ovalR + x * edgeLength, PADDING + ovalR + y * edgeLength);
+                gc.lineTo(PADDING + ovalR + x * edgeLength, PADDING + ovalR + y * edgeLength - edgeLength);
+            } else if (move == GraphGenerator.Move.RIGHT) {
+                gc.moveTo(PADDING + ovalR + x * edgeLength, PADDING + ovalR + y * edgeLength);
+                gc.lineTo(PADDING + ovalR + x * edgeLength + edgeLength, PADDING + ovalR + y * edgeLength);
+            } else if (move == GraphGenerator.Move.LEFT) {
+                gc.moveTo(PADDING + ovalR + x * edgeLength, PADDING + ovalR + y * edgeLength);
+                gc.lineTo(PADDING + ovalR + x * edgeLength - edgeLength, PADDING + ovalR + y * edgeLength);
+            } else {
+                System.err.println("An unexpected error occurred while drawing a path.");
+                return;
+            }
+            //Punkt
+            x = path.get(i) % graph.getColumnCount();
+            y = path.get(i) / graph.getColumnCount();
+            gc.fillOval(PADDING + x * edgeLength, PADDING + y * edgeLength, ovalR * 2, ovalR * 2);
+        }
+        gc.stroke();
+        gc.closePath();
+
+        System.out.printf("Distance between nodes %d and %d: %g%n", pf.getStartingNode().getIndex(), clickedNode.getIndex(), pf.getDistanceToNode(clickedNode));
+        System.out.printf("Path: %s%n", pf.getPathToNode(clickedNode));
     }
 }
