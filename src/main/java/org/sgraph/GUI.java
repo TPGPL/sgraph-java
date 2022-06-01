@@ -433,6 +433,8 @@ public class GUI extends Application {
         gc.setLineWidth(LINE_WIDTH_PROPORTION * ovalR);
 
         LinkedList<Integer> path=pathFinder.getPathToNode(clickedNode);
+        if(path==null)
+            return;//ignoruj
         Move move;
         int x,y;
         x=path.get(0)%graph.getColumnCount();
