@@ -6,13 +6,36 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Klasa odpowiadająca za przechowywanie informacji o grafie-siatce i zarządzanie jego elementami.
+ */
 public class Graph {
+    /**
+     * Liczba kolumn w siatce.
+     */
     private final int columnCount;
+    /**
+     * Liczba wierszy w siatce.
+     */
     private final int rowCount;
+    /**
+     * Liczba spójnych grafów w siatce.
+     */
     private int subgraphCount;
+    /**
+     * Tablica przechowująca wierzchołki grafu.
+     */
     private final ArrayList<Node> nodes;
+    /**
+     * Zakres w jakim znajdują się wagi na krawędziach w grafie.
+     */
     private Range edgeValueRange;
 
+    /**
+     * Konstruktor klasy.
+     * @param columnCount liczba kolumn w siatce
+     * @param rowCount liczba wierszy w siatce
+     */
     public Graph(int columnCount, int rowCount) {
         if (columnCount <= 0)
             throw new IllegalArgumentException("Graph: The number of columns must be positive.");
@@ -31,26 +54,52 @@ public class Graph {
         }
     }
 
+    /**
+     * Zwraca liczbę kolumn w siatce.
+     * @return liczba kolumn w siatce
+     */
     public int getColumnCount() {
         return columnCount;
     }
 
+    /**
+     * Zwraca liczbę wierszy w siatce.
+     * @return liczba wierszy w siatce.
+     */
     public int getRowCount() {
         return rowCount;
     }
 
+    /**
+     * Zwraca liczbę wierzchołków w grafie.
+     * @return liczba wierzchołków w grafie
+     */
     public int getNodeCount() {
         return rowCount * columnCount;
     }
 
+    /**
+     * Zwraca liczbę spójnych grafów w siatce.
+     * @return liczba spójnych grafów w siatce
+     */
     public int getSubgraphCount() {
         return subgraphCount;
     }
 
+    /**
+     * Zwraca zakres wartości wag na krawędziach w grafie.
+     * @return zakres wartości wag na krawędziach
+     */
     public Range getEdgeValueRange() {
         return edgeValueRange;
     }
 
+    /**
+     * Zwraca wierzchołek o podanym indeksie.
+     * @param index indeks wierzchołka
+     * @return wierzchołek o podanym indeksie
+     * @throws IllegalArgumentException jeżeli podano indeks spoza zakresu wierzchołków
+     */
     public Node getNode(int index) throws IllegalArgumentException {
         if (index < 0 || index >= getNodeCount())
             throw new IllegalArgumentException(String.format("Graph: Cannot get a node of index %d in a %dx%d graph.", index, rowCount, columnCount));
@@ -58,6 +107,13 @@ public class Graph {
         return nodes.get(index);
     }
 
+    /**
+     * Dodaje połączenie o określonej wadze między dwoma wierzchołkami w grafie.
+     * @param node1 pierwszy wierzchołek połączenia
+     * @param node2 drugi wierzchołek połączenia
+     * @param edge wartość wagi na krawędzi połączenia
+     * @throws IllegalArgumentException jeżeli wierzchołki nie mogą ze sobą sąsiadować w takim grafie, wartość wagi jest niedodatnia, istnieje już połączenie między tymi wierzchołkami o innej wadze
+     */
     public void addConnection(Node node1, Node node2, double edge) throws IllegalArgumentException {
         if (!canNodesAdhere(node1, node2))
             throw new IllegalArgumentException(String.format("Graph: Nodes %d and %d cannot adhere in a %dx%d graph.", node1.getIndex(), node2.getIndex(), rowCount, columnCount));
@@ -79,11 +135,22 @@ public class Graph {
         node2.addConnection(node1, edge);
     }
 
+    /**
+     * Usuwa połączenie między dwoma wierzchołkami.
+     * @param node1 pierwszy wierzchołek połączenia
+     * @param node2 drugi wierzchołek połączenia
+     */
     public void removeConnection(Node node1, Node node2) {
         node1.removeConnection(node2);
         node2.removeConnection(node1);
     }
 
+    /**
+     * Sprawdza, czy dwa wierzchołki mogą ze sobą sąsiadować w takim grafie.
+     * @param node1 pierwszy sprawdzany wierzchołek
+     * @param node2 drugi sprawdzany wierzchołek
+     * @return true, jeżeli wierzchołki mogą ze sobą sąsiadować; w przeciwnym razie zwraca false
+     */
     private boolean canNodesAdhere(Node node1, Node node2) {
         int row1 = (node1.getIndex() - node1.getIndex() % columnCount) / columnCount + 1;
         int row2 = (node2.getIndex() - node2.getIndex() % columnCount) / columnCount + 1;
@@ -93,6 +160,12 @@ public class Graph {
         return Math.abs(row1 - row2) == 1 || Math.abs(col1 - col2) == 1;
     }
 
+    /**
+     * Zapisuje informacje o grafie do pliku tekstowego o określonym formacie.
+     * Pierwsza linia pliku zawiera wymiary grafu, a kolejne zawierają listy sąsiedstwa wszystkich wierzchołków grafu.
+     * @param file plik, do którego będą zapisywane informacje
+     * @throws IOException jeżeli wystąpił błąd wejścia/wyjścia podczas pisania do pliku
+     */
     public void readToFile(File file) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         writer.write(String.format("%d %d\n", rowCount, columnCount));
@@ -104,6 +177,10 @@ public class Graph {
         writer.close();
     }
 
+    /**
+     * Oblicza liczbę spójnych grafów w siatce przy użyciu algorytmu przeszukiwania wszerz.
+     * @see BreadthFirstSearch
+     */
     public void calculateSubraphCount() {
         int n = 0;
         BreadthFirstSearch bfs = new BreadthFirstSearch(getNodeCount());
@@ -116,6 +193,10 @@ public class Graph {
         subgraphCount = n;
     }
 
+    /**
+     * Oblicza zakres wartości wag na krawędziach w grafie.
+     * Jeżeli w grafie nie ma żadnych krawędzi, zakres zostaje ustawiony na [0;0].
+     */
     public void calculateEdgeValueRange() {
         double min = Double.MAX_VALUE;
         double max = -1;
