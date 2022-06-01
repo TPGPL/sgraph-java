@@ -1,6 +1,7 @@
 package org.sgraph;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -92,15 +93,8 @@ public class Graph {
         return Math.abs(row1 - row2) == 1 || Math.abs(col1 - col2) == 1;
     }
 
-    public void print() {
-        System.out.println(rowCount + " " + columnCount);
-        for (Node n : nodes) {
-            System.out.println(n.toString());
-        }
-    }
-
-    public void readToFile(String path) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(path));
+    public void readToFile(File file) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         writer.write(String.format("%d %d\n", rowCount, columnCount));
 
         for (Node n : nodes) {
@@ -108,13 +102,6 @@ public class Graph {
         }
 
         writer.close();
-    }
-
-    public boolean areNodesConnected(Node node1, Node node2) {
-        BreadthFirstSearch bfs = new BreadthFirstSearch(getNodeCount());
-        bfs.run(node1);
-
-        return bfs.wasNodeVisited(node2);
     }
 
     public void calculateSubraphCount() {

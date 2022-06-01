@@ -2,22 +2,24 @@ package org.sgraph;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class GraphReader {
-    public static Graph readFromFile(String path) {
+
+    public static Graph readFromFile(File file) throws IOException {
         String[] lineSplit;
         ArrayList<Double> convertedLine;
         Scanner file_scanner;
 
         try {
-            file_scanner = new Scanner(new File(path));
+            file_scanner = new Scanner(file);
         } catch (FileNotFoundException e) {
             System.err.println("GraphReader: " + e.getMessage());
-            return null;
+            throw new FileNotFoundException("GraphReader: " + e.getMessage());
         }
 
         lineSplit = file_scanner.nextLine().split("\\s+"); // get dimensions
@@ -39,8 +41,7 @@ public class GraphReader {
             try {
                 lineSplit = file_scanner.nextLine().replace(":", " ").split("\\s+");
             } catch (NoSuchElementException e) {
-                System.err.println("GraphReader: File has less lines than dimensions suggest.");
-                return null;
+                throw new NoSuchElementException("GraphReader: File has less lines than dimensions suggest.");
             }
 
             convertedLine.clear();
