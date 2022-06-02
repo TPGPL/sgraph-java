@@ -17,6 +17,7 @@ public class Connection {
      * Konstruktor klasy
      * @param node wierzchołek, z którym istnieje połączenie
      * @param weight wartość wagi na krawędzi połączenia
+     * @throws IllegalArgumentException jeżeli wartość wagi na krawędzi połączenia jest niedodatnia
      */
     public Connection(Node node, double weight)
     {

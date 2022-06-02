@@ -23,6 +23,7 @@ public class BreadthFirstSearch {
     /**
      * Konstruktor klasy
      * @param nodeNumber liczba wierzchołków w grafie
+     * @throws IllegalArgumentException jeżeli liczba wierzchołków jest niedodatnia
      */
     public BreadthFirstSearch(int nodeNumber) {
         if (nodeNumber <= 0)

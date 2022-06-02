@@ -35,6 +35,7 @@ public class Graph {
      * Konstruktor klasy.
      * @param columnCount liczba kolumn w siatce
      * @param rowCount liczba wierszy w siatce
+     * @throws IllegalArgumentException jeżeli liczba kolumn lub wierszy jest niedodatnia
      */
     public Graph(int columnCount, int rowCount) {
         if (columnCount <= 0)
