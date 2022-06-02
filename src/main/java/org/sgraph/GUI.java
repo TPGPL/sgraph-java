@@ -33,40 +33,126 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.sgraph.GraphGenerator.getDirection;
 
+/**
+ * Klasa odpowiadająca za interfejs graficzny aplikacji i przetwarzanie zdarzeń w programie.
+ */
 public class GUI extends Application {
+    /**
+     * Szerokość okna aplikacji.
+     */
     private static final int WINDOW_WIDTH = 700;
+    /**
+     * Wysokość okna aplikacji.
+     */
     private static final int WINDOW_HEIGHT = 900;
+    /**
+     * Wymiar kwadratowej przestrzeni na rysowanie grafu.
+     */
     private static final int CANVAS_RESOLUTION = 700;
+    /**
+     * Odległość między elementami interfejsu graficznego.
+     */
     private static final double PADDING = 10.0;
+    /**
+     * Wysokość elementów interfejsu graficznego (przyciski, pola tekstowe).
+     */
     private static final int ITEM_HEIGHT = 30;
+    /**
+     * Wysokość dużego elementu interfejsu graficznego (dwa razy większa niż normalna).
+     */
     private static final int BIG_ITEM_HEIGHT = 2 * ITEM_HEIGHT + (int) PADDING;
+    /**
+     * Szerokość elementów interfejsu graficznego.
+     */
     private static final int ITEM_WIDTH = 105;
+    /**
+     * Domyslna liczba kolumn w siatce.
+     */
     private static final int DEFAULT_COLUMN_COUNT = 10;
+    /**
+     * Domyślna liczba wierszy w siatce.
+     */
     private static final int DEFAULT_ROW_COUNT = 10;
+    /**
+     * Domyślna liczba spójnych grafów w siatce.
+     */
     private static final int DEFAULT_SUBGRAPH_COUNT = 1;
+    /**
+     * Domyślny zakres wartości wag na krawędziach.
+     */
     private static final String DEFAULT_WEIGHT_RANGE = "0-1";
+    /**
+     * Stosunek szerokości krawędzi do promienia wierzchołka.
+     */
     private static final double LINE_WIDTH_PROPORTION = 2.0 / 3.0;
+    /**
+     * Stosunek długości krawędzi do promienia wierzchołka.
+     */
     private static final double LINE_LENGTH_PROPORTION = 4.0;
+    /**
+     * Domyślna nazwa pliku wyjściowego.
+     */
     private static final String DEFAULT_FILE_NAME = "graph.txt";
 
+    /**
+     * Obiekt przechowujący aktualnie wygenerowany graf.
+     */
     private Graph graph;
+    /**
+     * Obiekt odpowiadający za wyszukiwanie ścieżek do aktualnie wybranego wierzchołka początkowego.
+     */
     private PathFinder pf;
+    /**
+     * Obiekt odpowiadający za rysowanie po canvasie.
+     */
     private GraphicsContext gc;
+    /**
+     * Obiekt odpowiadający za okno wyboru i zapisu plików.
+     */
     private FileChooser fileChooser;
 
+    /**
+     * Pole tekstowe przeznaczone na liczbę kolumn w siatce.
+     */
     // text fields
     private TextField textFieldColumnCount;
+    /**
+     * Pole tekstowe przeznaczone na liczbę wierszy w siatce.
+     */
     private TextField textFieldRowCount;
+    /**
+     * Pole tekstowe przeznaczone na liczbę spójnych grafów w siatce.
+     */
     private TextField textFieldSubgraphCount;
+    /**
+     * Pole tekstowe przeznaczone na zakres wartości wag na krawędziach.
+     */
     private TextField textFieldWeightRange;
 
     // range field
 
+    /**
+     * Etykieta lewej granicy zakresu wartości wag na krawędziach.
+     */
     private Label labelEdgeRangeMin;
+    /**
+     * Etykieta prawej granicy zakresu wartości wag na krawędziach.
+     */
     private Label labelEdgeRangeMax;
+    /**
+     * Etykieta lewej granicy zakresu wartości odległości od wierzchołka początkowego.
+     */
     private Label labelNodeRangeMin;
+    /**
+     * Etykieta prawej granicy zakresu wartości odległości od wierzchołka początkowego.
+     */
     private Label labelNodeRangeMax;
 
+    /**
+     * Uruchamia okno interfejsu graficznego aplikacji i obsługuje zdarzenia w programie.
+     *
+     * @param stage scena, na której jest wyświetlany interfejs graficzny
+     */
     @Override
     public void start(Stage stage) {
         stage.setTitle("SGraph");
@@ -382,10 +468,21 @@ public class GUI extends Application {
         stage.show();
     }
 
+    /**
+     * Uruchamia okno interfejsu graficznego.
+     *
+     * @param args argumenty wywołania programu
+     */
     public static void main(String[] args) {
         launch();
     }
 
+    /**
+     * Rysuje graf o określonych wymiarach i zabarwia krawędzie względem zakresu wartości.
+     *
+     * @param columnCount liczba kolumn w siatce
+     * @param rowCount    liczba wierszy w siatce
+     */
     public void draw(int columnCount, int rowCount) {
 
         gc.clearRect(0, 0, CANVAS_RESOLUTION, CANVAS_RESOLUTION);
@@ -432,6 +529,13 @@ public class GUI extends Application {
         }
     }
 
+    /**
+     * Zwraca indeks wierzcholka znajdującego się pod sprawdzanym wierzchołkiem i sąsiadującego z nim.
+     * Jeżeli nie ma takiego wierzchołka, to zwraca -1.
+     *
+     * @param index indeks sprawdzanego wierzchołka
+     * @return indeks połączonego wierzchołka pod sprawdzanym wierzchołkiem
+     */
     private int checkDown(int index) {
         ArrayList<Node> connectedNodes = graph.getNode(index).getConnectedNodes();
         for (Node n : connectedNodes) {
@@ -441,6 +545,13 @@ public class GUI extends Application {
         return -1;
     }
 
+    /**
+     * Zwraca indeks wierzcholka znajdującego się na prawo od sprawdzanego wierzchołka i sąsiadującego z nim.
+     * Jeżeli nie ma takiego wierzchołka, to zwraca -1.
+     *
+     * @param index indeks sprawdzanego wierzchołka
+     * @return indeks połączonego wierzchołka na prawo od sprawdzanego wierzchołka
+     */
     private int checkRight(int index) {
         ArrayList<Node> connectedNodes = graph.getNode(index).getConnectedNodes();
         for (Node n : connectedNodes) {
@@ -450,6 +561,12 @@ public class GUI extends Application {
         return -1;
     }
 
+    /**
+     * Wyznacza najkrótsze ścieżki do wybranego wierzchołka w grafie i zabarwia wierzchołki względem zakresu wartości odległości od wierzchołka początkowego.
+     *
+     * @param startingNode wierzchołek początkowy
+     * @param nodeCount    liczba wierzchołków w grafie
+     */
     private void drawNodes(Node startingNode, int nodeCount) {
         pf = new PathFinder(nodeCount, startingNode);
         pf.run();
@@ -479,22 +596,20 @@ public class GUI extends Application {
         }
     }
 
-    private Color getColorFromValue(double value) {
-        if (value < 0 || value > 100) {
-            return Color.BLACK;
-        }
-        double hue = Color.BLUE.getHue() + (Color.RED.getHue() - Color.BLUE.getHue()) * value / 100;
-        return Color.hsb(hue, 1, 1, 1);
-    }
-
+    /**
+     * Tworzy obraz skali kolorów od niebieskiego do czerwonego.
+     *
+     * @return obraz skali kolorów
+     */
     private Image createColorScale() {
 
         WritableImage scale = new WritableImage(WINDOW_WIDTH, ITEM_HEIGHT);
         PixelWriter pw = scale.getPixelWriter();
+        Range r = new Range(0, 100);
 
         for (int x = 0; x < WINDOW_WIDTH; x++) {
             double value = 100.0 * x / WINDOW_WIDTH;
-            Color color = getColorFromValue(value);
+            Color color = r.getHSBValue(value);
 
             for (int y = 0; y < ITEM_HEIGHT; y++) {
                 pw.setColor(x, y, color);
@@ -504,16 +619,30 @@ public class GUI extends Application {
         return scale;
     }
 
+    /**
+     * Ustawia wartości etykiet zakresu wartości wag na krawędziach.
+     * Jeżeli graf nie został jeszcze wygenerowany, ustawia ich wartości odpowiednio na "MIN" i "MAX".
+     */
     private void setEdgeRangeLabels() {
         labelEdgeRangeMin.setText(graph == null ? "MIN" : Double.toString(graph.getEdgeValueRange().getMin()));
         labelEdgeRangeMax.setText(graph == null ? "MAX" : Double.toString(graph.getEdgeValueRange().getMax()));
     }
 
+    /**
+     * Ustawia wartości etykiet zakresu odległości od wierzchołka początkowego.
+     * Jeżeli żaden wierzchołek nie został jeszcze wybrany, ustawia ich wartości odpowiednio na "MIN" i "MAX".
+     */
     private void setNodeRangeLabels() {
         labelNodeRangeMin.setText(pf == null ? "MIN" : Double.toString(pf.getNodeValueRange().getMin()));
         labelNodeRangeMax.setText(pf == null ? "MAX" : Double.toString(pf.getNodeValueRange().getMax()));
     }
 
+    /**
+     * Rysuje drogę od wierzchołka początkowego do wybranego wierzchołka. Wypisuje jej wartość oraz ciąg indeksów do okna konsoli.
+     * Jeżeli droga między wierzchołkami nie istnieje, wypisuje odpowiedni komunikat i kończy działanie.
+     *
+     * @param clickedNode wierzchołek do którego zostanie narysowana droga
+     */
     private void drawPath(Node clickedNode) {
         gc.setFill(Color.BLACK);
 

@@ -3,13 +3,52 @@ package org.sgraph;
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * Klasa zawierająca statyczne metody pozwalające na wygenerowanie grafu na podstawie parametrów wejściowych.
+ */
 public class GraphGenerator {
+    /**
+     * Generator liczb pseudolosowych.
+     */
     private static final Random r = new Random();
 
+    /**
+     * Typ wyliczeniowy reprezentujący możliwe przejścia między wierzchołkami w grafie.
+     */
     public enum Move {
-        UP, LEFT, RIGHT, DOWN, NO_MOVE
+        /**
+         * Ruch w górę.
+         */
+        UP,
+        /**
+         * Ruch w lewo.
+         */
+        LEFT,
+        /**
+         * Ruch w prawo.
+         */
+        RIGHT,
+        /**
+         * Ruch w dół.
+         */
+        DOWN,
+        /**
+         * Brak ruchu.
+         */
+        NO_MOVE
     }
 
+    /**
+     * Generuje graf-siatkę na podstawie podanych parametrów wejściowych
+     *
+     * @param columnCount   liczba kolumn w siatce
+     * @param rowCount      liczba wierszy w siatce
+     * @param subgraphCount liczba spójnych grafów w siatce
+     * @param min           lewa granica zakresu wartości wag na krawędziach
+     * @param max           prawa granica zakresu wartości wag na krawędziach
+     * @return graf wygenerowany na podstawie danych wejściowych
+     * @throws IllegalArgumentException jeżeli liczba spójnych grafów jest niedodatnia lub większa od liczby wierzchołków, MIN jest ujemne lub mniejsze od MAX
+     */
     public static Graph generate(int columnCount, int rowCount, int subgraphCount, double min, double max) {
         Graph g = new Graph(columnCount, rowCount);
 
@@ -41,6 +80,11 @@ public class GraphGenerator {
         return g;
     }
 
+    /**
+     * Wydziela w siatce osobny spójny graf w sposób losowy.
+     *
+     * @param g graf do podzielenia na mniejsze fragmenty
+     */
     private static void divide(Graph g) {
         ArrayList<Integer> way = new ArrayList<>();
         int w, next_w, slice;
@@ -134,6 +178,15 @@ public class GraphGenerator {
         }
     }
 
+    /**
+     * Zwraca kierunek przejścia z jednego wierzchołka do drugiego.
+     *
+     * @param position    indeks wierzchołka przed przejściem
+     * @param n_position  indeks wierzchołka po przejściu
+     * @param columnCount liczba kolumn w siatce
+     * @param rowCount    liczba wierszy w siatce
+     * @return kierunek przejścia w postaci elementu typu wyliczającego Move
+     */
     public static Move getDirection(int position, int n_position, int columnCount, int rowCount) {
         if (position - columnCount > -1 && position - columnCount == n_position)
             return Move.UP;

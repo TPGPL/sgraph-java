@@ -8,8 +8,20 @@ import java.util.InputMismatchException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+/**
+ * Klasa zawierająca statyczne metody pozwalające na wczytanie grafu z pliku wejściowego.
+ */
 public class GraphReader {
 
+    /**
+     * Wczytuje graf z pliku wejściowego o określonym formacie.
+     *
+     * @param file plik wejściowy
+     * @return graf wczytany z pliku wejściowego
+     * @throws IOException            jeżeli wystąpił błąd z czytaniem pliku lub nie udało się go otworzyć
+     * @throws InputMismatchException jeżeli wymiary grafu lub liczba danych w jednej linii jest niepoprawna
+     * @throws NoSuchElementException jeżeli w pliku jest mniej linii niż wynika z wczytanych wymiarów grafu
+     */
     public static Graph readFromFile(File file) throws IOException {
         String[] lineSplit;
         ArrayList<Double> convertedLine;

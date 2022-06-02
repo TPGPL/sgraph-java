@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="ANALYZE_TEST_SOURCES" value="false" />
+  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="576f11d8-d586-4b82-a48b-86bdd25550ea" name="Changes" comment="Add Node unit tests">
+    <list default="true" id="576f11d8-d586-4b82-a48b-86bdd25550ea" name="Changes" comment="Add javadoc for GUI class">
       <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/sgraph/Graph.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/sgraph/Graph.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/sgraph/GUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/sgraph/GUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/sgraph/GraphGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/sgraph/GraphGenerator.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,6 +54,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Git.Branch.Popup.ShowAllRemotes": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
     "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
@@ -81,7 +86,7 @@
       <recent name="org.sgraph" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.NodeTest">
+  <component name="RunManager" selected="Application.GUI">
     <configuration name="GUI" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="org.sgraph.GUI" />
       <module name="SGraph" />
@@ -151,10 +156,10 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.GUI" />
         <item itemvalue="JUnit.NodeTest" />
         <item itemvalue="JUnit.GraphTest" />
         <item itemvalue="JUnit.ConnectionTest" />
-        <item itemvalue="Application.GUI" />
         <item itemvalue="JUnit.RangeTest" />
       </list>
     </recent_temporary>
@@ -198,6 +203,7 @@
       <workItem from="1654072159607" duration="1550000" />
       <workItem from="1654095400672" duration="23000" />
       <workItem from="1654095822038" duration="6462000" />
+      <workItem from="1654166788254" duration="9876000" />
     </task>
     <task id="LOCAL-00001" summary="Initial commit">
       <created>1652381727826</created>
@@ -360,7 +366,63 @@
       <option name="project" value="LOCAL" />
       <updated>1654101817551</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Add missing throw documentation">
+      <created>1654170032523</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1654170032523</updated>
+    </task>
+    <task id="LOCAL-00025" summary="Add javaodc for Node class">
+      <created>1654170090780</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1654170090780</updated>
+    </task>
+    <task id="LOCAL-00026" summary="Reformat javadocs">
+      <created>1654170125366</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1654170125366</updated>
+    </task>
+    <task id="LOCAL-00027" summary="Add javadoc for PathFinder class">
+      <created>1654170222192</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1654170222192</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Add javadoc for Range class">
+      <created>1654170364311</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1654170364311</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Add javadoc for GraphGenerator class">
+      <created>1654171701665</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1654171701665</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Add javadoc for GraphReader class">
+      <created>1654172618226</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1654172618226</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Add javadoc for GUI class">
+      <created>1654176393986</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1654176393986</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -378,12 +440,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Initial commit" />
-    <MESSAGE value="Implement the node connection class" />
-    <MESSAGE value="Update Range constructor exception message" />
-    <MESSAGE value="Implement basic Graph and Node class structure" />
-    <MESSAGE value="Implement BFS" />
-    <MESSAGE value="Minor QOL changes" />
     <MESSAGE value="Use reformatter on the Graph class" />
     <MESSAGE value="Add BFS node colouring" />
     <MESSAGE value="Remove obnoxious comments in GUI class" />
@@ -401,7 +457,22 @@
     <MESSAGE value="Add Range unit tests" />
     <MESSAGE value="Add some Graph unit tests" />
     <MESSAGE value="Add Node unit tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add Node unit tests" />
+    <MESSAGE value="Add missing throw documentation" />
+    <MESSAGE value="Add javaodc for Node class" />
+    <MESSAGE value="Reformat javadocs" />
+    <MESSAGE value="Add javadoc for PathFinder class" />
+    <MESSAGE value="Add javadoc for Range class" />
+    <MESSAGE value="Add javadoc for GraphGenerator class" />
+    <MESSAGE value="Add javadoc for GraphReader class" />
+    <MESSAGE value="Add javadoc for GUI class" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add javadoc for GUI class" />
+  </component>
+  <component name="XDebuggerManager">
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="Node" memberName="index" />
+      </pinned-members>
+    </pin-to-top-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
