@@ -81,8 +81,17 @@ public class GUI extends Application {
      * Domyślny zakres wartości wag na krawędziach.
      */
     private static final String DEFAULT_WEIGHT_RANGE = "0-1";
+    /**
+     * Stosunek szerokości krawędzi do promienia wierzchołka.
+     */
     private static final double LINE_WIDTH_PROPORTION = 2.0 / 3.0;
+    /**
+     * Stosunek długości krawędzi do promienia wierzchołka.
+     */
     private static final double LINE_LENGTH_PROPORTION = 4.0;
+    /**
+     * Domyślna nazwa pliku wyjściowego.
+     */
     private static final String DEFAULT_FILE_NAME = "graph.txt";
 
     /**

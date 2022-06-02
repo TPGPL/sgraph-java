@@ -16,7 +16,26 @@ public class GraphGenerator {
      * Typ wyliczeniowy reprezentujący możliwe przejścia między wierzchołkami w grafie.
      */
     public enum Move {
-        UP, LEFT, RIGHT, DOWN, NO_MOVE
+        /**
+         * Ruch w górę.
+         */
+        UP,
+        /**
+         * Ruch w lewo.
+         */
+        LEFT,
+        /**
+         * Ruch w prawo.
+         */
+        RIGHT,
+        /**
+         * Ruch w dół.
+         */
+        DOWN,
+        /**
+         * Brak ruchu.
+         */
+        NO_MOVE
     }
 
     /**
