@@ -22,6 +22,7 @@ public class BreadthFirstSearch {
 
     /**
      * Konstruktor klasy
+     *
      * @param nodeNumber liczba wierzchołków w grafie
      * @throws IllegalArgumentException jeżeli liczba wierzchołków jest niedodatnia
      */
@@ -37,6 +38,7 @@ public class BreadthFirstSearch {
     /**
      * Rozpoczyna działanie algorytmu BFS i przechodzi po wszystkich połączonych wierzchołkach wszerz.
      * Dołącza odwiedzone wierzchołki do tablicy connectedNodes i oznacza je jako odwiedzone.
+     *
      * @param startNode wierzchołek od którego rozpoczyna się działanie algorytmu
      */
     public void run(Node startNode)
@@ -61,6 +63,7 @@ public class BreadthFirstSearch {
 
     /**
      * Sprawdza, czy w grafie jest jakiś nieodwiedzony wierzchołek.
+     *
      * @return true, jeżeli jakiś wierzchołek nie został odwiedzony, w przeciwnym razie false
      */
     public boolean hasNotVisitedNode()
@@ -76,6 +79,7 @@ public class BreadthFirstSearch {
     /**
      * Zwraca indeks nieodwiedzonego wierzchołka o najmniejszym indeksie.
      * Jeżeli nie ma takiego wierzchołka, zwraca -1.
+     *
      * @return indeks nieodwiedzonego wierzchołka
      */
     public int getNotVisitedNode()
@@ -89,6 +93,7 @@ public class BreadthFirstSearch {
 
     /**
      * Zwraca tablicę wierzchołków połączonych z wierzchołkiem, od którego algorytm BFS rozpoczął działanie.
+     *
      * @return tablica wierzchołków połączonych z wierzchołkiem początkowym
      */
     public ArrayList<Node> getConnectedNodes() {

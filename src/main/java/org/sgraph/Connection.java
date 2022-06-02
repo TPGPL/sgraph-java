@@ -15,7 +15,8 @@ public class Connection {
 
     /**
      * Konstruktor klasy
-     * @param node wierzchołek, z którym istnieje połączenie
+     *
+     * @param node   wierzchołek, z którym istnieje połączenie
      * @param weight wartość wagi na krawędzi połączenia
      * @throws IllegalArgumentException jeżeli wartość wagi na krawędzi połączenia jest niedodatnia
      */
@@ -30,6 +31,7 @@ public class Connection {
 
     /**
      * Zwraca wartość wagi na krawędzi połączenia.
+     *
      * @return wartość wagi na krawędzi połączenia
      */
     public double getWeight() {
@@ -38,6 +40,7 @@ public class Connection {
 
     /**
      * Zwraca wierzchołek, z którym istnieje połączenie.
+     *
      * @return wierzchołek, z którym istnieje połączenie
      */
     public Node getNode()
@@ -48,6 +51,7 @@ public class Connection {
     /**
      * Sprawdza, czy przekazany obiekt jest równy obiektowi klasy.
      * Sprawdzenie odbywa się poprzez porównanie typów obiektów, a jeżeli są równe, to poprzez indeksy wierzchołków, z którymi istnieje połączenie.
+     *
      * @param obj porównywany obiekt
      * @return true, jeżeli obiekty są równe; w przeciwnym razie - false
      */
@@ -61,6 +65,7 @@ public class Connection {
 
     /**
      * Zwraca napis postaci "[indeks wierzchołka]:[waga]" reprezentujący aktualny stan obiektu.
+     *
      * @return napis reprezentujący połączenie
      */
     @Override

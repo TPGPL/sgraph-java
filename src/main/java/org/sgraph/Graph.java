@@ -33,8 +33,9 @@ public class Graph {
 
     /**
      * Konstruktor klasy.
+     *
      * @param columnCount liczba kolumn w siatce
-     * @param rowCount liczba wierszy w siatce
+     * @param rowCount    liczba wierszy w siatce
      * @throws IllegalArgumentException jeżeli liczba kolumn lub wierszy jest niedodatnia
      */
     public Graph(int columnCount, int rowCount) {
@@ -57,6 +58,7 @@ public class Graph {
 
     /**
      * Zwraca liczbę kolumn w siatce.
+     *
      * @return liczba kolumn w siatce
      */
     public int getColumnCount() {
@@ -65,6 +67,7 @@ public class Graph {
 
     /**
      * Zwraca liczbę wierszy w siatce.
+     *
      * @return liczba wierszy w siatce.
      */
     public int getRowCount() {
@@ -73,6 +76,7 @@ public class Graph {
 
     /**
      * Zwraca liczbę wierzchołków w grafie.
+     *
      * @return liczba wierzchołków w grafie
      */
     public int getNodeCount() {
@@ -81,6 +85,7 @@ public class Graph {
 
     /**
      * Zwraca liczbę spójnych grafów w siatce.
+     *
      * @return liczba spójnych grafów w siatce
      */
     public int getSubgraphCount() {
@@ -89,6 +94,7 @@ public class Graph {
 
     /**
      * Zwraca zakres wartości wag na krawędziach w grafie.
+     *
      * @return zakres wartości wag na krawędziach
      */
     public Range getEdgeValueRange() {
@@ -97,6 +103,7 @@ public class Graph {
 
     /**
      * Zwraca wierzchołek o podanym indeksie.
+     *
      * @param index indeks wierzchołka
      * @return wierzchołek o podanym indeksie
      * @throws IllegalArgumentException jeżeli podano indeks spoza zakresu wierzchołków
@@ -110,9 +117,10 @@ public class Graph {
 
     /**
      * Dodaje połączenie o określonej wadze między dwoma wierzchołkami w grafie.
+     *
      * @param node1 pierwszy wierzchołek połączenia
      * @param node2 drugi wierzchołek połączenia
-     * @param edge wartość wagi na krawędzi połączenia
+     * @param edge  wartość wagi na krawędzi połączenia
      * @throws IllegalArgumentException jeżeli wierzchołki nie mogą ze sobą sąsiadować w takim grafie, wartość wagi jest niedodatnia, istnieje już połączenie między tymi wierzchołkami o innej wadze
      */
     public void addConnection(Node node1, Node node2, double edge) throws IllegalArgumentException {
@@ -138,6 +146,7 @@ public class Graph {
 
     /**
      * Usuwa połączenie między dwoma wierzchołkami.
+     *
      * @param node1 pierwszy wierzchołek połączenia
      * @param node2 drugi wierzchołek połączenia
      */
@@ -148,6 +157,7 @@ public class Graph {
 
     /**
      * Sprawdza, czy dwa wierzchołki mogą ze sobą sąsiadować w takim grafie.
+     *
      * @param node1 pierwszy sprawdzany wierzchołek
      * @param node2 drugi sprawdzany wierzchołek
      * @return true, jeżeli wierzchołki mogą ze sobą sąsiadować; w przeciwnym razie zwraca false
@@ -164,6 +174,7 @@ public class Graph {
     /**
      * Zapisuje informacje o grafie do pliku tekstowego o określonym formacie.
      * Pierwsza linia pliku zawiera wymiary grafu, a kolejne zawierają listy sąsiedstwa wszystkich wierzchołków grafu.
+     *
      * @param file plik, do którego będą zapisywane informacje
      * @throws IOException jeżeli wystąpił błąd wejścia/wyjścia podczas pisania do pliku
      */
@@ -180,6 +191,7 @@ public class Graph {
 
     /**
      * Oblicza liczbę spójnych grafów w siatce przy użyciu algorytmu przeszukiwania wszerz.
+     *
      * @see BreadthFirstSearch
      */
     public void calculateSubraphCount() {
