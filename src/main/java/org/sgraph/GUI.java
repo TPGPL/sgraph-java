@@ -304,6 +304,9 @@ public class GUI extends Application {
                 return;
             }
 
+            if (graph.getSubgraphCount() != 1)
+                System.out.println("Graph is not connected - detected fragments: " + graph.getSubgraphCount());
+
             pf = null; // clearing PathFinder from previous usages;
             setNodeRangeLabels();
             setEdgeRangeLabels();
@@ -335,6 +338,9 @@ public class GUI extends Application {
                 System.err.println("Failed to load a graph from a file - error message: " + e.getMessage());
                 return;
             }
+
+            if (graph.getSubgraphCount() != 1)
+                System.out.println("Graph is not connected - detected fragments: " + graph.getSubgraphCount());
 
             pf = null; // clearing up PathFinder from previous graph usages
             setNodeRangeLabels();
