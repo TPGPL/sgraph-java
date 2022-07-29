@@ -32,68 +32,12 @@ import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.sgraph.GraphGenerator.getDirection;
+import static org.sgraph.Properties.*;
 
 /**
  * Klasa odpowiadająca za interfejs graficzny aplikacji i przetwarzanie zdarzeń w programie.
  */
 public class GUI extends Application {
-    /**
-     * Szerokość okna aplikacji.
-     */
-    private static final int WINDOW_WIDTH = 700;
-    /**
-     * Wysokość okna aplikacji.
-     */
-    private static final int WINDOW_HEIGHT = 900;
-    /**
-     * Wymiar kwadratowej przestrzeni na rysowanie grafu.
-     */
-    private static final int CANVAS_RESOLUTION = 700;
-    /**
-     * Odległość między elementami interfejsu graficznego.
-     */
-    private static final double PADDING = 10.0;
-    /**
-     * Wysokość elementów interfejsu graficznego (przyciski, pola tekstowe).
-     */
-    private static final int ITEM_HEIGHT = 30;
-    /**
-     * Wysokość dużego elementu interfejsu graficznego (dwa razy większa niż normalna).
-     */
-    private static final int BIG_ITEM_HEIGHT = 2 * ITEM_HEIGHT + (int) PADDING;
-    /**
-     * Szerokość elementów interfejsu graficznego.
-     */
-    private static final int ITEM_WIDTH = 105;
-    /**
-     * Domyslna liczba kolumn w siatce.
-     */
-    private static final int DEFAULT_COLUMN_COUNT = 10;
-    /**
-     * Domyślna liczba wierszy w siatce.
-     */
-    private static final int DEFAULT_ROW_COUNT = 10;
-    /**
-     * Domyślna liczba spójnych grafów w siatce.
-     */
-    private static final int DEFAULT_SUBGRAPH_COUNT = 1;
-    /**
-     * Domyślny zakres wartości wag na krawędziach.
-     */
-    private static final String DEFAULT_WEIGHT_RANGE = "0-1";
-    /**
-     * Stosunek szerokości krawędzi do promienia wierzchołka.
-     */
-    private static final double LINE_WIDTH_PROPORTION = 2.0 / 3.0;
-    /**
-     * Stosunek długości krawędzi do promienia wierzchołka.
-     */
-    private static final double LINE_LENGTH_PROPORTION = 4.0;
-    /**
-     * Domyślna nazwa pliku wyjściowego.
-     */
-    private static final String DEFAULT_FILE_NAME = "graph.txt";
-
     /**
      * Obiekt przechowujący aktualnie wygenerowany graf.
      */
