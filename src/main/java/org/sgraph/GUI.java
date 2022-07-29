@@ -650,14 +650,14 @@ public class GUI extends Application {
      * @param clickedNode wierzchołek do którego zostanie narysowana droga
      */
     private void drawPath(Node clickedNode) {
-        gc.setFill(Color.DARKSLATEGREY);
+        gc.setFill(Color.DARKSLATEGRAY);
 
         // scale
         double ovalR = graph.getColumnCount() > graph.getRowCount() ? (CANVAS_RESOLUTION - 2 * PADDING) / (2 * graph.getColumnCount() + (LINE_LENGTH_PROPORTION - 2.0) * (graph.getColumnCount() - 1)) : (CANVAS_RESOLUTION - 2 * PADDING) / (2 * graph.getRowCount() + (LINE_LENGTH_PROPORTION - 2.0) * (graph.getRowCount() - 1));
 
         double edgeLength = LINE_LENGTH_PROPORTION * ovalR; // edge length
 
-        gc.setStroke(Color.DARKSLATEGREY);
+        gc.setStroke(Color.DARKSLATEGRAY);
         gc.setLineWidth(LINE_WIDTH_PROPORTION * ovalR);
 
         LinkedList<Integer> path = pf.getIndexPathToNode(clickedNode);
