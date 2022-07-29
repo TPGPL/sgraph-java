@@ -25,14 +25,6 @@ public class Properties {
      */
     public static final int ITEM_HEIGHT = 30;
     /**
-     * Wysokość dużego elementu interfejsu graficznego (dwa razy większa niż normalna).
-     */
-    public static final int BIG_ITEM_HEIGHT = 2 * ITEM_HEIGHT + (int) PADDING;
-    /**
-     * Szerokość elementów interfejsu graficznego.
-     */
-    public static final int ITEM_WIDTH = 105;
-    /**
      * Domyslna liczba kolumn w siatce.
      */
     public static final int DEFAULT_COLUMN_COUNT = 10;

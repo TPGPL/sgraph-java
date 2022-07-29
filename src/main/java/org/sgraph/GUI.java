@@ -3,7 +3,6 @@ package org.sgraph;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -29,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.sgraph.GraphGenerator.getDirection;
@@ -109,31 +109,13 @@ public class GUI extends Application {
         // text labels
 
         Label labelColumnTextField = new Label("# of columns");
-        labelColumnTextField.setPrefWidth(ITEM_WIDTH);
-        labelColumnTextField.setPrefHeight(ITEM_HEIGHT);
-        labelColumnTextField.setAlignment(Pos.CENTER);
-
         Label labelRowTextField = new Label("# of rows");
-        labelRowTextField.setPrefWidth(ITEM_WIDTH);
-        labelRowTextField.setPrefHeight(ITEM_HEIGHT);
-        labelRowTextField.setAlignment(Pos.CENTER);
-
         Label labelSubgraphTextField = new Label("# of subgraphs");
-        labelSubgraphTextField.setPrefWidth(ITEM_WIDTH);
-        labelSubgraphTextField.setPrefHeight(ITEM_HEIGHT);
-        labelSubgraphTextField.setAlignment(Pos.CENTER);
-
         Label labelRangeTextField = new Label("Weight range");
-        labelRangeTextField.setPrefWidth(ITEM_WIDTH);
-        labelRangeTextField.setPrefHeight(ITEM_HEIGHT);
-        labelRangeTextField.setAlignment(Pos.CENTER);
 
         // text fields
 
         textFieldColumnCount = new TextField(Integer.toString(DEFAULT_COLUMN_COUNT));
-        textFieldColumnCount.setPrefWidth(ITEM_WIDTH);
-        textFieldColumnCount.setPrefHeight(ITEM_HEIGHT);
-        textFieldColumnCount.setAlignment(Pos.CENTER);
 
         validator.createCheck()
                 .dependsOn("column", textFieldColumnCount.textProperty())
@@ -149,9 +131,6 @@ public class GUI extends Application {
                 .immediate();
 
         textFieldRowCount = new TextField(Integer.toString(DEFAULT_ROW_COUNT));
-        textFieldRowCount.setPrefWidth(ITEM_WIDTH);
-        textFieldRowCount.setPrefHeight(ITEM_HEIGHT);
-        textFieldRowCount.setAlignment(Pos.CENTER);
 
         validator.createCheck()
                 .dependsOn("row", textFieldRowCount.textProperty())
@@ -167,9 +146,6 @@ public class GUI extends Application {
                 .immediate();
 
         textFieldSubgraphCount = new TextField(Integer.toString(DEFAULT_SUBGRAPH_COUNT));
-        textFieldSubgraphCount.setPrefWidth(ITEM_WIDTH);
-        textFieldSubgraphCount.setPrefHeight(ITEM_HEIGHT);
-        textFieldSubgraphCount.setAlignment(Pos.CENTER);
 
         validator.createCheck()
                 .dependsOn("subgraph", textFieldSubgraphCount.textProperty())
@@ -185,9 +161,6 @@ public class GUI extends Application {
                 .immediate();
 
         textFieldWeightRange = new TextField(DEFAULT_WEIGHT_RANGE);
-        textFieldWeightRange.setPrefWidth(ITEM_WIDTH);
-        textFieldWeightRange.setPrefHeight(ITEM_HEIGHT);
-        textFieldWeightRange.setAlignment(Pos.CENTER);
 
         validator.createCheck()
                 .dependsOn("range", textFieldWeightRange.textProperty())
@@ -214,6 +187,8 @@ public class GUI extends Application {
 
         // buttons
         Button buttonGenerate = new Button("Generate");
+        buttonGenerate.getStyleClass().add("big-button");
+
         buttonGenerate.setOnAction(actionEvent -> {
             int col, row, sub;
             double min, max;
@@ -257,9 +232,6 @@ public class GUI extends Application {
 
             draw(graph.getColumnCount(), graph.getRowCount());
         });
-        buttonGenerate.setPrefWidth(ITEM_WIDTH);
-        buttonGenerate.setPrefHeight(BIG_ITEM_HEIGHT);
-        buttonGenerate.setAlignment(Pos.CENTER);
 
         TooltipWrapper<Button> generateButtonWrapper = new TooltipWrapper<>(
                 buttonGenerate,
@@ -292,9 +264,6 @@ public class GUI extends Application {
 
             draw(graph.getColumnCount(), graph.getRowCount());
         });
-        buttonFileOpen.setPrefWidth(ITEM_WIDTH);
-        buttonFileOpen.setPrefHeight(ITEM_HEIGHT);
-        buttonFileOpen.setAlignment(Pos.CENTER);
 
         Button buttonFileSave = new Button("Save to file...");
         buttonFileSave.setOnAction(actionEvent -> {
@@ -314,9 +283,6 @@ public class GUI extends Application {
                 System.err.println("Failed to save a graph to file - error message: " + e.getMessage());
             }
         });
-        buttonFileSave.setPrefWidth(ITEM_WIDTH);
-        buttonFileSave.setPrefHeight(ITEM_HEIGHT);
-        buttonFileSave.setAlignment(Pos.CENTER);
 
         VBox buttonBox = new VBox(PADDING, buttonFileOpen, buttonFileSave);
 
@@ -374,36 +340,24 @@ public class GUI extends Application {
         // bottom bar
 
         labelEdgeRangeMin = new Label("MIN");
-        labelEdgeRangeMin.setAlignment(Pos.BOTTOM_LEFT);
-        labelEdgeRangeMin.setPrefHeight(ITEM_HEIGHT);
-        labelEdgeRangeMin.setPrefWidth(WINDOW_WIDTH / 3.0);
+        labelEdgeRangeMin.getStyleClass().addAll("wide-label", "edge-min");
 
         labelEdgeRangeMax = new Label("MAX");
-        labelEdgeRangeMax.setAlignment(Pos.BOTTOM_RIGHT);
-        labelEdgeRangeMax.setPrefHeight(ITEM_HEIGHT);
-        labelEdgeRangeMax.setPrefWidth(WINDOW_WIDTH / 3.0);
+        labelEdgeRangeMax.getStyleClass().addAll("wide-label", "edge-max");
 
         Label labelEdgeRangeTitle = new Label("Edge color scale");
-        labelEdgeRangeTitle.setAlignment(Pos.BOTTOM_CENTER);
-        labelEdgeRangeTitle.setPrefHeight(ITEM_HEIGHT);
-        labelEdgeRangeTitle.setPrefWidth(WINDOW_WIDTH / 3.0);
+        labelEdgeRangeTitle.getStyleClass().addAll("wide-label", "edge-text");
 
         HBox edgeRangeContainer = new HBox(0, labelEdgeRangeMin, labelEdgeRangeTitle, labelEdgeRangeMax);
 
         labelNodeRangeMin = new Label("MIN");
-        labelNodeRangeMin.setAlignment(Pos.TOP_LEFT);
-        labelNodeRangeMin.setPrefHeight(ITEM_HEIGHT);
-        labelNodeRangeMin.setPrefWidth(WINDOW_WIDTH / 3.0);
+        labelNodeRangeMin.getStyleClass().addAll("wide-label", "node-min");
 
         labelNodeRangeMax = new Label("MAX");
-        labelNodeRangeMax.setAlignment(Pos.TOP_RIGHT);
-        labelNodeRangeMax.setPrefHeight(ITEM_HEIGHT);
-        labelNodeRangeMax.setPrefWidth(WINDOW_WIDTH / 3.0);
+        labelNodeRangeMax.getStyleClass().addAll("wide-label", "node-max");
 
         Label labelNodeRangeTitle = new Label("Node color scale");
-        labelNodeRangeTitle.setAlignment(Pos.TOP_CENTER);
-        labelNodeRangeTitle.setPrefHeight(ITEM_HEIGHT);
-        labelNodeRangeTitle.setPrefWidth(WINDOW_WIDTH / 3.0);
+        labelNodeRangeTitle.getStyleClass().addAll("wide-label", "node-text");
 
         HBox nodeRangeContainer = new HBox(0, labelNodeRangeMin, labelNodeRangeTitle, labelNodeRangeMax);
 
@@ -414,7 +368,12 @@ public class GUI extends Application {
 
         root.getChildren().addAll(topBar, canvas, bottomBar);
 
-        stage.setScene(new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT));
+        Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles/buttons.css")).toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles/labels.css")).toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles/text-fields.css")).toExternalForm());
+
+        stage.setScene(scene);
         stage.show();
     }
 
