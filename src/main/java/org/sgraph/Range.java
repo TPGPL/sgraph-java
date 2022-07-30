@@ -20,11 +20,11 @@ public class Range {
      *
      * @param min lewa granica zakresu wartości
      * @param max prawa granica zakresu wartości
-     * @throws IllegalArgumentException jeżeli lewa granica zakresu jest ujemna
+     * @throws IllegalArgumentException jeżeli lewa granica zakresu jest ujemna lub prawa granica jest mniejsza od lewej
      */
     public Range(double min, double max) {
-        if (min < 0)
-            throw new IllegalArgumentException("Range: MIN must be non-negative.");
+        if (min < 0 || max < min)
+            throw new IllegalArgumentException("Range: MIN must be non-negative and not higher than MAX.");
 
         this.min = min;
         this.max = max;
@@ -61,10 +61,7 @@ public class Range {
         if (value < min || value > max)
             throw new IllegalArgumentException("Range: Value must be in range bounds.");
 
-        if (min == max) // prevents 0-0 range as well
-            return Color.hsb(0, 1, 1, 1);
-
-        return Color.hsb((1 - (value - min) / (max - min)) * 240, 1, 1, 1);
+        return min != max ? Color.hsb((1 - (value - min) / (max - min)) * 240, 1, 1, 1) : Color.hsb(0, 1, 1, 1);
     }
 
     /**
