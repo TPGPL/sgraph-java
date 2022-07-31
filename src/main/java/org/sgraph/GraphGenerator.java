@@ -113,21 +113,21 @@ public class GraphGenerator {
         // removing connections on path
         if (way.size() == 2) { // if there are only two nodes in path
             if (g.getNode(way.get(0)).getAdherentNumber() == 1 && g.getNode(way.get(1)).getAdherentNumber() == 1) { // if they are only connected to each other
-                g.removeConnection(g.getNode(way.get(0)), g.getNode(way.get(1)));
+                g.removeConnection(way.get(0), way.get(1));
             } else { // if they are connected to other nodes
                 while (g.getNode(way.get(0)).getAdherentNumber() > 1) {
                     if (g.getNode(way.get(0)).getConnectedNodes().get(0).getIndex() != way.get(1)) {
-                        g.removeConnection(g.getNode(way.get(0)), g.getNode(way.get(0)).getConnectedNodes().get(0));
+                        g.removeConnection(way.get(0), g.getNode(way.get(0)).getConnectedNodes().get(0).getIndex());
                     } else {
-                        g.removeConnection(g.getNode(way.get(0)), g.getNode(way.get(0)).getConnectedNodes().get(1));
+                        g.removeConnection(way.get(0), g.getNode(way.get(0)).getConnectedNodes().get(1).getIndex());
                     }
                 }
 
                 while (g.getNode(way.get(1)).getAdherentNumber() > 1) {
                     if (g.getNode(way.get(1)).getConnectedNodes().get(1).getIndex() != way.get(0)) {
-                        g.removeConnection(g.getNode(way.get(1)), g.getNode(way.get(1)).getConnectedNodes().get(0));
+                        g.removeConnection(way.get(1), g.getNode(way.get(1)).getConnectedNodes().get(0).getIndex());
                     } else {
-                        g.removeConnection(g.getNode(way.get(1)), g.getNode(way.get(1)).getConnectedNodes().get(1));
+                        g.removeConnection(way.get(1), g.getNode(way.get(1)).getConnectedNodes().get(1).getIndex());
                     }
                 }
             }
@@ -146,7 +146,7 @@ public class GraphGenerator {
                 return;
             }
 
-            g.removeConnection(g.getNode(w), g.getNode(slice));
+            g.removeConnection(w, slice);
             w = next_w;
 
             // the rest of the path
@@ -160,21 +160,21 @@ public class GraphGenerator {
                     slice = w + g.getColumnCount();
                 } else if ((next_move == Move.UP || next_move == Move.DOWN)) { // slices to the bottom, then to the left
                     slice = w - 1;
-                    g.removeConnection(g.getNode(w), g.getNode(w + g.getColumnCount()));
+                    g.removeConnection(w, w + g.getColumnCount());
                 } else if ((next_move == Move.LEFT || next_move == Move.RIGHT)) { // slices to the left, then to the bottom
                     slice = 3;
-                    g.removeConnection(g.getNode(w), g.getNode(w - 1));
+                    g.removeConnection(w, w - 1);
                 } else {
                     System.err.println("GraphGenerator: An unexpected error occured while slicing the graph into subgraphs.");
                     return;
                 }
-                g.removeConnection(g.getNode(w), g.getNode(slice));
+                g.removeConnection(w, slice);
                 w = next_w;
                 move = next_move;
             }
 
             // final step
-            g.removeConnection(g.getNode(next_w), g.getNode(slice));
+            g.removeConnection(next_w, slice);
         }
     }
 

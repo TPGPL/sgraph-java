@@ -145,12 +145,18 @@ public class Graph {
     }
 
     /**
-     * Usuwa połączenie między dwoma wierzchołkami.
+     * Usuwa połączenie między dwoma wierzchołkami o podanych indeksach.
      *
-     * @param node1 pierwszy wierzchołek połączenia
-     * @param node2 drugi wierzchołek połączenia
+     * @param firstNodeIndex indeks pierwszego wierzchołka połączenia
+     * @param secondNodeIndex indeks drugiego wierzchołka połączenia
      */
-    public void removeConnection(Node node1, Node node2) {
+    public void removeConnection(int firstNodeIndex, int secondNodeIndex) {
+        if (isIndexNotInBounds(firstNodeIndex) || isIndexNotInBounds(secondNodeIndex))
+            throw new IllegalArgumentException("Graph: Attempted to remove a connection between nodes of invalid indexes.");
+
+        Node node1 = getNode(firstNodeIndex);
+        Node node2 = getNode(secondNodeIndex);
+
         node1.removeConnection(node2);
         node2.removeConnection(node1);
     }
@@ -242,5 +248,16 @@ public class Graph {
         }
 
         edgeValueRange = (max == -1) ? new Range(0, 0) : new Range(min, max);
+    }
+
+    /**
+     * Sprawdza, czy wierzchołek o podanym indeksie nie znajduje się w grafie.
+     *
+     * @param nodeIndex indeks sprawdzanego wierzchołka
+     * @return wartość logiczną, czy wierzchołek o podanym indeksie nie znajduje się w grafie
+     */
+    private boolean isIndexNotInBounds(int nodeIndex)
+    {
+        return nodeIndex < 0 || nodeIndex >= getNodeCount();
     }
 }
