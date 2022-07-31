@@ -60,10 +60,10 @@ public class GraphGenerator {
 
         for (int i = 0; i < g.getNodeCount(); i++) {
             if (i % columnCount + 1 != columnCount) // if node is not in the last column
-                g.addConnection(g.getNode(i), g.getNode(i + 1), r.nextDouble(min, max));
+                g.addConnection(i, i + 1, r.nextDouble(min, max));
 
             if ((i - i % columnCount) / columnCount + 1 != rowCount) // if node is not in the last row
-                g.addConnection(g.getNode(i), g.getNode(i + columnCount), r.nextDouble(min, max));
+                g.addConnection(i, i + columnCount, r.nextDouble(min, max));
         }
 
         g.calculateSubraphCount();

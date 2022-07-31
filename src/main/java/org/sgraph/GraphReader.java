@@ -69,7 +69,7 @@ public class GraphReader {
                 throw new InputMismatchException("GraphReader: Incorrect node connection values in line " + (i + 1));
 
             for (int j = 0; j < convertedLine.size(); j += 2) {
-                g.addConnection(g.getNode(i), g.getNode(convertedLine.get(j).intValue()), convertedLine.get(j + 1));
+                g.addConnection(i, convertedLine.get(j).intValue(), convertedLine.get(j + 1));
             }
         }
         if (file_scanner.hasNextDouble())

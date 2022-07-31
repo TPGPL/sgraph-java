@@ -118,12 +118,18 @@ public class Graph {
     /**
      * Dodaje połączenie o określonej wadze między dwoma wierzchołkami w grafie.
      *
-     * @param node1 pierwszy wierzchołek połączenia
-     * @param node2 drugi wierzchołek połączenia
+     * @param firstNodeIndex indeks pierwszego wierzchołka połączenia
+     * @param secondNodeIndex indeks drugiego wierzchołka połączenia
      * @param edge  wartość wagi na krawędzi połączenia
      * @throws IllegalArgumentException jeżeli wierzchołki nie mogą ze sobą sąsiadować w takim grafie, wartość wagi jest niedodatnia, istnieje już połączenie między tymi wierzchołkami o innej wadze
      */
-    public void addConnection(Node node1, Node node2, double edge) throws IllegalArgumentException {
+    public void addConnection(int firstNodeIndex, int secondNodeIndex, double edge) throws IllegalArgumentException {
+        if (isIndexNotInBounds(firstNodeIndex) || isIndexNotInBounds(secondNodeIndex))
+            throw new IllegalArgumentException("Graph: Attempted to remove a connection between nodes of invalid indexes.");
+
+        Node node1 = getNode(firstNodeIndex);
+        Node node2 = getNode(secondNodeIndex);
+
         if (!canNodesAdhere(node1, node2))
             throw new IllegalArgumentException(String.format("Graph: Nodes %d and %d cannot adhere in a %dx%d graph.", node1.getIndex(), node2.getIndex(), rowCount, columnCount));
 
