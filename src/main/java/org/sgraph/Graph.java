@@ -118,9 +118,9 @@ public class Graph {
     /**
      * Dodaje połączenie o określonej wadze między dwoma wierzchołkami w grafie.
      *
-     * @param firstNodeIndex indeks pierwszego wierzchołka połączenia
+     * @param firstNodeIndex  indeks pierwszego wierzchołka połączenia
      * @param secondNodeIndex indeks drugiego wierzchołka połączenia
-     * @param edge  wartość wagi na krawędzi połączenia
+     * @param edge            wartość wagi na krawędzi połączenia
      * @throws IllegalArgumentException jeżeli wierzchołki nie mogą ze sobą sąsiadować w takim grafie, wartość wagi jest niedodatnia, istnieje już połączenie między tymi wierzchołkami o innej wadze
      */
     public void addConnection(int firstNodeIndex, int secondNodeIndex, double edge) throws IllegalArgumentException {
@@ -153,7 +153,7 @@ public class Graph {
     /**
      * Usuwa połączenie między dwoma wierzchołkami o podanych indeksach.
      *
-     * @param firstNodeIndex indeks pierwszego wierzchołka połączenia
+     * @param firstNodeIndex  indeks pierwszego wierzchołka połączenia
      * @param secondNodeIndex indeks drugiego wierzchołka połączenia
      */
     public void removeConnection(int firstNodeIndex, int secondNodeIndex) {
@@ -175,10 +175,11 @@ public class Graph {
      * @return true, jeżeli wierzchołki mogą ze sobą sąsiadować; w przeciwnym razie zwraca false
      */
     private boolean canNodesAdhere(Node node1, Node node2) {
-        int row1 = (node1.getIndex() - node1.getIndex() % columnCount) / columnCount + 1;
-        int row2 = (node2.getIndex() - node2.getIndex() % columnCount) / columnCount + 1;
-        int col1 = node1.getIndex() % columnCount + 1;
-        int col2 = node2.getIndex() % columnCount + 1;
+        int row1 = getNodeRowNumber(node1.getIndex());
+        int row2 = getNodeRowNumber(node2.getIndex());
+
+        int col1 = getNodeColumnNumber(node1.getIndex());
+        int col2 = getNodeColumnNumber(node2.getIndex());
 
         return Math.abs(row1 - row2) == 1 || Math.abs(col1 - col2) == 1;
     }
@@ -224,36 +225,33 @@ public class Graph {
      */
     public void calculateEdgeValueRange() {
         double min = Double.MAX_VALUE;
-        double max = -1;
+        double max = 0;
         double edge;
 
         for (Node n : nodes) {
-            if (n.getIndex() % columnCount + 1 != columnCount) {
-                if (n.hasConnection(getNode(n.getIndex() + 1))) {
-                    edge = n.getEdgeOnConnection(getNode(n.getIndex() + 1));
+            if (getNodeColumnNumber(n.getIndex()) != columnCount) {
+                edge = n.getEdgeOnConnection(getNode(n.getIndex() + 1));
 
-                    if (edge > max)
-                        max = edge;
+                if (edge > max)
+                    max = edge;
 
-                    if (edge < min)
-                        min = edge;
-                }
+                if (edge != 0 && edge < min)
+                    min = edge;
+
             }
 
-            if ((n.getIndex() - n.getIndex() % columnCount) / columnCount + 1 != rowCount) {
-                if (n.hasConnection(getNode(n.getIndex() + columnCount))) {
-                    edge = n.getEdgeOnConnection(getNode(n.getIndex() + columnCount));
+            if (getNodeRowNumber(n.getIndex()) != rowCount) {
+                edge = n.getEdgeOnConnection(getNode(n.getIndex() + columnCount));
 
-                    if (edge > max)
-                        max = edge;
+                if (edge > max)
+                    max = edge;
 
-                    if (edge < min)
-                        min = edge;
-                }
+                if (edge != 0 && edge < min)
+                    min = edge;
             }
         }
 
-        edgeValueRange = (max == -1) ? new Range(0, 0) : new Range(min, max);
+        edgeValueRange = (max == 0) ? new Range(0, 0) : new Range(min, max);
     }
 
     /**
@@ -265,5 +263,27 @@ public class Graph {
     private boolean isIndexNotInBounds(int nodeIndex)
     {
         return nodeIndex < 0 || nodeIndex >= getNodeCount();
+    }
+
+    /**
+     * Zwraca numer wiersza, w której znajduje się wierzchołek o określonym indeksie.
+     *
+     * @param nodeIndex indeks sprawdzanego wierzchołka
+     * @return numer wiersza, w której znajduje się wierzchołek
+     */
+    private int getNodeRowNumber(int nodeIndex)
+    {
+        return (nodeIndex - nodeIndex % columnCount) / columnCount + 1;
+    }
+
+    /**
+     * Zwraca numer kolumny, w której znajduje się wierzchołek o określonym indeksie.
+     *
+     * @param nodeIndex indeks sprawdzanego wierzchołka
+     * @return numer kolumny, w której znajduje się wierzchołek
+     */
+    private int getNodeColumnNumber(int nodeIndex)
+    {
+        return nodeIndex % columnCount + 1;
     }
 }
