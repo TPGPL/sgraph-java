@@ -80,7 +80,7 @@ public class Node {
 
     /**
      * Zwraca wartość wagi na krawędzi połączenia z przekazanym wierzchołkiem.
-     * Jeżeli nie istnieje połączenie z wierzchołkiem, zwraca -1.
+     * Jeżeli nie istnieje połączenie z wierzchołkiem, zwraca 0.
      *
      * @param node sprawdzany wierzchołek
      * @return wartość wagi na krawędzi połączenia z wierzchołkiem
