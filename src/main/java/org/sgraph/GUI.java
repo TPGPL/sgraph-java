@@ -216,7 +216,7 @@ public class GUI extends Application {
             }
 
             try {
-                graph = GraphGenerator.generate(col, row, sub, min, max);
+                graph = GraphGenerator.generateGraph(col, row, sub, min, max);
             } catch (Exception e) // if graph generation still SOMEHOW failed
             {
                 System.err.println("Graph generation failed - error message: " + e.getMessage());

@@ -49,35 +49,37 @@ public class GraphGenerator {
      * @return graf wygenerowany na podstawie danych wejściowych
      * @throws IllegalArgumentException jeżeli liczba spójnych grafów jest niedodatnia lub większa od liczby wierzchołków, MIN jest ujemne lub mniejsze od MAX
      */
-    public static Graph generate(int columnCount, int rowCount, int subgraphCount, double min, double max) {
-        Graph g = new Graph(columnCount, rowCount);
+    public static Graph generateGraph(int columnCount, int rowCount, int subgraphCount, double min, double max) {
+        Graph graph = new Graph(columnCount, rowCount);
+        Random rand = new Random();
+        Range edgeRange = new Range(min, max);
 
-        if (subgraphCount <= 0 || subgraphCount > g.getNodeCount())
+        if (subgraphCount <= 0 || subgraphCount > graph.getNodeCount())
             throw new IllegalArgumentException("GraphGenerator: The number of subgraphs must be positive and lower than the total number of nodes.");
 
-        if (min < 0 || max <= min)
-            throw new IllegalArgumentException("GraphGenerator: Invalid edge value range. MIN must be non-negative and lower than MAX.");
+        if (min == max)
+            throw new IllegalArgumentException("GraphGenerator: Invalid edge value range. MIN must not be equal to MAX.");
 
-        for (int i = 0; i < g.getNodeCount(); i++) {
+        for (int i = 0; i < graph.getNodeCount(); i++) {
             if (i % columnCount + 1 != columnCount) // if node is not in the last column
-                g.addConnection(i, i + 1, r.nextDouble(min, max));
+                graph.addConnection(i, i + 1, rand.nextDouble(edgeRange.getMin(), edgeRange.getMax()));
 
             if ((i - i % columnCount) / columnCount + 1 != rowCount) // if node is not in the last row
-                g.addConnection(i, i + columnCount, r.nextDouble(min, max));
+                graph.addConnection(i, i + columnCount, rand.nextDouble(edgeRange.getMin(), edgeRange.getMax()));
         }
 
-        g.calculateSubraphCount();
+        graph.calculateSubraphCount();
 
         if (subgraphCount != 1) {
-            while (subgraphCount > g.getSubgraphCount()) {
-                divide(g);
-                g.calculateSubraphCount();
+            while (subgraphCount > graph.getSubgraphCount()) {
+                divide(graph);
+                graph.calculateSubraphCount();
             }
         }
 
-        g.calculateEdgeValueRange();
+        graph.calculateEdgeValueRange();
 
-        return g;
+        return graph;
     }
 
     /**
