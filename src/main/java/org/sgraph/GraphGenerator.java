@@ -3,6 +3,9 @@ package org.sgraph;
 import java.util.ArrayList;
 import java.util.Random;
 
+import static org.sgraph.Move.getDirection;
+import static org.sgraph.Move.MoveDirection;
+
 /**
  * Klasa zawierająca statyczne metody pozwalające na wygenerowanie grafu na podstawie parametrów wejściowych.
  */
@@ -12,31 +15,6 @@ public class GraphGenerator {
      */
     private static final Random r = new Random();
 
-    /**
-     * Typ wyliczeniowy reprezentujący możliwe przejścia między wierzchołkami w grafie.
-     */
-    public enum Move {
-        /**
-         * Ruch w górę.
-         */
-        UP,
-        /**
-         * Ruch w lewo.
-         */
-        LEFT,
-        /**
-         * Ruch w prawo.
-         */
-        RIGHT,
-        /**
-         * Ruch w dół.
-         */
-        DOWN,
-        /**
-         * Brak ruchu.
-         */
-        NO_MOVE
-    }
 
     /**
      * Generuje graf-siatkę na podstawie podanych parametrów wejściowych
@@ -90,7 +68,7 @@ public class GraphGenerator {
     private static void divide(Graph g) {
         ArrayList<Integer> way = new ArrayList<>();
         int w, next_w, slice;
-        Move move, next_move;
+        MoveDirection move, next_move;
 
         // find the starting node
         do {
@@ -139,9 +117,9 @@ public class GraphGenerator {
             next_w = way.get(1);
             move = getDirection(w, next_w, g.getColumnCount(), g.getRowCount());
 
-            if (move == Move.UP || move == Move.DOWN) { // slices to the left
+            if (move == MoveDirection.UP || move == MoveDirection.DOWN) { // slices to the left
                 slice = w - 1;
-            } else if (move == Move.LEFT || move == Move.RIGHT) { // slices to the bottom
+            } else if (move == MoveDirection.LEFT || move == MoveDirection.RIGHT) { // slices to the bottom
                 slice = w + g.getColumnCount();
             } else {
                 System.err.println("GraphGenerator: An unexpected error occured while slicing the graph into subgraphs.");
@@ -156,14 +134,14 @@ public class GraphGenerator {
                 next_w = way.get(i);
                 next_move = getDirection(w, next_w, g.getColumnCount(), g.getRowCount());
 
-                if ((next_move == Move.UP || next_move == Move.DOWN) && next_move == move) { // slices to the left
+                if ((next_move == MoveDirection.UP || next_move == MoveDirection.DOWN) && next_move == move) { // slices to the left
                     slice = w - 1;
-                } else if ((next_move == Move.LEFT || next_move == Move.RIGHT) && next_move == move) { // slices to the bottom
+                } else if ((next_move == MoveDirection.LEFT || next_move == MoveDirection.RIGHT) && next_move == move) { // slices to the bottom
                     slice = w + g.getColumnCount();
-                } else if ((next_move == Move.UP || next_move == Move.DOWN)) { // slices to the bottom, then to the left
+                } else if ((next_move == MoveDirection.UP || next_move == MoveDirection.DOWN)) { // slices to the bottom, then to the left
                     slice = w - 1;
                     g.removeConnection(w, w + g.getColumnCount());
-                } else if ((next_move == Move.LEFT || next_move == Move.RIGHT)) { // slices to the left, then to the bottom
+                } else if ((next_move == MoveDirection.LEFT || next_move == MoveDirection.RIGHT)) { // slices to the left, then to the bottom
                     slice = 3;
                     g.removeConnection(w, w - 1);
                 } else {
@@ -178,27 +156,5 @@ public class GraphGenerator {
             // final step
             g.removeConnection(next_w, slice);
         }
-    }
-
-    /**
-     * Zwraca kierunek przejścia z jednego wierzchołka do drugiego.
-     *
-     * @param position    indeks wierzchołka przed przejściem
-     * @param n_position  indeks wierzchołka po przejściu
-     * @param columnCount liczba kolumn w siatce
-     * @param rowCount    liczba wierszy w siatce
-     * @return kierunek przejścia w postaci elementu typu wyliczającego Move
-     */
-    public static Move getDirection(int position, int n_position, int columnCount, int rowCount) {
-        if (position - columnCount > -1 && position - columnCount == n_position)
-            return Move.UP;
-        else if (position - 1 == n_position && position / columnCount == n_position / columnCount)
-            return Move.LEFT;
-        else if (position + 1 == n_position && position / columnCount == n_position / columnCount)
-            return Move.RIGHT;
-        else if (position + columnCount < rowCount * columnCount && position + columnCount == n_position)
-            return Move.DOWN;
-        else
-            return Move.NO_MOVE;
     }
 }

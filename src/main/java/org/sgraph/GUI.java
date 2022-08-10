@@ -31,7 +31,7 @@ import java.util.LinkedList;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.sgraph.GraphGenerator.getDirection;
+import static org.sgraph.Move.*;
 import static org.sgraph.Properties.*;
 
 /**
@@ -570,7 +570,7 @@ public class GUI extends Application {
             return;
         }
 
-        GraphGenerator.Move move;
+        MoveDirection move;
         int x = path.get(0) % graph.getColumnCount();
         int y = path.get(0) / graph.getColumnCount();
 
@@ -580,16 +580,16 @@ public class GUI extends Application {
         for (int i = 1; i < path.size(); i++) {
             move = getDirection(path.get(i - 1), path.get(i), graph.getColumnCount(), graph.getRowCount());
 
-            if (move == GraphGenerator.Move.DOWN) {
+            if (move == MoveDirection.DOWN) {
                 gc.moveTo(PADDING + ovalR + x * edgeLength, PADDING + ovalR + y * edgeLength);
                 gc.lineTo(PADDING + ovalR + x * edgeLength, PADDING + ovalR + y * edgeLength + edgeLength);
-            } else if (move == GraphGenerator.Move.UP) {
+            } else if (move == MoveDirection.UP) {
                 gc.moveTo(PADDING + ovalR + x * edgeLength, PADDING + ovalR + y * edgeLength);
                 gc.lineTo(PADDING + ovalR + x * edgeLength, PADDING + ovalR + y * edgeLength - edgeLength);
-            } else if (move == GraphGenerator.Move.RIGHT) {
+            } else if (move == MoveDirection.RIGHT) {
                 gc.moveTo(PADDING + ovalR + x * edgeLength, PADDING + ovalR + y * edgeLength);
                 gc.lineTo(PADDING + ovalR + x * edgeLength + edgeLength, PADDING + ovalR + y * edgeLength);
-            } else if (move == GraphGenerator.Move.LEFT) {
+            } else if (move == MoveDirection.LEFT) {
                 gc.moveTo(PADDING + ovalR + x * edgeLength, PADDING + ovalR + y * edgeLength);
                 gc.lineTo(PADDING + ovalR + x * edgeLength - edgeLength, PADDING + ovalR + y * edgeLength);
             } else {
