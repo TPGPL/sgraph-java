@@ -5,6 +5,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
+
+import static org.sgraph.Move.getDirection;
+import static org.sgraph.Move.MoveDirection;
 
 /**
  * Klasa odpowiadająca za przechowywanie informacji o grafie-siatce i zarządzanie jego elementami.
@@ -285,5 +289,103 @@ public class Graph {
     private int getNodeColumnNumber(int nodeIndex)
     {
         return nodeIndex % columnCount + 1;
+    }
+
+    /**
+     * Wydziela w siatce osobny spójny graf w sposób losowy.
+     */
+    public void split() {
+        ArrayList<Integer> way = new ArrayList<>();
+        int w, next_w, slice;
+        MoveDirection move, next_move;
+
+        Random rand = new Random();
+
+        // find the starting node
+        do {
+            w = rand.nextInt(getNodeCount());
+        } while (getNode(w).getAdherentNumber() == 4 || getNode(w).getAdherentNumber() == 0);
+
+        way.add(w);
+
+        // start creating a slicing path
+
+        do {
+            next_w = getNode(w).getConnectedNodes().get(rand.nextInt(getNode(w).getAdherentNumber())).getIndex(); // draws a random adherent node
+
+            if (way.contains(next_w))
+                return; // the path crosssed -> dividing starts from the beginning
+
+            way.add(next_w);
+            w = next_w;
+
+        } while (getNode(w).getAdherentNumber() == 4);
+
+        // removing connections on path
+        if (way.size() == 2) { // if there are only two nodes in path
+            if (getNode(way.get(0)).getAdherentNumber() == 1 && getNode(way.get(1)).getAdherentNumber() == 1) { // if they are only connected to each other
+                removeConnection(way.get(0), way.get(1));
+            } else { // if they are connected to other nodes
+                while (getNode(way.get(0)).getAdherentNumber() > 1) {
+                    if (getNode(way.get(0)).getConnectedNodes().get(0).getIndex() != way.get(1)) {
+                        removeConnection(way.get(0), getNode(way.get(0)).getConnectedNodes().get(0).getIndex());
+                    } else {
+                        removeConnection(way.get(0), getNode(way.get(0)).getConnectedNodes().get(1).getIndex());
+                    }
+                }
+
+                while (getNode(way.get(1)).getAdherentNumber() > 1) {
+                    if (getNode(way.get(1)).getConnectedNodes().get(1).getIndex() != way.get(0)) {
+                        removeConnection(way.get(1), getNode(way.get(1)).getConnectedNodes().get(0).getIndex());
+                    } else {
+                        removeConnection(way.get(1), getNode(way.get(1)).getConnectedNodes().get(1).getIndex());
+                    }
+                }
+            }
+        } else { // path longer than two nodes
+            // first step
+            w = way.get(0);
+            next_w = way.get(1);
+            move = getDirection(w, next_w, getColumnCount(), getRowCount());
+
+            if (move == MoveDirection.UP || move == MoveDirection.DOWN) { // slices to the left
+                slice = w - 1;
+            } else if (move == MoveDirection.LEFT || move == MoveDirection.RIGHT) { // slices to the bottom
+                slice = w + getColumnCount();
+            } else {
+                System.err.println("GraphGenerator: An unexpected error occured while slicing the graph into subgraphs.");
+                return;
+            }
+
+            removeConnection(w, slice);
+            w = next_w;
+
+            // the rest of the path
+            for (int i = 2; i < way.size(); i++) {
+                next_w = way.get(i);
+                next_move = getDirection(w, next_w, getColumnCount(), getRowCount());
+
+                if ((next_move == MoveDirection.UP || next_move == MoveDirection.DOWN) && next_move == move) { // slices to the left
+                    slice = w - 1;
+                } else if ((next_move == MoveDirection.LEFT || next_move == MoveDirection.RIGHT) && next_move == move) { // slices to the bottom
+                    slice = w + getColumnCount();
+                } else if ((next_move == MoveDirection.UP || next_move == MoveDirection.DOWN)) { // slices to the bottom, then to the left
+                    slice = w - 1;
+                    removeConnection(w, w + getColumnCount());
+                } else if ((next_move == MoveDirection.LEFT || next_move == MoveDirection.RIGHT)) { // slices to the left, then to the bottom
+                    slice = 3;
+                    removeConnection(w, w - 1);
+                } else {
+                    System.err.println("GraphGenerator: An unexpected error occured while slicing the graph into subgraphs.");
+                    return;
+                }
+                removeConnection(w, slice);
+                w = next_w;
+                move = next_move;
+            }
+
+            // final step
+            removeConnection(next_w, slice);
+        }
     }
 }
