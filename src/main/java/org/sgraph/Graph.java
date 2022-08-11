@@ -108,15 +108,15 @@ public class Graph {
     /**
      * Zwraca wierzchołek o podanym indeksie.
      *
-     * @param index indeks wierzchołka
+     * @param nodeIndex indeks wierzchołka
      * @return wierzchołek o podanym indeksie
      * @throws IllegalArgumentException jeżeli podano indeks spoza zakresu wierzchołków
      */
-    public Node getNode(int index) throws IllegalArgumentException {
-        if (index < 0 || index >= getNodeCount())
-            throw new IllegalArgumentException(String.format("Graph: Cannot get a node of index %d in a %dx%d graph.", index, rowCount, columnCount));
+    public Node getNode(int nodeIndex) throws IllegalArgumentException {
+        if (nodeIndex < 0 || nodeIndex >= getNodeCount())
+            throw new IllegalArgumentException(String.format("Graph: Cannot get a node of index %d in a %dx%d graph.", nodeIndex, rowCount, columnCount));
 
-        return nodes.get(index);
+        return nodes.get(nodeIndex);
     }
 
     /**
@@ -174,16 +174,16 @@ public class Graph {
     /**
      * Sprawdza, czy dwa wierzchołki mogą ze sobą sąsiadować w takim grafie.
      *
-     * @param node1 pierwszy sprawdzany wierzchołek
-     * @param node2 drugi sprawdzany wierzchołek
+     * @param firstNode  pierwszy sprawdzany wierzchołek
+     * @param secondNode drugi sprawdzany wierzchołek
      * @return true, jeżeli wierzchołki mogą ze sobą sąsiadować; w przeciwnym razie zwraca false
      */
-    private boolean canNodesAdhere(Node node1, Node node2) {
-        int row1 = getNodeRowNumber(node1.getIndex());
-        int row2 = getNodeRowNumber(node2.getIndex());
+    private boolean canNodesAdhere(Node firstNode, Node secondNode) {
+        int row1 = getNodeRowNumber(firstNode.getIndex());
+        int row2 = getNodeRowNumber(secondNode.getIndex());
 
-        int col1 = getNodeColumnNumber(node1.getIndex());
-        int col2 = getNodeColumnNumber(node2.getIndex());
+        int col1 = getNodeColumnNumber(firstNode.getIndex());
+        int col2 = getNodeColumnNumber(secondNode.getIndex());
 
         return Math.abs(row1 - row2) == 1 || Math.abs(col1 - col2) == 1;
     }
