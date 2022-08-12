@@ -353,7 +353,7 @@ public class Graph {
             } else if (move == MoveDirection.LEFT || move == MoveDirection.RIGHT) { // slices to the bottom
                 slice = w + getColumnCount();
             } else {
-                System.err.println("GraphGenerator: An unexpected error occured while slicing the graph into subgraphs.");
+                System.err.println("Graph: An unexpected error occured while slicing the graph into subgraphs.");
                 return;
             }
 
@@ -376,7 +376,7 @@ public class Graph {
                     slice = 3;
                     removeConnection(w, w - 1);
                 } else {
-                    System.err.println("GraphGenerator: An unexpected error occured while slicing the graph into subgraphs.");
+                    System.err.println("Graph: An unexpected error occured while slicing the graph into subgraphs.");
                     return;
                 }
                 removeConnection(w, slice);
