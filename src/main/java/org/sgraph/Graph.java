@@ -208,11 +208,11 @@ public class Graph {
      */
     public void calculateSubraphCount() {
         int n = 0;
-        BreadthFirstSearch bfs = new BreadthFirstSearch(getNodeCount());
+        BreadthFirstSearch bfs = new BreadthFirstSearch(this);
 
         while (bfs.hasNotVisitedNode()) {
             n++;
-            bfs.run(nodes.get(bfs.getNotVisitedNode()));
+            bfs.run(bfs.getNotVisitedNode());
         }
 
         subgraphCount = n;
