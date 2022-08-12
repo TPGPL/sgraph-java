@@ -63,7 +63,6 @@ public class PathFinder {
         queue = new ArrayList<>();
 
         Arrays.fill(distanceToNode, Double.MAX_VALUE);
-        Arrays.fill(previousNode, -1); // TODO: is needed?
 
         // params for the starting node
         queue.add(startNodeIndex);
