@@ -113,7 +113,7 @@ public class Graph {
      * @throws IllegalArgumentException jeżeli podano indeks spoza zakresu wierzchołków
      */
     public Node getNode(int nodeIndex) {
-        if (nodeIndex < 0 || nodeIndex >= getNodeCount())
+        if (isIndexNotInBounds(nodeIndex))
             throw new IllegalArgumentException(String.format("Graph: Cannot get a node of index %d in a %dx%d graph.", nodeIndex, rowCount, columnCount));
 
         return nodes.get(nodeIndex);
@@ -128,9 +128,6 @@ public class Graph {
      * @throws IllegalArgumentException jeżeli wierzchołki nie mogą ze sobą sąsiadować w takim grafie, wartość wagi jest niedodatnia, istnieje już połączenie między tymi wierzchołkami o innej wadze
      */
     public void addConnection(int firstNodeIndex, int secondNodeIndex, double edge) throws IllegalArgumentException {
-        if (isIndexNotInBounds(firstNodeIndex) || isIndexNotInBounds(secondNodeIndex))
-            throw new IllegalArgumentException("Graph: Attempted to remove a connection between nodes of invalid indexes.");
-
         Node node1 = getNode(firstNodeIndex);
         Node node2 = getNode(secondNodeIndex);
 
@@ -161,8 +158,6 @@ public class Graph {
      * @param secondNodeIndex indeks drugiego wierzchołka połączenia
      */
     public void removeConnection(int firstNodeIndex, int secondNodeIndex) {
-        if (isIndexNotInBounds(firstNodeIndex) || isIndexNotInBounds(secondNodeIndex))
-            throw new IllegalArgumentException("Graph: Attempted to remove a connection between nodes of invalid indexes.");
 
         Node node1 = getNode(firstNodeIndex);
         Node node2 = getNode(secondNodeIndex);
@@ -399,9 +394,6 @@ public class Graph {
      */
     public double getEdgeOnNodeConnection(int firstNodeIndex, int secondNodeIndex)
     {
-        if (isIndexNotInBounds(firstNodeIndex) || isIndexNotInBounds(secondNodeIndex))
-            throw new IllegalArgumentException("Graph: Attempted to get edge on connection between nodes of invalid indexes.");
-
         Node node1 = getNode(firstNodeIndex);
         Node node2 = getNode(secondNodeIndex);
 
@@ -416,9 +408,6 @@ public class Graph {
      */
     public ArrayList<Integer> getConnectedNodeIndexes(int nodeIndex)
     {
-        if (isIndexNotInBounds(nodeIndex))
-            throw new IllegalArgumentException("Graph: Attempted to get connected node indexes of node of invalid index.");
-
         Node node = getNode((nodeIndex));
 
         return node.getConnectedNodeIndexes();
