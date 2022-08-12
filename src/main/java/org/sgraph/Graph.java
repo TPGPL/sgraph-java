@@ -112,7 +112,7 @@ public class Graph {
      * @return wierzchołek o podanym indeksie
      * @throws IllegalArgumentException jeżeli podano indeks spoza zakresu wierzchołków
      */
-    public Node getNode(int nodeIndex) throws IllegalArgumentException {
+    public Node getNode(int nodeIndex) {
         if (nodeIndex < 0 || nodeIndex >= getNodeCount())
             throw new IllegalArgumentException(String.format("Graph: Cannot get a node of index %d in a %dx%d graph.", nodeIndex, rowCount, columnCount));
 
