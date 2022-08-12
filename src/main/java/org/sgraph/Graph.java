@@ -388,4 +388,39 @@ public class Graph {
             removeConnection(next_w, slice);
         }
     }
+
+    /**
+     * Zwraca wartość wagi na krawędzi połączenia między dwoma wierzchołkami o określonych indeksach.
+     * Jeżeli połączenie nie istnieje, zostaje zwrócone 0.
+     *
+     * @param firstNodeIndex  indeks pierwszego wierzchołka połączenia
+     * @param secondNodeIndex indeks drugiego wierzchołka połączenia
+     * @return wartość wagi na krawędzi połączenia
+     */
+    public double getEdgeOnNodeConnection(int firstNodeIndex, int secondNodeIndex)
+    {
+        if (isIndexNotInBounds(firstNodeIndex) || isIndexNotInBounds(secondNodeIndex))
+            throw new IllegalArgumentException("Graph: Attempted to get edge on connection between nodes of invalid indexes.");
+
+        Node node1 = getNode(firstNodeIndex);
+        Node node2 = getNode(secondNodeIndex);
+
+        return node1.getEdgeOnConnection(node2);
+    }
+
+    /**
+     * Zwraca tablicę indeksów wierzchołków, z którymi połączony jest wierzchołek o określonym indeksie.
+     *
+     * @param nodeIndex indeks wierzchołka
+     * @return tablica indeksów połączonych wierzchołków
+     */
+    public ArrayList<Integer> getConnectedNodeIndexes(int nodeIndex)
+    {
+        if (isIndexNotInBounds(nodeIndex))
+            throw new IllegalArgumentException("Graph: Attempted to get connected node indexes of node of invalid index.");
+
+        Node node = getNode((nodeIndex));
+
+        return node.getConnectedNodeIndexes();
+    }
 }

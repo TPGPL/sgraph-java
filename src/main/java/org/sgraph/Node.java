@@ -109,6 +109,21 @@ public class Node {
     }
 
     /**
+     * Zwraca tablicę indeksów wierzchołków, z którymi istnieje połączenie.
+     *
+     * @return tablica indeksów wierzchołków, z którymi istnieje połączenie
+     */
+    public ArrayList<Integer> getConnectedNodeIndexes()
+    {
+        ArrayList<Integer> nodeIndexes = new ArrayList<>();
+
+        for (Connection c : connections)
+            nodeIndexes.add(c.getNode().getIndex());
+
+        return nodeIndexes;
+    }
+
+    /**
      * Zwraca ciąg napisów reprezentujących połączenia oddzielonych spacją reprezentujący aktualny stan obiektu.
      *
      * @return napis reprezentujący wierzchołek
