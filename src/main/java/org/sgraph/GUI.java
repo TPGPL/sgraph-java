@@ -324,13 +324,13 @@ public class GUI extends Application {
                     wasPathDrawn.set(false);
                 }
 
-                drawNodes(graph.getNode(posX + posY * graph.getColumnCount()), graph.getNodeCount());
-                System.out.println("Chosen node: number " + pf.getStartingNode().getIndex());
+                drawNodes(posX + posY * graph.getColumnCount());
+                System.out.println("Chosen node: number " + pf.getStartNodeIndex());
             } else if (event.getButton() == MouseButton.SECONDARY) {
                 if (pf == null) // no node chosen
                     return;
 
-                drawPath(graph.getNode(posX + posY * graph.getColumnCount()));
+                drawPath(posX + posY * graph.getColumnCount());
 
                 wasPathDrawn.set(true);
             }
@@ -412,7 +412,7 @@ public class GUI extends Application {
                 parsedNodeIndex = j * columnCount + i;
                 // vertical connection
                 if ((adhNodeIndex = checkDown(parsedNodeIndex)) != -1) {
-                    gc.setStroke(graph.getEdgeValueRange().getHSBValue(graph.getNode(parsedNodeIndex).getEdgeOnConnection(graph.getNode(adhNodeIndex))));
+                    gc.setStroke(graph.getEdgeValueRange().getHSBValue(graph.getEdgeOnNodeConnection(parsedNodeIndex, adhNodeIndex)));
                     gc.beginPath();
                     gc.moveTo(PADDING + ovalR + i * edgeLength, PADDING + ovalR + j * edgeLength);
                     gc.lineTo(PADDING + ovalR + i * edgeLength + 0, PADDING + ovalR + j * edgeLength + edgeLength);
@@ -421,7 +421,7 @@ public class GUI extends Application {
                 }
                 // horizontal connection
                 if ((adhNodeIndex = checkRight(parsedNodeIndex)) != -1) {
-                    gc.setStroke(graph.getEdgeValueRange().getHSBValue(graph.getNode(parsedNodeIndex).getEdgeOnConnection(graph.getNode(adhNodeIndex))));
+                    gc.setStroke(graph.getEdgeValueRange().getHSBValue(graph.getEdgeOnNodeConnection(parsedNodeIndex, adhNodeIndex)));
                     gc.beginPath();
                     gc.moveTo(PADDING + ovalR + i * edgeLength, PADDING + ovalR + j * edgeLength);
                     gc.lineTo(PADDING + ovalR + i * edgeLength + edgeLength, PADDING + ovalR + j * edgeLength);
@@ -442,15 +442,17 @@ public class GUI extends Application {
      * Zwraca indeks wierzcholka znajdującego się pod sprawdzanym wierzchołkiem i sąsiadującego z nim.
      * Jeżeli nie ma takiego wierzchołka, to zwraca -1.
      *
-     * @param index indeks sprawdzanego wierzchołka
+     * @param nodeIndex indeks sprawdzanego wierzchołka
      * @return indeks połączonego wierzchołka pod sprawdzanym wierzchołkiem
      */
-    private int checkDown(int index) {
-        ArrayList<Node> connectedNodes = graph.getNode(index).getConnectedNodes();
-        for (Node n : connectedNodes) {
-            if (index + graph.getColumnCount() < graph.getRowCount() * graph.getColumnCount() && index + graph.getColumnCount() == n.getIndex())
-                return n.getIndex();
+    private int checkDown(int nodeIndex) {
+        ArrayList<Integer> connectedNodeIndexes = graph.getConnectedNodeIndexes(nodeIndex);
+
+        for (int parsedNodeIndex : connectedNodeIndexes) {
+            if (nodeIndex + graph.getColumnCount() < graph.getRowCount() * graph.getColumnCount() && nodeIndex + graph.getColumnCount() == parsedNodeIndex)
+                return parsedNodeIndex;
         }
+
         return -1;
     }
 
@@ -458,26 +460,27 @@ public class GUI extends Application {
      * Zwraca indeks wierzcholka znajdującego się na prawo od sprawdzanego wierzchołka i sąsiadującego z nim.
      * Jeżeli nie ma takiego wierzchołka, to zwraca -1.
      *
-     * @param index indeks sprawdzanego wierzchołka
+     * @param nodeIndex indeks sprawdzanego wierzchołka
      * @return indeks połączonego wierzchołka na prawo od sprawdzanego wierzchołka
      */
-    private int checkRight(int index) {
-        ArrayList<Node> connectedNodes = graph.getNode(index).getConnectedNodes();
-        for (Node n : connectedNodes) {
-            if (index + 1 == n.getIndex() && index / graph.getColumnCount() == n.getIndex() / graph.getColumnCount())
-                return n.getIndex();
+    private int checkRight(int nodeIndex) {
+        ArrayList<Integer> connectedNodeIndexes = graph.getConnectedNodeIndexes(nodeIndex);
+
+        for (int parsedNodeIndex : connectedNodeIndexes) {
+            if (nodeIndex + 1 == parsedNodeIndex && nodeIndex / graph.getColumnCount() == parsedNodeIndex / graph.getColumnCount())
+                return parsedNodeIndex;
         }
+
         return -1;
     }
 
     /**
      * Wyznacza najkrótsze ścieżki do wybranego wierzchołka w grafie i zabarwia wierzchołki względem zakresu wartości odległości od wierzchołka początkowego.
      *
-     * @param startingNode wierzchołek początkowy
-     * @param nodeCount    liczba wierzchołków w grafie
+     * @param startNodeIndex indeks wierzchołka początkowego
      */
-    private void drawNodes(Node startingNode, int nodeCount) {
-        pf = new PathFinder(nodeCount, startingNode);
+    private void drawNodes(int startNodeIndex) {
+        pf = new PathFinder(graph, startNodeIndex);
         pf.run();
         pf.calculateNodeValueRange();
         setNodeRangeLabels();
@@ -494,8 +497,8 @@ public class GUI extends Application {
 
         for (int j = 0; j < rowCount; j++) {
             for (int i = 0; i < columnCount; i++) {
-                if (pf.getDistanceToNode(graph.getNode(j * graph.getColumnCount() + i)) != -1) {
-                    gc.setFill(pf.getNodeValueRange().getHSBValue(pf.getDistanceToNode(graph.getNode(j * graph.getColumnCount() + i))));
+                if (pf.getDistanceToNode(j * graph.getColumnCount() + i) != -1) {
+                    gc.setFill(pf.getNodeValueRange().getHSBValue(pf.getDistanceToNode(j * graph.getColumnCount() + i)));
                 } else {
                     gc.setFill(Color.BLACK); // doesn't colour nodes which are not connected
                 }
@@ -550,9 +553,9 @@ public class GUI extends Application {
      * Rysuje drogę od wierzchołka początkowego do wybranego wierzchołka. Wypisuje jej wartość oraz ciąg indeksów do okna konsoli.
      * Jeżeli droga między wierzchołkami nie istnieje, wypisuje odpowiedni komunikat i kończy działanie.
      *
-     * @param clickedNode wierzchołek do którego zostanie narysowana droga
+     * @param clickedNodeIndex indeks wierzchołka do którego zostanie narysowana droga
      */
-    private void drawPath(Node clickedNode) {
+    private void drawPath(int clickedNodeIndex) {
         gc.setFill(Color.DARKSLATEGRAY);
 
         // scale
@@ -563,10 +566,10 @@ public class GUI extends Application {
         gc.setStroke(Color.DARKSLATEGRAY);
         gc.setLineWidth(LINE_WIDTH_PROPORTION * ovalR);
 
-        LinkedList<Integer> path = pf.getIndexPathToNode(clickedNode);
+        LinkedList<Integer> path = pf.getIndexPathToNode(clickedNodeIndex);
 
         if (path == null) {
-            System.err.printf("There is not path between nodes %d and %d.%n", pf.getStartingNode().getIndex(), clickedNode.getIndex());
+            System.err.printf("There is not path between nodes %d and %d.%n", pf.getStartNodeIndex(), clickedNodeIndex);
             return;
         }
 
@@ -604,7 +607,7 @@ public class GUI extends Application {
         gc.stroke();
         gc.closePath();
 
-        System.out.printf("Distance between nodes %d and %d: %g%n", pf.getStartingNode().getIndex(), clickedNode.getIndex(), pf.getDistanceToNode(clickedNode));
-        System.out.printf("Path: %s%n", pf.getPathToNode(clickedNode));
+        System.out.printf("Distance between nodes %d and %d: %g%n", pf.getStartNodeIndex(), clickedNodeIndex, pf.getDistanceToNode(clickedNodeIndex));
+        System.out.printf("Path: %s%n", pf.getPathToNode(clickedNodeIndex));
     }
 }
