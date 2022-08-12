@@ -223,7 +223,7 @@ public class GUI extends Application {
                 return;
             }
 
-            if (graph.getSubgraphCount() != 1)
+            if (!graph.isConnected())
                 System.out.println("Graph is not connected - detected fragments: " + graph.getSubgraphCount());
 
             pf = null; // clearing PathFinder from previous usages;

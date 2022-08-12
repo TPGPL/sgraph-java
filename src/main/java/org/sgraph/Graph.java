@@ -411,4 +411,9 @@ public class Graph {
 
         return node.getConnectedNodeIndexes();
     }
+
+    public boolean isConnected()
+    {
+        return subgraphCount == 1;
+    }
 }
