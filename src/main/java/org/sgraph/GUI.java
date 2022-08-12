@@ -3,7 +3,6 @@ package org.sgraph;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -29,71 +28,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.sgraph.GraphGenerator.getDirection;
+import static org.sgraph.Move.*;
+import static org.sgraph.Properties.*;
 
 /**
  * Klasa odpowiadająca za interfejs graficzny aplikacji i przetwarzanie zdarzeń w programie.
  */
 public class GUI extends Application {
-    /**
-     * Szerokość okna aplikacji.
-     */
-    private static final int WINDOW_WIDTH = 700;
-    /**
-     * Wysokość okna aplikacji.
-     */
-    private static final int WINDOW_HEIGHT = 900;
-    /**
-     * Wymiar kwadratowej przestrzeni na rysowanie grafu.
-     */
-    private static final int CANVAS_RESOLUTION = 700;
-    /**
-     * Odległość między elementami interfejsu graficznego.
-     */
-    private static final double PADDING = 10.0;
-    /**
-     * Wysokość elementów interfejsu graficznego (przyciski, pola tekstowe).
-     */
-    private static final int ITEM_HEIGHT = 30;
-    /**
-     * Wysokość dużego elementu interfejsu graficznego (dwa razy większa niż normalna).
-     */
-    private static final int BIG_ITEM_HEIGHT = 2 * ITEM_HEIGHT + (int) PADDING;
-    /**
-     * Szerokość elementów interfejsu graficznego.
-     */
-    private static final int ITEM_WIDTH = 105;
-    /**
-     * Domyslna liczba kolumn w siatce.
-     */
-    private static final int DEFAULT_COLUMN_COUNT = 10;
-    /**
-     * Domyślna liczba wierszy w siatce.
-     */
-    private static final int DEFAULT_ROW_COUNT = 10;
-    /**
-     * Domyślna liczba spójnych grafów w siatce.
-     */
-    private static final int DEFAULT_SUBGRAPH_COUNT = 1;
-    /**
-     * Domyślny zakres wartości wag na krawędziach.
-     */
-    private static final String DEFAULT_WEIGHT_RANGE = "0-1";
-    /**
-     * Stosunek szerokości krawędzi do promienia wierzchołka.
-     */
-    private static final double LINE_WIDTH_PROPORTION = 2.0 / 3.0;
-    /**
-     * Stosunek długości krawędzi do promienia wierzchołka.
-     */
-    private static final double LINE_LENGTH_PROPORTION = 4.0;
-    /**
-     * Domyślna nazwa pliku wyjściowego.
-     */
-    private static final String DEFAULT_FILE_NAME = "graph.txt";
-
     /**
      * Obiekt przechowujący aktualnie wygenerowany graf.
      */
@@ -165,31 +109,13 @@ public class GUI extends Application {
         // text labels
 
         Label labelColumnTextField = new Label("# of columns");
-        labelColumnTextField.setPrefWidth(ITEM_WIDTH);
-        labelColumnTextField.setPrefHeight(ITEM_HEIGHT);
-        labelColumnTextField.setAlignment(Pos.CENTER);
-
         Label labelRowTextField = new Label("# of rows");
-        labelRowTextField.setPrefWidth(ITEM_WIDTH);
-        labelRowTextField.setPrefHeight(ITEM_HEIGHT);
-        labelRowTextField.setAlignment(Pos.CENTER);
-
         Label labelSubgraphTextField = new Label("# of subgraphs");
-        labelSubgraphTextField.setPrefWidth(ITEM_WIDTH);
-        labelSubgraphTextField.setPrefHeight(ITEM_HEIGHT);
-        labelSubgraphTextField.setAlignment(Pos.CENTER);
-
         Label labelRangeTextField = new Label("Weight range");
-        labelRangeTextField.setPrefWidth(ITEM_WIDTH);
-        labelRangeTextField.setPrefHeight(ITEM_HEIGHT);
-        labelRangeTextField.setAlignment(Pos.CENTER);
 
         // text fields
 
         textFieldColumnCount = new TextField(Integer.toString(DEFAULT_COLUMN_COUNT));
-        textFieldColumnCount.setPrefWidth(ITEM_WIDTH);
-        textFieldColumnCount.setPrefHeight(ITEM_HEIGHT);
-        textFieldColumnCount.setAlignment(Pos.CENTER);
 
         validator.createCheck()
                 .dependsOn("column", textFieldColumnCount.textProperty())
@@ -205,9 +131,6 @@ public class GUI extends Application {
                 .immediate();
 
         textFieldRowCount = new TextField(Integer.toString(DEFAULT_ROW_COUNT));
-        textFieldRowCount.setPrefWidth(ITEM_WIDTH);
-        textFieldRowCount.setPrefHeight(ITEM_HEIGHT);
-        textFieldRowCount.setAlignment(Pos.CENTER);
 
         validator.createCheck()
                 .dependsOn("row", textFieldRowCount.textProperty())
@@ -223,9 +146,6 @@ public class GUI extends Application {
                 .immediate();
 
         textFieldSubgraphCount = new TextField(Integer.toString(DEFAULT_SUBGRAPH_COUNT));
-        textFieldSubgraphCount.setPrefWidth(ITEM_WIDTH);
-        textFieldSubgraphCount.setPrefHeight(ITEM_HEIGHT);
-        textFieldSubgraphCount.setAlignment(Pos.CENTER);
 
         validator.createCheck()
                 .dependsOn("subgraph", textFieldSubgraphCount.textProperty())
@@ -241,9 +161,6 @@ public class GUI extends Application {
                 .immediate();
 
         textFieldWeightRange = new TextField(DEFAULT_WEIGHT_RANGE);
-        textFieldWeightRange.setPrefWidth(ITEM_WIDTH);
-        textFieldWeightRange.setPrefHeight(ITEM_HEIGHT);
-        textFieldWeightRange.setAlignment(Pos.CENTER);
 
         validator.createCheck()
                 .dependsOn("range", textFieldWeightRange.textProperty())
@@ -270,6 +187,8 @@ public class GUI extends Application {
 
         // buttons
         Button buttonGenerate = new Button("Generate");
+        buttonGenerate.getStyleClass().add("big-button");
+
         buttonGenerate.setOnAction(actionEvent -> {
             int col, row, sub;
             double min, max;
@@ -297,14 +216,14 @@ public class GUI extends Application {
             }
 
             try {
-                graph = GraphGenerator.generate(col, row, sub, min, max);
+                graph = GraphGenerator.generateGraph(col, row, sub, min, max);
             } catch (Exception e) // if graph generation still SOMEHOW failed
             {
                 System.err.println("Graph generation failed - error message: " + e.getMessage());
                 return;
             }
 
-            if (graph.getSubgraphCount() != 1)
+            if (!graph.isConnected())
                 System.out.println("Graph is not connected - detected fragments: " + graph.getSubgraphCount());
 
             pf = null; // clearing PathFinder from previous usages;
@@ -313,9 +232,6 @@ public class GUI extends Application {
 
             draw(graph.getColumnCount(), graph.getRowCount());
         });
-        buttonGenerate.setPrefWidth(ITEM_WIDTH);
-        buttonGenerate.setPrefHeight(BIG_ITEM_HEIGHT);
-        buttonGenerate.setAlignment(Pos.CENTER);
 
         TooltipWrapper<Button> generateButtonWrapper = new TooltipWrapper<>(
                 buttonGenerate,
@@ -348,9 +264,6 @@ public class GUI extends Application {
 
             draw(graph.getColumnCount(), graph.getRowCount());
         });
-        buttonFileOpen.setPrefWidth(ITEM_WIDTH);
-        buttonFileOpen.setPrefHeight(ITEM_HEIGHT);
-        buttonFileOpen.setAlignment(Pos.CENTER);
 
         Button buttonFileSave = new Button("Save to file...");
         buttonFileSave.setOnAction(actionEvent -> {
@@ -370,9 +283,6 @@ public class GUI extends Application {
                 System.err.println("Failed to save a graph to file - error message: " + e.getMessage());
             }
         });
-        buttonFileSave.setPrefWidth(ITEM_WIDTH);
-        buttonFileSave.setPrefHeight(ITEM_HEIGHT);
-        buttonFileSave.setAlignment(Pos.CENTER);
 
         VBox buttonBox = new VBox(PADDING, buttonFileOpen, buttonFileSave);
 
@@ -414,13 +324,13 @@ public class GUI extends Application {
                     wasPathDrawn.set(false);
                 }
 
-                drawNodes(graph.getNode(posX + posY * graph.getColumnCount()), graph.getNodeCount());
-                System.out.println("Chosen node: number " + pf.getStartingNode().getIndex());
+                drawNodes(posX + posY * graph.getColumnCount());
+                System.out.println("Chosen node: number " + pf.getStartNodeIndex());
             } else if (event.getButton() == MouseButton.SECONDARY) {
                 if (pf == null) // no node chosen
                     return;
 
-                drawPath(graph.getNode(posX + posY * graph.getColumnCount()));
+                drawPath(posX + posY * graph.getColumnCount());
 
                 wasPathDrawn.set(true);
             }
@@ -430,36 +340,24 @@ public class GUI extends Application {
         // bottom bar
 
         labelEdgeRangeMin = new Label("MIN");
-        labelEdgeRangeMin.setAlignment(Pos.BOTTOM_LEFT);
-        labelEdgeRangeMin.setPrefHeight(ITEM_HEIGHT);
-        labelEdgeRangeMin.setPrefWidth(WINDOW_WIDTH / 3.0);
+        labelEdgeRangeMin.getStyleClass().addAll("wide-label", "edge-min");
 
         labelEdgeRangeMax = new Label("MAX");
-        labelEdgeRangeMax.setAlignment(Pos.BOTTOM_RIGHT);
-        labelEdgeRangeMax.setPrefHeight(ITEM_HEIGHT);
-        labelEdgeRangeMax.setPrefWidth(WINDOW_WIDTH / 3.0);
+        labelEdgeRangeMax.getStyleClass().addAll("wide-label", "edge-max");
 
         Label labelEdgeRangeTitle = new Label("Edge color scale");
-        labelEdgeRangeTitle.setAlignment(Pos.BOTTOM_CENTER);
-        labelEdgeRangeTitle.setPrefHeight(ITEM_HEIGHT);
-        labelEdgeRangeTitle.setPrefWidth(WINDOW_WIDTH / 3.0);
+        labelEdgeRangeTitle.getStyleClass().addAll("wide-label", "edge-text");
 
         HBox edgeRangeContainer = new HBox(0, labelEdgeRangeMin, labelEdgeRangeTitle, labelEdgeRangeMax);
 
         labelNodeRangeMin = new Label("MIN");
-        labelNodeRangeMin.setAlignment(Pos.TOP_LEFT);
-        labelNodeRangeMin.setPrefHeight(ITEM_HEIGHT);
-        labelNodeRangeMin.setPrefWidth(WINDOW_WIDTH / 3.0);
+        labelNodeRangeMin.getStyleClass().addAll("wide-label", "node-min");
 
         labelNodeRangeMax = new Label("MAX");
-        labelNodeRangeMax.setAlignment(Pos.TOP_RIGHT);
-        labelNodeRangeMax.setPrefHeight(ITEM_HEIGHT);
-        labelNodeRangeMax.setPrefWidth(WINDOW_WIDTH / 3.0);
+        labelNodeRangeMax.getStyleClass().addAll("wide-label", "node-max");
 
         Label labelNodeRangeTitle = new Label("Node color scale");
-        labelNodeRangeTitle.setAlignment(Pos.TOP_CENTER);
-        labelNodeRangeTitle.setPrefHeight(ITEM_HEIGHT);
-        labelNodeRangeTitle.setPrefWidth(WINDOW_WIDTH / 3.0);
+        labelNodeRangeTitle.getStyleClass().addAll("wide-label", "node-text");
 
         HBox nodeRangeContainer = new HBox(0, labelNodeRangeMin, labelNodeRangeTitle, labelNodeRangeMax);
 
@@ -470,7 +368,12 @@ public class GUI extends Application {
 
         root.getChildren().addAll(topBar, canvas, bottomBar);
 
-        stage.setScene(new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT));
+        Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles/buttons.css")).toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles/labels.css")).toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles/text-fields.css")).toExternalForm());
+
+        stage.setScene(scene);
         stage.show();
     }
 
@@ -509,7 +412,7 @@ public class GUI extends Application {
                 parsedNodeIndex = j * columnCount + i;
                 // vertical connection
                 if ((adhNodeIndex = checkDown(parsedNodeIndex)) != -1) {
-                    gc.setStroke(graph.getEdgeValueRange().getHSBValue(graph.getNode(parsedNodeIndex).getEdgeOnConnection(graph.getNode(adhNodeIndex))));
+                    gc.setStroke(graph.getEdgeValueRange().getHSBValue(graph.getEdgeOnNodeConnection(parsedNodeIndex, adhNodeIndex)));
                     gc.beginPath();
                     gc.moveTo(PADDING + ovalR + i * edgeLength, PADDING + ovalR + j * edgeLength);
                     gc.lineTo(PADDING + ovalR + i * edgeLength + 0, PADDING + ovalR + j * edgeLength + edgeLength);
@@ -518,7 +421,7 @@ public class GUI extends Application {
                 }
                 // horizontal connection
                 if ((adhNodeIndex = checkRight(parsedNodeIndex)) != -1) {
-                    gc.setStroke(graph.getEdgeValueRange().getHSBValue(graph.getNode(parsedNodeIndex).getEdgeOnConnection(graph.getNode(adhNodeIndex))));
+                    gc.setStroke(graph.getEdgeValueRange().getHSBValue(graph.getEdgeOnNodeConnection(parsedNodeIndex, adhNodeIndex)));
                     gc.beginPath();
                     gc.moveTo(PADDING + ovalR + i * edgeLength, PADDING + ovalR + j * edgeLength);
                     gc.lineTo(PADDING + ovalR + i * edgeLength + edgeLength, PADDING + ovalR + j * edgeLength);
@@ -539,15 +442,17 @@ public class GUI extends Application {
      * Zwraca indeks wierzcholka znajdującego się pod sprawdzanym wierzchołkiem i sąsiadującego z nim.
      * Jeżeli nie ma takiego wierzchołka, to zwraca -1.
      *
-     * @param index indeks sprawdzanego wierzchołka
+     * @param nodeIndex indeks sprawdzanego wierzchołka
      * @return indeks połączonego wierzchołka pod sprawdzanym wierzchołkiem
      */
-    private int checkDown(int index) {
-        ArrayList<Node> connectedNodes = graph.getNode(index).getConnectedNodes();
-        for (Node n : connectedNodes) {
-            if (index + graph.getColumnCount() < graph.getRowCount() * graph.getColumnCount() && index + graph.getColumnCount() == n.getIndex())
-                return n.getIndex();
+    private int checkDown(int nodeIndex) {
+        ArrayList<Integer> connectedNodeIndexes = graph.getConnectedNodeIndexes(nodeIndex);
+
+        for (int parsedNodeIndex : connectedNodeIndexes) {
+            if (nodeIndex + graph.getColumnCount() < graph.getRowCount() * graph.getColumnCount() && nodeIndex + graph.getColumnCount() == parsedNodeIndex)
+                return parsedNodeIndex;
         }
+
         return -1;
     }
 
@@ -555,26 +460,27 @@ public class GUI extends Application {
      * Zwraca indeks wierzcholka znajdującego się na prawo od sprawdzanego wierzchołka i sąsiadującego z nim.
      * Jeżeli nie ma takiego wierzchołka, to zwraca -1.
      *
-     * @param index indeks sprawdzanego wierzchołka
+     * @param nodeIndex indeks sprawdzanego wierzchołka
      * @return indeks połączonego wierzchołka na prawo od sprawdzanego wierzchołka
      */
-    private int checkRight(int index) {
-        ArrayList<Node> connectedNodes = graph.getNode(index).getConnectedNodes();
-        for (Node n : connectedNodes) {
-            if (index + 1 == n.getIndex() && index / graph.getColumnCount() == n.getIndex() / graph.getColumnCount())
-                return n.getIndex();
+    private int checkRight(int nodeIndex) {
+        ArrayList<Integer> connectedNodeIndexes = graph.getConnectedNodeIndexes(nodeIndex);
+
+        for (int parsedNodeIndex : connectedNodeIndexes) {
+            if (nodeIndex + 1 == parsedNodeIndex && nodeIndex / graph.getColumnCount() == parsedNodeIndex / graph.getColumnCount())
+                return parsedNodeIndex;
         }
+
         return -1;
     }
 
     /**
      * Wyznacza najkrótsze ścieżki do wybranego wierzchołka w grafie i zabarwia wierzchołki względem zakresu wartości odległości od wierzchołka początkowego.
      *
-     * @param startingNode wierzchołek początkowy
-     * @param nodeCount    liczba wierzchołków w grafie
+     * @param startNodeIndex indeks wierzchołka początkowego
      */
-    private void drawNodes(Node startingNode, int nodeCount) {
-        pf = new PathFinder(nodeCount, startingNode);
+    private void drawNodes(int startNodeIndex) {
+        pf = new PathFinder(graph, startNodeIndex);
         pf.run();
         pf.calculateNodeValueRange();
         setNodeRangeLabels();
@@ -591,8 +497,8 @@ public class GUI extends Application {
 
         for (int j = 0; j < rowCount; j++) {
             for (int i = 0; i < columnCount; i++) {
-                if (pf.getDistanceToNode(graph.getNode(j * graph.getColumnCount() + i)) != -1) {
-                    gc.setFill(pf.getNodeValueRange().getHSBValue(pf.getDistanceToNode(graph.getNode(j * graph.getColumnCount() + i))));
+                if (pf.getDistanceToNode(j * graph.getColumnCount() + i) != -1) {
+                    gc.setFill(pf.getNodeValueRange().getHSBValue(pf.getDistanceToNode(j * graph.getColumnCount() + i)));
                 } else {
                     gc.setFill(Color.BLACK); // doesn't colour nodes which are not connected
                 }
@@ -647,9 +553,9 @@ public class GUI extends Application {
      * Rysuje drogę od wierzchołka początkowego do wybranego wierzchołka. Wypisuje jej wartość oraz ciąg indeksów do okna konsoli.
      * Jeżeli droga między wierzchołkami nie istnieje, wypisuje odpowiedni komunikat i kończy działanie.
      *
-     * @param clickedNode wierzchołek do którego zostanie narysowana droga
+     * @param clickedNodeIndex indeks wierzchołka do którego zostanie narysowana droga
      */
-    private void drawPath(Node clickedNode) {
+    private void drawPath(int clickedNodeIndex) {
         gc.setFill(Color.DARKSLATEGRAY);
 
         // scale
@@ -660,14 +566,14 @@ public class GUI extends Application {
         gc.setStroke(Color.DARKSLATEGRAY);
         gc.setLineWidth(LINE_WIDTH_PROPORTION * ovalR);
 
-        LinkedList<Integer> path = pf.getIndexPathToNode(clickedNode);
+        LinkedList<Integer> path = pf.getIndexPathToNode(clickedNodeIndex);
 
         if (path == null) {
-            System.err.printf("There is not path between nodes %d and %d.%n", pf.getStartingNode().getIndex(), clickedNode.getIndex());
+            System.err.printf("There is not path between nodes %d and %d.%n", pf.getStartNodeIndex(), clickedNodeIndex);
             return;
         }
 
-        GraphGenerator.Move move;
+        MoveDirection move;
         int x = path.get(0) % graph.getColumnCount();
         int y = path.get(0) / graph.getColumnCount();
 
@@ -677,16 +583,16 @@ public class GUI extends Application {
         for (int i = 1; i < path.size(); i++) {
             move = getDirection(path.get(i - 1), path.get(i), graph.getColumnCount(), graph.getRowCount());
 
-            if (move == GraphGenerator.Move.DOWN) {
+            if (move == MoveDirection.DOWN) {
                 gc.moveTo(PADDING + ovalR + x * edgeLength, PADDING + ovalR + y * edgeLength);
                 gc.lineTo(PADDING + ovalR + x * edgeLength, PADDING + ovalR + y * edgeLength + edgeLength);
-            } else if (move == GraphGenerator.Move.UP) {
+            } else if (move == MoveDirection.UP) {
                 gc.moveTo(PADDING + ovalR + x * edgeLength, PADDING + ovalR + y * edgeLength);
                 gc.lineTo(PADDING + ovalR + x * edgeLength, PADDING + ovalR + y * edgeLength - edgeLength);
-            } else if (move == GraphGenerator.Move.RIGHT) {
+            } else if (move == MoveDirection.RIGHT) {
                 gc.moveTo(PADDING + ovalR + x * edgeLength, PADDING + ovalR + y * edgeLength);
                 gc.lineTo(PADDING + ovalR + x * edgeLength + edgeLength, PADDING + ovalR + y * edgeLength);
-            } else if (move == GraphGenerator.Move.LEFT) {
+            } else if (move == MoveDirection.LEFT) {
                 gc.moveTo(PADDING + ovalR + x * edgeLength, PADDING + ovalR + y * edgeLength);
                 gc.lineTo(PADDING + ovalR + x * edgeLength - edgeLength, PADDING + ovalR + y * edgeLength);
             } else {
@@ -701,7 +607,7 @@ public class GUI extends Application {
         gc.stroke();
         gc.closePath();
 
-        System.out.printf("Distance between nodes %d and %d: %g%n", pf.getStartingNode().getIndex(), clickedNode.getIndex(), pf.getDistanceToNode(clickedNode));
-        System.out.printf("Path: %s%n", pf.getPathToNode(clickedNode));
+        System.out.printf("Distance between nodes %d and %d: %g%n", pf.getStartNodeIndex(), clickedNodeIndex, pf.getDistanceToNode(clickedNodeIndex));
+        System.out.printf("Path: %s%n", pf.getPathToNode(clickedNodeIndex));
     }
 }

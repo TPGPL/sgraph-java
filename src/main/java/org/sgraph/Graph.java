@@ -5,6 +5,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
+
+import static org.sgraph.Move.getDirection;
+import static org.sgraph.Move.MoveDirection;
 
 /**
  * Klasa odpowiadająca za przechowywanie informacji o grafie-siatce i zarządzanie jego elementami.
@@ -104,26 +108,28 @@ public class Graph {
     /**
      * Zwraca wierzchołek o podanym indeksie.
      *
-     * @param index indeks wierzchołka
+     * @param nodeIndex indeks wierzchołka
      * @return wierzchołek o podanym indeksie
-     * @throws IllegalArgumentException jeżeli podano indeks spoza zakresu wierzchołków
      */
-    public Node getNode(int index) throws IllegalArgumentException {
-        if (index < 0 || index >= getNodeCount())
-            throw new IllegalArgumentException(String.format("Graph: Cannot get a node of index %d in a %dx%d graph.", index, rowCount, columnCount));
+    private Node getNode(int nodeIndex) {
+        if (isIndexNotInBounds(nodeIndex))
+            throw new IllegalArgumentException(String.format("Graph: Cannot get a node of index %d in a %dx%d graph.", nodeIndex, rowCount, columnCount));
 
-        return nodes.get(index);
+        return nodes.get(nodeIndex);
     }
 
     /**
      * Dodaje połączenie o określonej wadze między dwoma wierzchołkami w grafie.
      *
-     * @param node1 pierwszy wierzchołek połączenia
-     * @param node2 drugi wierzchołek połączenia
-     * @param edge  wartość wagi na krawędzi połączenia
+     * @param firstNodeIndex  indeks pierwszego wierzchołka połączenia
+     * @param secondNodeIndex indeks drugiego wierzchołka połączenia
+     * @param edge            wartość wagi na krawędzi połączenia
      * @throws IllegalArgumentException jeżeli wierzchołki nie mogą ze sobą sąsiadować w takim grafie, wartość wagi jest niedodatnia, istnieje już połączenie między tymi wierzchołkami o innej wadze
      */
-    public void addConnection(Node node1, Node node2, double edge) throws IllegalArgumentException {
+    public void addConnection(int firstNodeIndex, int secondNodeIndex, double edge) throws IllegalArgumentException {
+        Node node1 = getNode(firstNodeIndex);
+        Node node2 = getNode(secondNodeIndex);
+
         if (!canNodesAdhere(node1, node2))
             throw new IllegalArgumentException(String.format("Graph: Nodes %d and %d cannot adhere in a %dx%d graph.", node1.getIndex(), node2.getIndex(), rowCount, columnCount));
 
@@ -145,12 +151,16 @@ public class Graph {
     }
 
     /**
-     * Usuwa połączenie między dwoma wierzchołkami.
+     * Usuwa połączenie między dwoma wierzchołkami o podanych indeksach.
      *
-     * @param node1 pierwszy wierzchołek połączenia
-     * @param node2 drugi wierzchołek połączenia
+     * @param firstNodeIndex  indeks pierwszego wierzchołka połączenia
+     * @param secondNodeIndex indeks drugiego wierzchołka połączenia
      */
-    public void removeConnection(Node node1, Node node2) {
+    public void removeConnection(int firstNodeIndex, int secondNodeIndex) {
+
+        Node node1 = getNode(firstNodeIndex);
+        Node node2 = getNode(secondNodeIndex);
+
         node1.removeConnection(node2);
         node2.removeConnection(node1);
     }
@@ -158,15 +168,16 @@ public class Graph {
     /**
      * Sprawdza, czy dwa wierzchołki mogą ze sobą sąsiadować w takim grafie.
      *
-     * @param node1 pierwszy sprawdzany wierzchołek
-     * @param node2 drugi sprawdzany wierzchołek
+     * @param firstNode  pierwszy sprawdzany wierzchołek
+     * @param secondNode drugi sprawdzany wierzchołek
      * @return true, jeżeli wierzchołki mogą ze sobą sąsiadować; w przeciwnym razie zwraca false
      */
-    private boolean canNodesAdhere(Node node1, Node node2) {
-        int row1 = (node1.getIndex() - node1.getIndex() % columnCount) / columnCount + 1;
-        int row2 = (node2.getIndex() - node2.getIndex() % columnCount) / columnCount + 1;
-        int col1 = node1.getIndex() % columnCount + 1;
-        int col2 = node2.getIndex() % columnCount + 1;
+    private boolean canNodesAdhere(Node firstNode, Node secondNode) {
+        int row1 = getNodeRowNumber(firstNode.getIndex());
+        int row2 = getNodeRowNumber(secondNode.getIndex());
+
+        int col1 = getNodeColumnNumber(firstNode.getIndex());
+        int col2 = getNodeColumnNumber(secondNode.getIndex());
 
         return Math.abs(row1 - row2) == 1 || Math.abs(col1 - col2) == 1;
     }
@@ -196,11 +207,11 @@ public class Graph {
      */
     public void calculateSubraphCount() {
         int n = 0;
-        BreadthFirstSearch bfs = new BreadthFirstSearch(getNodeCount());
+        BreadthFirstSearch bfs = new BreadthFirstSearch(this);
 
         while (bfs.hasNotVisitedNode()) {
             n++;
-            bfs.run(nodes.get(bfs.getNotVisitedNode()));
+            bfs.run(bfs.getNotVisitedNode());
         }
 
         subgraphCount = n;
@@ -212,35 +223,197 @@ public class Graph {
      */
     public void calculateEdgeValueRange() {
         double min = Double.MAX_VALUE;
-        double max = -1;
+        double max = 0;
         double edge;
 
         for (Node n : nodes) {
-            if (n.getIndex() % columnCount + 1 != columnCount) {
-                if (n.hasConnection(getNode(n.getIndex() + 1))) {
-                    edge = n.getEdgeOnConnection(getNode(n.getIndex() + 1));
+            if (getNodeColumnNumber(n.getIndex()) != columnCount) {
+                edge = n.getEdgeOnConnection(getNode(n.getIndex() + 1));
 
-                    if (edge > max)
-                        max = edge;
+                if (edge > max)
+                    max = edge;
 
-                    if (edge < min)
-                        min = edge;
-                }
+                if (edge != 0 && edge < min)
+                    min = edge;
+
             }
 
-            if ((n.getIndex() - n.getIndex() % columnCount) / columnCount + 1 != rowCount) {
-                if (n.hasConnection(getNode(n.getIndex() + columnCount))) {
-                    edge = n.getEdgeOnConnection(getNode(n.getIndex() + columnCount));
+            if (getNodeRowNumber(n.getIndex()) != rowCount) {
+                edge = n.getEdgeOnConnection(getNode(n.getIndex() + columnCount));
 
-                    if (edge > max)
-                        max = edge;
+                if (edge > max)
+                    max = edge;
 
-                    if (edge < min)
-                        min = edge;
-                }
+                if (edge != 0 && edge < min)
+                    min = edge;
             }
         }
 
-        edgeValueRange = (max == -1) ? new Range(0, 0) : new Range(min, max);
+        edgeValueRange = (max == 0) ? new Range(0, 0) : new Range(min, max);
+    }
+
+    /**
+     * Sprawdza, czy wierzchołek o podanym indeksie nie znajduje się w grafie.
+     *
+     * @param nodeIndex indeks sprawdzanego wierzchołka
+     * @return wartość logiczną, czy wierzchołek o podanym indeksie nie znajduje się w grafie
+     */
+    private boolean isIndexNotInBounds(int nodeIndex)
+    {
+        return nodeIndex < 0 || nodeIndex >= getNodeCount();
+    }
+
+    /**
+     * Zwraca numer wiersza, w której znajduje się wierzchołek o określonym indeksie.
+     *
+     * @param nodeIndex indeks sprawdzanego wierzchołka
+     * @return numer wiersza, w której znajduje się wierzchołek
+     */
+    private int getNodeRowNumber(int nodeIndex)
+    {
+        return (nodeIndex - nodeIndex % columnCount) / columnCount + 1;
+    }
+
+    /**
+     * Zwraca numer kolumny, w której znajduje się wierzchołek o określonym indeksie.
+     *
+     * @param nodeIndex indeks sprawdzanego wierzchołka
+     * @return numer kolumny, w której znajduje się wierzchołek
+     */
+    private int getNodeColumnNumber(int nodeIndex)
+    {
+        return nodeIndex % columnCount + 1;
+    }
+
+    /**
+     * Wydziela w siatce osobny spójny graf w sposób losowy.
+     */
+    public void split() {
+        ArrayList<Integer> way = new ArrayList<>();
+        int w, next_w, slice;
+        MoveDirection move, next_move;
+
+        Random rand = new Random();
+
+        // find the starting node
+        do {
+            w = rand.nextInt(getNodeCount());
+        } while (getNode(w).getAdherentNumber() == 4 || getNode(w).getAdherentNumber() == 0);
+
+        way.add(w);
+
+        // start creating a slicing path
+
+        do {
+            next_w = getNode(w).getConnectedNodes().get(rand.nextInt(getNode(w).getAdherentNumber())).getIndex(); // draws a random adherent node
+
+            if (way.contains(next_w))
+                return; // the path crosssed -> dividing starts from the beginning
+
+            way.add(next_w);
+            w = next_w;
+
+        } while (getNode(w).getAdherentNumber() == 4);
+
+        // removing connections on path
+        if (way.size() == 2) { // if there are only two nodes in path
+            if (getNode(way.get(0)).getAdherentNumber() == 1 && getNode(way.get(1)).getAdherentNumber() == 1) { // if they are only connected to each other
+                removeConnection(way.get(0), way.get(1));
+            } else { // if they are connected to other nodes
+                while (getNode(way.get(0)).getAdherentNumber() > 1) {
+                    if (getNode(way.get(0)).getConnectedNodes().get(0).getIndex() != way.get(1)) {
+                        removeConnection(way.get(0), getNode(way.get(0)).getConnectedNodes().get(0).getIndex());
+                    } else {
+                        removeConnection(way.get(0), getNode(way.get(0)).getConnectedNodes().get(1).getIndex());
+                    }
+                }
+
+                while (getNode(way.get(1)).getAdherentNumber() > 1) {
+                    if (getNode(way.get(1)).getConnectedNodes().get(1).getIndex() != way.get(0)) {
+                        removeConnection(way.get(1), getNode(way.get(1)).getConnectedNodes().get(0).getIndex());
+                    } else {
+                        removeConnection(way.get(1), getNode(way.get(1)).getConnectedNodes().get(1).getIndex());
+                    }
+                }
+            }
+        } else { // path longer than two nodes
+            // first step
+            w = way.get(0);
+            next_w = way.get(1);
+            move = getDirection(w, next_w, getColumnCount(), getRowCount());
+
+            if (move == MoveDirection.UP || move == MoveDirection.DOWN) { // slices to the left
+                slice = w - 1;
+            } else if (move == MoveDirection.LEFT || move == MoveDirection.RIGHT) { // slices to the bottom
+                slice = w + getColumnCount();
+            } else {
+                System.err.println("Graph: An unexpected error occured while slicing the graph into subgraphs.");
+                return;
+            }
+
+            removeConnection(w, slice);
+            w = next_w;
+
+            // the rest of the path
+            for (int i = 2; i < way.size(); i++) {
+                next_w = way.get(i);
+                next_move = getDirection(w, next_w, getColumnCount(), getRowCount());
+
+                if ((next_move == MoveDirection.UP || next_move == MoveDirection.DOWN) && next_move == move) { // slices to the left
+                    slice = w - 1;
+                } else if ((next_move == MoveDirection.LEFT || next_move == MoveDirection.RIGHT) && next_move == move) { // slices to the bottom
+                    slice = w + getColumnCount();
+                } else if ((next_move == MoveDirection.UP || next_move == MoveDirection.DOWN)) { // slices to the bottom, then to the left
+                    slice = w - 1;
+                    removeConnection(w, w + getColumnCount());
+                } else if ((next_move == MoveDirection.LEFT || next_move == MoveDirection.RIGHT)) { // slices to the left, then to the bottom
+                    slice = 3;
+                    removeConnection(w, w - 1);
+                } else {
+                    System.err.println("Graph: An unexpected error occured while slicing the graph into subgraphs.");
+                    return;
+                }
+                removeConnection(w, slice);
+                w = next_w;
+                move = next_move;
+            }
+
+            // final step
+            removeConnection(next_w, slice);
+        }
+    }
+
+    /**
+     * Zwraca wartość wagi na krawędzi połączenia między dwoma wierzchołkami o określonych indeksach.
+     * Jeżeli połączenie nie istnieje, zostaje zwrócone 0.
+     *
+     * @param firstNodeIndex  indeks pierwszego wierzchołka połączenia
+     * @param secondNodeIndex indeks drugiego wierzchołka połączenia
+     * @return wartość wagi na krawędzi połączenia
+     */
+    public double getEdgeOnNodeConnection(int firstNodeIndex, int secondNodeIndex)
+    {
+        Node node1 = getNode(firstNodeIndex);
+        Node node2 = getNode(secondNodeIndex);
+
+        return node1.getEdgeOnConnection(node2);
+    }
+
+    /**
+     * Zwraca tablicę indeksów wierzchołków, z którymi połączony jest wierzchołek o określonym indeksie.
+     *
+     * @param nodeIndex indeks wierzchołka
+     * @return tablica indeksów połączonych wierzchołków
+     */
+    public ArrayList<Integer> getConnectedNodeIndexes(int nodeIndex)
+    {
+        Node node = getNode((nodeIndex));
+
+        return node.getConnectedNodeIndexes();
+    }
+
+    public boolean isConnected()
+    {
+        return subgraphCount == 1;
     }
 }

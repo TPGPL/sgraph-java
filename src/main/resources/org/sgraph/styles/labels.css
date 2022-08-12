@@ -1,0 +1,33 @@
+.label {
+    -fx-alignment: center;
+    -fx-pref-height: 30px;
+    -fx-pref-width: 105px;
+}
+
+.wide-label {
+    -fx-pref-width: 233px;
+}
+
+.edge-min {
+    -fx-alignment: bottom-left;
+}
+
+.edge-text {
+    -fx-alignment: bottom-center;
+}
+
+.edge-max {
+    -fx-alignment: bottom-right;
+}
+
+.node-min {
+    -fx-alignment: top-left;
+}
+
+.node-text {
+    -fx-alignment: top-center;
+}
+
+.node-max {
+    -fx-alignment: top-right;
+}

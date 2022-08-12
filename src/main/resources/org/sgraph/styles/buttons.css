@@ -1,0 +1,9 @@
+.button {
+    -fx-text-alignment: center;
+    -fx-pref-height: 30px;
+    -fx-pref-width: 105px;
+}
+
+.big-button {
+    -fx-pref-height: 70px;
+}

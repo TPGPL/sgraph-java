@@ -9,27 +9,31 @@ import java.util.LinkedList;
  */
 public class PathFinder {
     /**
-     * Wierzchołek od którego zaczyna się wyznaczanie najkrótszych ścieżek.
+     * Graf, w którym będzie działał algorytm Dijkstry.
      */
-    private final Node startingNode;
+    private final Graph graph;
+    /**
+     * Indeks Wierzchołka od którego zaczyna się wyznaczanie najkrótszych ścieżek.
+     */
+    private final int startNodeIndex;
     /**
      * Tablica najkrótszych odległości do wierzchołka początkowego.
      * Początkowo inicjalizowana jako tablica Double.MAX_VALUE (oznacza brak połączenia/nieprzetworzony wierzchołek).
      */
     private final double[] distanceToNode;
     /**
-     * Tablica poprzedników-wierzchołków algorytmu Dijkstry wykorzystywana do budowana najkrótszych ścieżek.
-     * Dla wierzchołka początkowego i wierzchołków niepołączonych, wartość ustalona na null.
+     * Tablica indeksów poprzedników-wierzchołków algorytmu Dijkstry wykorzystywana do budowana najkrótszych ścieżek.
+     * Dla wierzchołka początkowego i wierzchołków niepołączonych, wartość ustalona na -1.
      */
-    private final Node[] previousNode;
+    private final int[] previousNode;
     /**
      * Tablica zawierająca stany przetworzenia wierzchołków przez algorytm Dijkstry.
      */
     private final boolean[] parsedNodes;
     /**
-     * Kolejka priorytetowa wierzchołków do przetworzenia.
+     * Kolejka priorytetowa indeksów wierzchołków do przetworzenia.
      */
-    private final ArrayList<Node> queue;
+    private final ArrayList<Integer> queue;
     /**
      * Zakres wartości najkrótszych odległości połączonych wierzchołków od wierzchołka początkowego.
      */
@@ -39,32 +43,36 @@ public class PathFinder {
      * Konstruktor klasy
      * Wykorzystuje algorytm BFS do wyznaczenia zawartości kolejki priorytetowej.
      *
-     * @param nodeCount    liczba wierzchołków w grafie
-     * @param startingNode wierzchołek początkowy od którego rozpoczyna się wyznaczanie najkrótszych ścieżek
+     * @param graph          graf, w którym będzie działał algorytm Dijkstry
+     * @param startNodeIndex indeks wierzchołka początkowego, od którego rozpoczyna się wyznaczanie najkrótszych ścieżek
      * @throws IllegalArgumentException jeżeli przekazana liczba wierzchołków jest niedodatnia
      * @see BreadthFirstSearch
      */
-    public PathFinder(int nodeCount, Node startingNode)
+    public PathFinder(Graph graph, int startNodeIndex)
     {
-        if (nodeCount <= 0) throw new IllegalArgumentException("PathFinder: The node count must be positive.");
+        this.graph = graph;
 
-        this.startingNode = startingNode;
-        distanceToNode = new double[nodeCount];
-        previousNode = new Node[nodeCount];
-        parsedNodes = new boolean[nodeCount];
+        if (startNodeIndex < 0 || startNodeIndex >= graph.getNodeCount())
+            throw new IllegalArgumentException(String.format("PathFinder: Invalid starting node index. Allowed range: %d - %d", 0, graph.getNodeCount() - 1));
+
+        this.startNodeIndex = startNodeIndex;
+
+        distanceToNode = new double[graph.getNodeCount()];
+        previousNode = new int[graph.getNodeCount()];
+        parsedNodes = new boolean[graph.getNodeCount()];
         queue = new ArrayList<>();
 
         Arrays.fill(distanceToNode, Double.MAX_VALUE);
 
         // params for the starting node
-        queue.add(startingNode);
-        distanceToNode[startingNode.getIndex()] = 0;
-        previousNode[startingNode.getIndex()] = null;
+        queue.add(startNodeIndex);
+        distanceToNode[startNodeIndex] = 0;
+        previousNode[startNodeIndex] = -1;
 
         // get connected nodes
-        BreadthFirstSearch bfs = new BreadthFirstSearch(nodeCount);
-        bfs.run(startingNode);
-        queue.addAll(bfs.getConnectedNodes());
+        BreadthFirstSearch bfs = new BreadthFirstSearch(graph);
+        bfs.run(startNodeIndex);
+        queue.addAll(bfs.getConnectedNodeIndexes());
     }
 
     /**
@@ -73,13 +81,13 @@ public class PathFinder {
     public void run()
     {
         while (!queue.isEmpty()) {
-            Node currParsedNode = getNodeFromQueue();
-            parsedNodes[currParsedNode.getIndex()] = true;
+            int parsedNodeIndex = getNodeFromQueue();
+            parsedNodes[parsedNodeIndex] = true;
 
-            for (Node n : currParsedNode.getConnectedNodes()) {
-                if (!parsedNodes[n.getIndex()] && (distanceToNode[currParsedNode.getIndex()] + currParsedNode.getEdgeOnConnection(n) < distanceToNode[n.getIndex()])) {
-                    distanceToNode[n.getIndex()] = distanceToNode[currParsedNode.getIndex()] + currParsedNode.getEdgeOnConnection(n);
-                    previousNode[n.getIndex()] = currParsedNode;
+            for (int nodeIndex : graph.getConnectedNodeIndexes(parsedNodeIndex)) {
+                if (!parsedNodes[nodeIndex] && (distanceToNode[parsedNodeIndex] + graph.getEdgeOnNodeConnection(parsedNodeIndex, nodeIndex) < distanceToNode[nodeIndex])) {
+                    distanceToNode[nodeIndex] = distanceToNode[parsedNodeIndex] + graph.getEdgeOnNodeConnection(parsedNodeIndex, nodeIndex);
+                    previousNode[nodeIndex] = parsedNodeIndex;
                 }
             }
         }
@@ -88,77 +96,87 @@ public class PathFinder {
     /**
      * Priorytetowo wyjmuje z kolejki wierzchołek, którego odległość do wierzchołka początkowego jest najmniejsza.
      *
-     * @return wierzchołek, którego odległość do wierzchołka początkowego jest najmniejsza
+     * @return indeks wierzchołka, którego odległość do wierzchołka początkowego jest najmniejsza
      */
-    private Node getNodeFromQueue()
+    private int getNodeFromQueue()
     {
-        Node minNode = queue.get(0); // gets first element;
+        int minNodeIndex = queue.get(0); // gets first element;
 
-        for (Node n : queue) {
-            if (distanceToNode[n.getIndex()] < distanceToNode[minNode.getIndex()]) minNode = n;
+        for (int nodeIndex : queue) {
+            if (distanceToNode[nodeIndex] < distanceToNode[nodeIndex])
+                minNodeIndex = nodeIndex;
         }
 
-        queue.remove(minNode);
+        queue.remove((Object)minNodeIndex);
 
-        return minNode;
+        return minNodeIndex;
     }
 
     /**
-     * Zwraca odległość przekazanego wierzchołka od wierzchołka początkowego.
+     * Zwraca odległość  wierzchołka o określonym indeksie od wierzchołka początkowego.
      * Jeżeli wartość odległości jest domyślna (Double.MAX_VALUE), to zwraca -1.
      *
-     * @param n sprawdzany wierzchołek
+     * @param nodeIndex indeks sprawdzanego wierzchołka
      * @return odległość sprawdzanego wierzchołka od wierzchołka początkowego
      */
-    public double getDistanceToNode(Node n)
+    public double getDistanceToNode(int nodeIndex)
     {
-        return distanceToNode[n.getIndex()] == Double.MAX_VALUE ? -1 : distanceToNode[n.getIndex()];
+        if (nodeIndex < 0 || nodeIndex >= graph.getNodeCount())
+            throw new IllegalArgumentException(String.format("PathFinder: Invalid node index. Allowed range: %d - %d", 0, graph.getNodeCount() - 1));
+
+        return distanceToNode[nodeIndex] == Double.MAX_VALUE ? -1 : distanceToNode[nodeIndex];
     }
 
 
     /**
-     * Zwraca najkrótszą ścieżkę do przekazanego wierzchołka w postaci napisu zawierającego ciąg indeksów wierzchołków.
+     * Zwraca najkrótszą ścieżkę do wierzchołka o określonym indeksie w postaci napisu zawierającego ciąg indeksów wierzchołków.
      * Jeżeli droga nie istnieje, to zwraca null.
      *
-     * @param n sprawdzany wierzchołek
+     * @param nodeIndex indeks sprawdzanego wierzchołka
      * @return napis zawierający najkrótszą ścieżkę do wierzchołka w postaci ciągu indeksów
      */
-    public String getPathToNode(Node n)
+    public String getPathToNode(int nodeIndex)
     {
-        if (distanceToNode[n.getIndex()] == Double.MAX_VALUE) // no path
+        if (nodeIndex < 0 || nodeIndex >= graph.getNodeCount())
+            throw new IllegalArgumentException(String.format("PathFinder: Invalid node index. Allowed range: %d - %d", 0, graph.getNodeCount() - 1));
+
+        if (distanceToNode[nodeIndex] == Double.MAX_VALUE) // no path
             return null;
 
         String path = "";
-        LinkedList<Integer> indexes = getIndexPathToNode(n);
+        LinkedList<Integer> indexes = getIndexPathToNode(nodeIndex);
 
         for (int index : indexes) {
             path = path.concat(Integer.toString(index));
 
-            if (index != n.getIndex()) path = path.concat(" -> ");
+            if (index != nodeIndex) path = path.concat(" -> ");
         }
 
         return path;
     }
 
     /**
-     * Zwraca najkrótszą ścieżkę do przekazanego wierzchołka w postaci listy liniowej indeksów wierzchołków.
+     * Zwraca najkrótszą ścieżkę do wierzchołka o określonym indeksie w postaci listy liniowej indeksów wierzchołków.
      * Jeżeli droga nie istnieje, to zwraca null.
      *
-     * @param n sprawdzany wierzchołek
+     * @param nodeIndex indeks sprawdzanego wierzchołka
      * @return lista liniowa zawierająca najkrótszą ścieżkę do wierzchołka w postaci indeksów wierzchołków
      */
-    public LinkedList<Integer> getIndexPathToNode(Node n)
+    public LinkedList<Integer> getIndexPathToNode(int nodeIndex)
     {
-        if (distanceToNode[n.getIndex()] == Double.MAX_VALUE) // no path
+        if (nodeIndex < 0 || nodeIndex >= graph.getNodeCount())
+            throw new IllegalArgumentException(String.format("PathFinder: Invalid node index. Allowed range: %d - %d", 0, graph.getNodeCount() - 1));
+
+        if (distanceToNode[nodeIndex] == Double.MAX_VALUE) // no path
             return null;
 
         LinkedList<Integer> indexes = new LinkedList<>();
 
-        Node parsedNode = n;
+        int parsedNodeIndex = nodeIndex;
 
-        while (parsedNode != null) {
-            indexes.addFirst(parsedNode.getIndex());
-            parsedNode = previousNode[parsedNode.getIndex()];
+        while (parsedNodeIndex != -1) {
+            indexes.addFirst(parsedNodeIndex);
+            parsedNodeIndex = previousNode[parsedNodeIndex];
         }
 
         return indexes;
@@ -198,12 +216,12 @@ public class PathFinder {
     }
 
     /**
-     * Zwraca wierzchołek, od którego rozpoczyna się wyznaczanie najkrótszych ścieżek w grafie.
+     * Zwraca indeks wierzchołka, od którego rozpoczyna się wyznaczanie najkrótszych ścieżek w grafie.
      *
-     * @return wierzchołek początkowy
+     * @return indeks wierzchołka początkowego
      */
-    public Node getStartingNode()
+    public int getStartNodeIndex()
     {
-        return startingNode;
+        return startNodeIndex;
     }
 }

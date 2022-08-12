@@ -80,7 +80,7 @@ public class Node {
 
     /**
      * Zwraca wartość wagi na krawędzi połączenia z przekazanym wierzchołkiem.
-     * Jeżeli nie istnieje połączenie z wierzchołkiem, zwraca -1.
+     * Jeżeli nie istnieje połączenie z wierzchołkiem, zwraca 0.
      *
      * @param node sprawdzany wierzchołek
      * @return wartość wagi na krawędzi połączenia z wierzchołkiem
@@ -106,6 +106,21 @@ public class Node {
             connectedNodes.add(c.getNode());
 
         return connectedNodes;
+    }
+
+    /**
+     * Zwraca tablicę indeksów wierzchołków, z którymi istnieje połączenie.
+     *
+     * @return tablica indeksów wierzchołków, z którymi istnieje połączenie
+     */
+    public ArrayList<Integer> getConnectedNodeIndexes()
+    {
+        ArrayList<Integer> nodeIndexes = new ArrayList<>();
+
+        for (Connection c : connections)
+            nodeIndexes.add(c.getNode().getIndex());
+
+        return nodeIndexes;
     }
 
     /**
