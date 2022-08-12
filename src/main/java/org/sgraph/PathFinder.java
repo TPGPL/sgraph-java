@@ -108,7 +108,7 @@ public class PathFinder {
                 minNodeIndex = nodeIndex;
         }
 
-        queue.remove(minNodeIndex);
+        queue.remove((Object)minNodeIndex);
 
         return minNodeIndex;
     }
